@@ -77,8 +77,8 @@ require 'cek.php';
                                                 <th>Nama Barang</th>
                                                 <th>Jumlah</th>
                                                 <th>Penerima</th>
-                                                <th>Bukti Keluar</th>
                                                 <th>Keterangan</th>
+                                                <th>Bukti Keluar</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -92,6 +92,8 @@ require 'cek.php';
                                                 $namabarang = $data['namabarang'];
                                                 $qty = $data['qty'];
                                                 $penerima = $data['penerima'];
+                                                $keterangan = $data['keterangan'];
+                                                $gambar_base64 = $data['gambar_base64'];
                                             
                                             ?>
 
@@ -100,6 +102,8 @@ require 'cek.php';
                                                 <td><?=$namabarang;?></td>
                                                 <td><?=$qty;?></td>
                                                 <td><?=$penerima;?></td>
+                                                <td><?=$keterangan;?></td>
+                                                <td><img src="data:image/jpeg;base64,<?= $gambar_base64; ?>" alt="Bukti Keluar" style="max-width: 100px; max-height: 100px;"></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idk;?>">
                                                     Edit
@@ -122,17 +126,25 @@ require 'cek.php';
                                                         </div>
                                                         
                                                         <!-- Modal body -->
-                                                        <form method="post">
-                                                        <div class="modal-body">
-                                                        <input type="text" name="penerima" value="<?=$penerima;?>" class="form-control" required>
-                                                        <br>
-                                                        <input type="text" name="qty" value="<?=$qty;?>" class="form-control" required>
-                                                        <br>
-                                                        <input type="hidden" name="idb" value="<?=$idb;?>">
-                                                        <input type="hidden" name="idk" value="<?=$idk;?>">
-                                                        <button type="submit" class="btn btn-primary" name="updatebarangkeluar">Submit</button>
-                                                        </div>
-                                                        </form>
+                                                        <form method="post" enctype="multipart/form-data">
+    <div class="modal-body">
+        <label for="penerima">Penerima</label>
+        <input type="text" name="penerima" value="<?=$penerima;?>" class="form-control" required>
+        <br>
+        <label for="qty">Jumlah</label>
+        <input type="text" name="qty" value="<?=$qty;?>" class="form-control" required>
+        <br>
+        <label for="keterangan">Keterangan:</label>
+        <textarea name="keterangan" class="form-control" required><?=$keterangan;?></textarea>
+        <br>
+        <label for="update_gambar">Bukti Keluar:</label>
+        <input type="file" name="update_gambar" class="form-control-file" accept="image/*">
+        <br>
+        <input type="hidden" name="idb" value="<?=$idb;?>">
+        <input type="hidden" name="idk" value="<?=$idk;?>">
+        <button type="submit" class="btn btn-primary" name="updatebarangkeluar">Submit</button>
+    </div>
+</form>
 
                                                     </div>
                                                 </div>
@@ -180,7 +192,7 @@ require 'cek.php';
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2020</div>
+                            <div class="text-muted">Copyright &copy; Your Website 2024</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;
@@ -214,8 +226,9 @@ require 'cek.php';
             </div>
             
             <!-- Modal body -->
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
             <div class="modal-body">
+            <label for="barangnya">Nama Barang:</label>
             <select name="barangnya" class="form-control">
                 <?php
                     $ambilsemuadatanya = mysqli_query($conn,"select * from stock");
@@ -232,9 +245,17 @@ require 'cek.php';
                 ?>
             </select>
             <br>
+            <label for="qty">Jumlah:</label>
             <input type="number" name="qty" placeholder="qty" class="form-control" required>
             <br>
+            <label for="penerima">Penerima:</label>
             <input type="text" name="penerima" placeholder="Penerima" class="form-control" required>
+            <br>
+            <label for="keterangan">Keterangan:</label>
+            <textarea name="keterangan" class="form-control" placeholder="Keterangan" rows="3" required></textarea>
+            <br>
+            <label for="gambar_base64">Bukti Keluar:</label>
+            <input type="file" name="gambar_base64" class="form-control-file" required>
             <br>
             <button type="submit" class="btn btn-primary" name="addbarangkeluar">Submit</button>
             </div>
@@ -250,3 +271,9 @@ require 'cek.php';
     </div>
 
 </html>
+
+
+
+
+
+    
