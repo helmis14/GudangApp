@@ -92,6 +92,7 @@ require 'cek.php';
                                                 <th>Nama Barang</th>
                                                 <th>Unit</th>
                                                 <th>Stock</th>
+                                                <th>Lokasi/Rak</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -104,6 +105,7 @@ require 'cek.php';
                                                 $namabarang = $data['namabarang'];
                                                 $deskripsi = $data['deskripsi'];
                                                 $stock = $data['stock'];
+                                                $lok = $data['lokasi'];
                                                 $idb = $data['idbarang'];
                                             ?>
 
@@ -112,6 +114,7 @@ require 'cek.php';
                                                 <td><?=$namabarang;?></td>
                                                 <td><?=$deskripsi;?></td>
                                                 <td><?=$stock;?></td>
+                                                <td><?=$lok;?></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idb;?>">
                                                     Edit
@@ -138,6 +141,8 @@ require 'cek.php';
                                                         <input type="text" name="namabarang" value="<?=$namabarang;?>" class="form-control" required>
                                                         <br>
                                                         <input type="text" name="deskripsi" value="<?=$deskripsi;?>" class="form-control" required>
+                                                        <br>
+                                                        <input type="text" name="lokasi" value="<?=$lok;?>" class="form-control" required>
                                                         <br>
                                                         <input type="hidden" name="idb" value="<?=$idb;?>">
                                                         <button type="submit" class="btn btn-primary" name="updatebarang">Submit</button>
@@ -220,9 +225,11 @@ require 'cek.php';
                                     <div class="modal-body">
                                     <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
                                     <br>
-                                    <input type="text" name="deskripsi" placeholder="Deskripsi" class="form-control" required>
+                                    <input type="text" name="deskripsi" placeholder="Unit" class="form-control" required>
                                     <br>
                                     <input type="number" name="stock" placeholder="Jumlah" class="form-control" required>
+                                    <br>
+                                    <input type="text" name="lokasi" placeholder="Lokasi/Rak" class="form-control" required>
                                     <br>
                                     <button type="submit" class="btn btn-primary" name="addnewbarang">Submit</button>
                                     </div>

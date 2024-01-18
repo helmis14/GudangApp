@@ -76,6 +76,7 @@ require 'cek.php';
                                             <tr>
                                                 <th>No</th>
                                                 <th>Email Admin</th>
+                                                <th>Password</pass>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -93,6 +94,7 @@ require 'cek.php';
                                             <tr>
                                                 <td><?=$i++;?></td>
                                                 <td><?=$em;?></td>
+                                                <td><?=$pass;?></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$iduser;?>">
                                                     Edit
@@ -118,7 +120,7 @@ require 'cek.php';
                                                         <div class="modal-body">
                                                         <input type="text" name="email" value="<?=$em;?>" class="form-control" required>
                                                         <br>
-                                                        <input type="text" name="password" value="<?=$pass;?>" class="form-control" required>
+                                                        <input type="password" name="password" value="<?=$pass;?>" class="form-control" required>
                                                         <br>
                                                         <input type="hidden" name="id" value="<?=$iduser;?>">
                                                         <button type="submit" class="btn btn-primary" name="updateadmin">Submit</button>
@@ -201,7 +203,7 @@ require 'cek.php';
                                     <div class="modal-body">
                                     <input type="text" name="email" placeholder="email" class="form-control" required>
                                     <br>
-                                    <input type="text" name="password" placeholder="password" class="form-control" required>
+                                    <input type="password" name="password" placeholder="password" class="form-control" required>
                                     <br>
                                     <button type="submit" class="btn btn-primary" name="addnewadmin">Submit</button>
                                     </div>

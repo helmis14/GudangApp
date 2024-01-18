@@ -81,6 +81,7 @@ require 'cek.php';
                                                 <th>Quantity</th>
                                                 <th>Keterangan</th>
                                                 <th>Bukti</th>
+                                                <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -90,19 +91,23 @@ require 'cek.php';
                                             $ambilsemuadatapermintaan = mysqli_query($conn,"select * from permintaan");
                                                 $i = 1;
                                             while($data=mysqli_fetch_array($ambilsemuadatapermintaan)){
+                                                $tanggal = $data['tanggal'];
                                                 $namabarang = $data['namabarang'];
                                                 $unit = $data['unit'];
-                                                $qtyp = $data['qtypermintaan'];
+                                                $qtypermintaan = $data['qtypermintaan'];
                                                 $ket = $data['keterangan'];
-                                                $idp = $data['idpermintaan']
+                                                $idp = $data['idpermintaan'];
+                                                $bukti = $data['bukti'];
                                             ?>
 
                                             <tr>
                                                 <td><?=$i++;?></td>
+                                                <td><?=$tanggal;?></td>
                                                 <td><?=$namabarang;?></td>
                                                 <td><?=$unit;?></td>
-                                                <td><?=$qtyp;?></td>
+                                                <td><?=$qtypermintaan;?></td>
                                                 <td><?=$ket;?></td>
+                                                <td><?=$bukti;?></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idp;?>">
                                                     Edit
@@ -113,7 +118,7 @@ require 'cek.php';
                                                 </td>
                                             </tr>
                                                 <!-- Edit Modal -->
-                                                <div class="modal fade" id="edit<?=$iduser;?>">
+                                                <div class="modal fade" id="edit<?=$idp;?>">
                                                     <div class="modal-dialog">
                                                     <div class="modal-content">
                                                     
@@ -126,12 +131,12 @@ require 'cek.php';
                                                         <!-- Modal body -->
                                                         <form method="post">
                                                         <div class="modal-body">
-                                                        <input type="text" name="email" value="<?=$em;?>" class="form-control" required>
+                                                        <input type="text" name="namabarang" value="<?=$namabarang;?>" class="form-control" required>
                                                         <br>
-                                                        <input type="text" name="iduser" value="<?=$iduser;?>" class="form-control" required>
+                                                        <input type="text" name="qtypermintaan" value="<?=$qtypermintaan;?>" class="form-control" required>
                                                         <br>
-                                                        <input type="hidden" name="id" value="<?=$iduser;?>">
-                                                        <button type="submit" class="btn btn-primary" name="updateadmin">Submit</button>
+                                                        <input type="hidden" name="id" value="<?=$idpermintaan;?>">
+                                                        <button type="submit" class="btn btn-primary" name="updatepermintaan">Submit</button>
                                                         </div>
                                                         </form>
 
@@ -142,24 +147,24 @@ require 'cek.php';
                                                 </div>
 
                                                    <!-- Delete Modal -->
-                                                    <div class="modal fade" id="delete<?=$iduser;?>">
+                                                    <div class="modal fade" id="delete<?=$idp;?>">
                                                     <div class="modal-dialog">
                                                     <div class="modal-content">
                                                     
                                                         <!-- Modal Header -->
                                                         <div class="modal-header">
-                                                        <h4 class="modal-title">Hapus Admin</h4>
+                                                        <h4 class="modal-title">Hapus Permintaan</h4>
                                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                         </div>
                                                         
                                                         <!-- Modal body -->
                                                         <form method="post">
                                                         <div class="modal-body">
-                                                        Apakah Anda Yakin Ingin Menghapus <?=$em;?>?
-                                                        <input type="hidden" name="iduser" value="<?=$iduser;?>">
+                                                        Apakah Anda Yakin Ingin Menghapus <?=$namabarang;?>?
+                                                        <input type="hidden" name="idpermintaan" value="<?=$idp;?>">
                                                         <br>
                                                         <br>
-                                                        <button type="submit" class="btn btn-danger" name="hapusadmin">Hapus</button>
+                                                        <button type="submit" class="btn btn-danger" name="hapuspermintaan">Hapus</button>
                                                         </div>
                                                         </form>
 
@@ -213,13 +218,13 @@ require 'cek.php';
                                     <br>
                                     <input type="text" name="unit" placeholder="Unit" class="form-control" required>
                                     <br>
-                                    <input type="Number" name="qtyp" placeholder="Quantity" class="form-control" required>
+                                    <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
                                     <br>
                                     <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
                                     <br>
                                     <input type="file" name="bukti" placeholder="Bukti" class="form-control" required>
                                     <br>
-                                    <button type="submit" class="btn btn-primary" name="addnewadmin">Submit</button>
+                                    <button type="submit" class="btn btn-primary" name="addnewpermintaan">Submit</button>
                                     </div>
                                     </form>
 
