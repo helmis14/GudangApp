@@ -9,8 +9,9 @@ if(isset($_POST['addnewbarang'])){
     $namabarang = $_POST['namabarang'];
     $deskripsi = $_POST['deskripsi'];
     $stock = $_POST['stock'];
+    $lok = $_POST['lokasi'];
 
-    $addtotable = mysqli_query($conn,"insert into stock (namabarang, deskripsi, stock) values('$namabarang','$deskripsi','$stock')");
+    $addtotable = mysqli_query($conn,"insert into stock (namabarang, deskripsi, stock, lokasi) values('$namabarang','$deskripsi','$stock','$lok')");
     if($addtotable){
         header('location:index.php');
     } else {
@@ -104,8 +105,9 @@ if(isset($_POST['updatebarang'])){
     $idb = $_POST['idb'];
     $namabarang = $_POST['namabarang'];
     $deskripsi = $_POST['deskripsi'];
+    $lok = $_POST['lokasi'];
 
-    $update = mysqli_query($conn,"update stock set namabarang='$namabarang', deskripsi='$deskripsi' where idbarang ='$idb'");
+    $update = mysqli_query($conn,"update stock set namabarang='$namabarang', deskripsi='$deskripsi', lokasi='$lok' where idbarang ='$idb'");
     if($update){
         header('location:index.php');
     } else {
@@ -295,7 +297,20 @@ if(isset($_POST['addnewadmin'])){
     }
 };
 
+//Update perubahan user
+if(isset($_POST['updateadmin'])){
+    $iduser = $_POST['iduser'];
+    $em = $_POST['email'];
+    $pass = $_POST['password'];
 
+    $update = mysqli_query($conn,"update login set email='$em', password='$pass' where iduser ='$iduser'");
+    if($update){
+        header('location:admin.php');
+    } else {
+        echo 'Gagal';
+        header('location:admin.php');
+    }
+}
 
 //Menghapus admin dari kelola admin
 if(isset($_POST['hapusadmin'])){
@@ -310,5 +325,36 @@ if(isset($_POST['hapusadmin'])){
     }
 }
 
+
+//menambah permintaan barang
+if(isset($_POST['addnewpermintaan'])){
+    $namabarang = $_POST['namabarang'];
+    $unit = $_POST['unit'];
+    $qtypermintaan = $_POST['qtypermintaan'];
+    $ket = $_POST['keterangan'];
+    $bukti = $_POST['bukti'];
+
+    $addtotable = mysqli_query($conn,"insert into permintaan (namabarang, unit, qtypermintaan, keterangan, bukti) values('$namabarang','$unit','$qtypermintaan','$ket','$bukti')");
+    if($addtotable){
+        header('location:permintaan.php');
+    } else {
+        echo 'Gagal';
+        header('location:permintaan.php');
+    
+    }
+};
+
+//Menghapus permintaan barang
+if(isset($_POST['hapuspermintaan'])){
+    $idp = $_POST['idpermintaan'];
+
+    $hapus = mysqli_query($conn,"delete from permintaan where idpermintaan='$idp'");
+    if($hapus){
+        header('location:permintaan.php');
+    } else {
+        echo 'Gagal';
+        header('location:permintaan.php');
+    }
+}
 
 ?>
