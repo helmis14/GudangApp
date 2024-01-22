@@ -66,6 +66,9 @@ require 'cek.php';
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                              Tambah Barang
                              </button>
+                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#export">
+                             Export
+                             </button>
                             </div>
                             <div class="card-body">
 
@@ -243,5 +246,36 @@ require 'cek.php';
                                 </div>
                                 </div>
                             </div>
+
+
+                      <!-- The Modal "Tambah Barang"-->
+                        <div class="modal fade" id="export">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+                                    <h4 class="modal-title">Export Data Stock Barang</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    
+                                    <!-- Modal body -->
+                                    <form method="post">
+                                    <div class="modal-body">
+                                    <br>
+                                    <button type="button" class="btn btn-primary" name="excel">Export to Excel</button>
+                                    <button type="button" class="btn btn-primary" name="pdf">Export to PDF</button>
+                                    </div>
+                                    </form>
+
+                                    <!-- Modal footer -->
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                    </div>
+                                    
+                                </div>
+                                </div>
+                            </div>
+
 
 </html>
