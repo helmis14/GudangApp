@@ -76,7 +76,6 @@ require 'cek.php';
                                                 <th>Nama Barang</th>
                                                 <th>Jumlah</th>
                                                 <th>Penerima</th>
-                                                <th>Bukti Masuk</th>
                                                 <th>Keterangan</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -91,6 +90,7 @@ require 'cek.php';
                                                 $namabarang = $data['namabarang'];
                                                 $qty = $data['qty'];
                                                 $keterangan = $data['keterangan'];
+                                                $penerima = $data['penerima'];
                                             
                                             ?>
 
@@ -98,6 +98,7 @@ require 'cek.php';
                                                 <td><?=$tanggal;?></td>
                                                 <td><?=$namabarang;?></td>
                                                 <td><?=$qty;?></td>
+                                                <td><?=$penerima;?></td>
                                                 <td><?=$keterangan;?></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idb;?>">
@@ -123,9 +124,11 @@ require 'cek.php';
                                                         <!-- Modal body -->
                                                         <form method="post">
                                                         <div class="modal-body">
-                                                        <input type="text" name="keterangan" value="<?=$keterangan;?>" class="form-control" required>
+                                                        <input type="text" name="penerima" value="<?=$penerima;?>" class="form-control">
                                                         <br>
-                                                        <input type="text" name="qty" value="<?=$qty;?>" class="form-control" required>
+                                                        <input type="text" name="qty" value="<?=$qty;?>" class="form-control">
+                                                        <br>
+                                                        <input type="text" name="keterangan" value="<?=$keterangan;?>" class="form-control">
                                                         <br>
                                                         <input type="hidden" name="idb" value="<?=$idb;?>">
                                                         <input type="hidden" name="idm" value="<?=$idm;?>">
@@ -219,7 +222,7 @@ require 'cek.php';
             <!-- Modal body -->
             <form method="post">
             <div class="modal-body">
-
+            <label for="barangnya">Nama Barang:</label>
             <select name="barangnya" class="form-control">
                 <?php
                     $ambilsemuadatanya = mysqli_query($conn,"select * from stock");
@@ -236,9 +239,14 @@ require 'cek.php';
                 ?>
             </select>
             <br>
+            <label for="jumlah">Jumlah:</label>
             <input type="number" name="qty" placeholder="Quantity" class="form-control" required>
             </br>
+            <label for="penerima">Penerima</label>
             <input type="text" name="penerima" placeholder="Penerima" class="form-control" required>
+            </br>
+            <label for="keterangan">Keterangan</label>
+            <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
             </br>
             <button type="submit" class="btn btn-primary" name="barangmasuk">Submit</button>
             </div>
