@@ -110,17 +110,17 @@ require 'cek.php';
                                                 <td><?=$keterangan;?></td>
                                                 <td><img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;"></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idb;?>">
+                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idm;?>">
                                                     Edit
                                                      </button>
-                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idb;?>">
+                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idm;?>">
                                                     Delete
                                                      </button>
                                                 </td>
                                             </tr>
 
                                             <!-- Edit Modal -->
-                                            <div class="modal fade" id="edit<?=$idb;?>">
+                                            <div class="modal fade" id="edit<?=$idm;?>">
                                                     <div class="modal-dialog">
                                                     <div class="modal-content">
                                                     
