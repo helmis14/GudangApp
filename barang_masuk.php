@@ -76,6 +76,8 @@ require 'cek.php';
                                                 <th>Nama Barang</th>
                                                 <th>Jumlah</th>
                                                 <th>Penerima</th>
+                                                <th>Unit</th>
+                                                <th>Vendor</th>
                                                 <th>Keterangan</th>
                                                 <th>Aksi</th>
                                             </tr>
