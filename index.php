@@ -144,6 +144,7 @@ require 'cek.php';
                                                         <label for="deskripsi">Unit:</label>
                                                         <input type="text" name="deskripsi" value="<?=$deskripsi;?>" class="form-control" required>
                                                         <br>
+                                                        <label for="lokasi">Lokasi:</label>
                                                         <input type="text" name="lokasi" value="<?=$lok;?>" class="form-control" required>
                                                         <br>
                                                         <input type="hidden" name="idb" value="<?=$idb;?>">
@@ -242,6 +243,7 @@ require 'cek.php';
                                     <label for="stock">Stock:</label>
                                     <input type="number" name="stock" placeholder="Jumlah" class="form-control" required>
                                     <br>
+                                    <label for="lokasi">Lokasi:</label>
                                     <input type="text" name="lokasi" placeholder="Lokasi/Rak" class="form-control" required>
                                     <br>
                                     <button type="submit" class="btn btn-primary" name="addnewbarang">Submit</button>

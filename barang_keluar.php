@@ -75,6 +75,7 @@ require 'cek.php';
                                             <tr>
                                                 <th>Tanggal</th>
                                                 <th>Nama Barang</th>
+                                                <th>Unit</th>
                                                 <th>Jumlah</th>
                                                 <th>Penerima</th>
                                                 <th>Keterangan</th>
@@ -92,6 +93,7 @@ require 'cek.php';
                                                 $namabarang = $data['namabarang'];
                                                 $qty = $data['qty'];
                                                 $penerima = $data['penerima'];
+                                                $deskripsi = $data['deskripsi'];
                                                 $keterangan = $data['keterangan'];
                                                 $gambar_base64 = $data['gambar_base64'];
                                             
@@ -100,6 +102,7 @@ require 'cek.php';
                                             <tr>
                                                 <td><?=$tanggal;?></td>
                                                 <td><?=$namabarang;?></td>
+                                                <td><?=$deskripsi;?></td>
                                                 <td><?=$qty;?></td>
                                                 <td><?=$penerima;?></td>
                                                 <td><?=$keterangan;?></td>
@@ -127,24 +130,24 @@ require 'cek.php';
                                                         
                                                         <!-- Modal body -->
                                                         <form method="post" enctype="multipart/form-data">
-    <div class="modal-body">
-        <label for="penerima">Penerima</label>
-        <input type="text" name="penerima" value="<?=$penerima;?>" class="form-control" required>
-        <br>
-        <label for="qty">Jumlah</label>
-        <input type="text" name="qty" value="<?=$qty;?>" class="form-control" required>
-        <br>
-        <label for="keterangan">Keterangan:</label>
-        <textarea name="keterangan" class="form-control" required><?=$keterangan;?></textarea>
-        <br>
-        <label for="update_gambar">Bukti Keluar:</label>
-        <input type="file" name="update_gambar" class="form-control-file" accept="image/*">
-        <br>
-        <input type="hidden" name="idb" value="<?=$idb;?>">
-        <input type="hidden" name="idk" value="<?=$idk;?>">
-        <button type="submit" class="btn btn-primary" name="updatebarangkeluar">Submit</button>
-    </div>
-</form>
+                                                        <div class="modal-body">
+                                                            <label for="penerima">Penerima</label>
+                                                            <input type="text" name="penerima" value="<?=$penerima;?>" class="form-control" required>
+                                                            <br>
+                                                            <label for="qty">Jumlah</label>
+                                                            <input type="text" name="qty" value="<?=$qty;?>" class="form-control" required>
+                                                            <br>
+                                                            <label for="keterangan">Keterangan:</label>
+                                                            <textarea name="keterangan" class="form-control" required><?=$keterangan;?></textarea>
+                                                            <br>
+                                                            <label for="update_gambar">Bukti Keluar:</label>
+                                                            <input type="file" name="update_gambar" class="form-control-file" accept="image/*">
+                                                            <br>
+                                                            <input type="hidden" name="idb" value="<?=$idb;?>">
+                                                            <input type="hidden" name="idk" value="<?=$idk;?>">
+                                                            <button type="submit" class="btn btn-primary" name="updatebarangkeluar">Submit</button>
+                                                        </div>
+                                                        </form>
 
                                                     </div>
                                                 </div>
@@ -245,6 +248,9 @@ require 'cek.php';
                 ?>
             </select>
             <br>
+            <!-- <label for="deskripsi">Unit:</label>
+            <input type="text" name="deskripsi" placeholder="Unit" class="form-control" required>
+            <br> -->
             <label for="qty">Jumlah:</label>
             <input type="number" name="qty" placeholder="qty" class="form-control" required>
             <br>
