@@ -74,11 +74,14 @@ require 'cek.php';
                                             <tr>
                                                 <th>Tanggal</th>
                                                 <th>Nama Barang</th>
+                                                <th>Unit</th>
                                                 <th>Jumlah</th>
+                                                <th>distributor</th>
                                                 <th>Penerima</th>
                                                 <th>Unit</th>
                                                 <th>Vendor</th>
                                                 <th>Keterangan</th>
+                                                <th>Bukti Masuk</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -93,15 +96,21 @@ require 'cek.php';
                                                 $qty = $data['qty'];
                                                 $keterangan = $data['keterangan'];
                                                 $penerima = $data['penerima'];
+                                                $deskripsi = $data['deskripsi'];
+                                                $distributor = $data['distributor'];
+                                                $bukti_masuk_base64 = $data['bukti_masuk_base64'];
                                             
                                             ?>
 
                                             <tr>
                                                 <td><?=$tanggal;?></td>
                                                 <td><?=$namabarang;?></td>
+                                                <td><?=$deskripsi;?></td>
                                                 <td><?=$qty;?></td>
+                                                <td><?=$distributor;?></td>
                                                 <td><?=$penerima;?></td>
                                                 <td><?=$keterangan;?></td>
+                                                <td><img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;"></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idb;?>">
                                                     Edit
@@ -124,14 +133,23 @@ require 'cek.php';
                                                         </div>
                                                         
                                                         <!-- Modal body -->
-                                                        <form method="post">
+                                                        <form method="post" enctype="multipart/form-data">
                                                         <div class="modal-body">
+                                                        <label for="penerima">Penerima:</label>
                                                         <input type="text" name="penerima" value="<?=$penerima;?>" class="form-control">
                                                         <br>
+                                                        <label for="qty">Jumlah:</label>
                                                         <input type="text" name="qty" value="<?=$qty;?>" class="form-control">
                                                         <br>
+                                                        <label for="keterangan">keterangan:</label>
                                                         <input type="text" name="keterangan" value="<?=$keterangan;?>" class="form-control">
                                                         <br>
+                                                        <label for="distributor">Distributor:</label>
+                                                        <input type="text" name="distributor" value="<?=$distributor;?>" class="form-control">
+                                                        <br>
+                                                        <label for="update_bukti_masuk">Bukti Masuk:</label>
+                                                            <input type="file" name="update_bukti_masuk" class="form-control-file" accept="image/*">
+                                                            <br>
                                                         <input type="hidden" name="idb" value="<?=$idb;?>">
                                                         <input type="hidden" name="idm" value="<?=$idm;?>">
                                                         <button type="submit" class="btn btn-primary" name="updatebarangmasuk">Submit</button>
@@ -188,7 +206,7 @@ require 'cek.php';
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2020</div>
+                            <div class="text-muted">Copyright &copy; Your Website 2024</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;
@@ -222,7 +240,7 @@ require 'cek.php';
             </div>
             
             <!-- Modal body -->
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
             <div class="modal-body">
             <label for="barangnya">Nama Barang:</label>
             <select name="barangnya" class="form-control">
@@ -244,12 +262,18 @@ require 'cek.php';
             <label for="jumlah">Jumlah:</label>
             <input type="number" name="qty" placeholder="Quantity" class="form-control" required>
             </br>
+            <label for="distributor">Distributor:</label>
+            <input type="text" name="distributor" placeholder="Distributor" class="form-control" required>
+            </br>
             <label for="penerima">Penerima</label>
             <input type="text" name="penerima" placeholder="Penerima" class="form-control" required>
             </br>
             <label for="keterangan">Keterangan</label>
             <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
             </br>
+            <label for="bukti_masuk_base64">Bukti Masuk:</label>
+            <input type="file" name="bukti_masuk_base64" class="form-control-file" required>
+            <br>
             <button type="submit" class="btn btn-primary" name="barangmasuk">Submit</button>
             </div>
             </form>

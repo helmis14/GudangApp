@@ -94,10 +94,11 @@ require 'cek.php';
                                                 $tanggal = $data['tanggal'];
                                                 $namabarang = $data['namabarang'];
                                                 $unit = $data['unit'];
+                                                $status = $data['status'];
                                                 $qtypermintaan = $data['qtypermintaan'];
                                                 $ket = $data['keterangan'];
                                                 $idp = $data['idpermintaan'];
-                                                $bukti = $data['bukti'];
+                                                $bukti_base64 = $data['bukti_base64'];
                                             ?>
 
                                             <tr>
@@ -107,7 +108,11 @@ require 'cek.php';
                                                 <td><?=$unit;?></td>
                                                 <td><?=$qtypermintaan;?></td>
                                                 <td><?=$ket;?></td>
-                                                <td><?=$bukti;?></td>
+                                                <td><img src="data:image/jpeg;base64,<?= $bukti_base64; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;"></td>
+                                                <td><?= ($status == 0) ? 'Pending' : ($status == 1 ? 'Diterima' : 'Ditolak'); ?></td>
+
+
+                                                <!-- <td><?=$bukti_base64;?></td> -->
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idp;?>">
                                                     Edit
@@ -129,11 +134,22 @@ require 'cek.php';
                                                         </div>
                                                         
                                                         <!-- Modal body -->
-                                                        <form method="post">
+                                                        <form method="post" enctype="multipart/form-data">
                                                         <div class="modal-body">
+                                                        <label for="namabarang">Nama Barang:</label>
                                                         <input type="text" name="namabarang" value="<?=$namabarang;?>" class="form-control" required>
                                                         <br>
+                                                        <label for="unit">Unit:</label>
+                                                        <input type="text" name="unit" value="<?=$unit;?>" class="form-control" required>
+                                                        <br>
+                                                        <label for="qtypermintaan">Jumlah:</label>
                                                         <input type="text" name="qtypermintaan" value="<?=$qtypermintaan;?>" class="form-control" required>
+                                                        <br>
+                                                        <label for="ket">Keterangan:</label>
+                                                        <input type="text" name="ket" value="<?=$ket;?>" class="form-control" required>
+                                                        <br>
+                                                        <label for="update_permintaan">Bukti</label>
+                                                        <input type="file" name="update_permintaan" class="form-control-file" accept="image/*">
                                                         <br>
                                                         <input type="hidden" name="id" value="<?=$idpermintaan;?>">
                                                         <button type="submit" class="btn btn-primary" name="updatepermintaan">Submit</button>
@@ -212,17 +228,36 @@ require 'cek.php';
                                     </div>
                                     
                                     <!-- Modal body -->
-                                    <form method="post">
+                                    <form method="post" enctype="multipart/form-data">
                                     <div class="modal-body">
+                                    <label for="namabarang">Nama Barang:</label>
                                     <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
                                     <br>
-                                    <input type="text" name="unit" placeholder="Unit" class="form-control" required>
+                                    <label for="unit">Unit:</label>
+                                    <select name="unit" class="form-control">
+                                        <option value="Pcs">PCS</option>
+                                        <option value="Pack">Pack</option>
+                                        <option value="Kg">KG</option>
+                                        <option value="Ball">BALL</option>
+                                    </select>
                                     <br>
+                                    <label for="qtypermintaan">Jumlah:</label>
                                     <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
                                     <br>
+                                    <label for="keterangan">Keterangan:</label>
                                     <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
                                     <br>
-                                    <input type="file" name="bukti" placeholder="Bukti" class="form-control" required>
+                                    <!-- <input type="file" name="bukti_base64" placeholder="Bukti" class="form-control" required> -->
+                                    <label for="bukti_base64">Bukti Permintaan:</label>
+                                    <input type="file" name="bukti_base64" class="form-control-file" required>
+                                    <br>
+                                    <label for="status">Status:</label>
+                                    <select name="status" class="form-control">
+                                        <option value="0">Pending</option>
+                                        <option value="1" disabled>Diterima</option>
+                                        <option value="2" disabled>Ditolak</option>
+                                    </select>
+
                                     <br>
                                     <button type="submit" class="btn btn-primary" name="addnewpermintaan">Submit</button>
                                     </div>

@@ -1,6 +1,6 @@
 <?php
 // Koneksi ke database
-$conn = mysqli_connect("localhost", "root", "", "stokbarang");
+$conn = mysqli_connect("localhost", "root", "", "stokbarangs");
 
 // Function untuk mengonversi gambar menjadi base64
 function convertToBase64($file_path)
@@ -21,7 +21,7 @@ if (isset($_POST['submit'])) {
         $base64_image = convertToBase64($tmp_path);
 
         // Simpan base64 ke dalam database
-        $query = "INSERT INTO keluar (gambar_base64) VALUES (?)";
+        $query = "INSERT INTO permintaan (bukti_base64) VALUES (?)";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "s", $base64_image);
         mysqli_stmt_execute($stmt);
@@ -55,11 +55,11 @@ if (isset($_POST['submit'])) {
     </form>
     <?php
     // Ambil data gambar dari database (misalnya, 5 gambar terakhir)
-    $query = "SELECT gambar_base64 FROM keluar ORDER BY idkeluar DESC LIMIT 5";
+    $query = "SELECT bukti_base64 FROM permintaan ORDER BY idpermintaan DESC LIMIT 5";
     $result = mysqli_query($conn, $query);
 
     while ($row = mysqli_fetch_assoc($result)) {
-        $base64_image = $row['gambar_base64'];
+        $base64_image = $row['bukti_base64'];
         $data_uri = 'data:image/jpeg;base64,' . $base64_image;
     ?>
         <img src="<?= $data_uri; ?>" alt="Gambar dari Database" style="max-width: 100px; margin-top: 10px;">
