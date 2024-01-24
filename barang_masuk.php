@@ -78,8 +78,6 @@ require 'cek.php';
                                                 <th>Jumlah</th>
                                                 <th>distributor</th>
                                                 <th>Penerima</th>
-                                                <th>Unit</th>
-                                                <th>Vendor</th>
                                                 <th>Keterangan</th>
                                                 <th>Bukti Masuk</th>
                                                 <th>Aksi</th>
