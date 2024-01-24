@@ -35,7 +35,7 @@ if(isset($_POST['barangmasuk'])){
     $qty = $_POST['qty'];
     $keterangan = $_POST['keterangan'];
     $distributor = $_POST['distributor'];
-    $deskripsi = $_POST['deskripsi'];
+    $unit = $_POST['unit'];
      // Proses konversi gambar ke base64
      $bukti_masuk_base64 = $_FILES['bukti_masuk_base64'];
      $tmp_name = $bukti_masuk_base64['tmp_name'];
@@ -52,7 +52,7 @@ if(isset($_POST['barangmasuk'])){
     $stocksekarang = $ambildatanya['stock'];
     $tambahkanstocksekarangdenganquantity = $stocksekarang+$qty;
 
-    $addtomasuk = mysqli_query($conn,"insert into masuk (idbarang, penerima, qty, keterangan, deskripsi, distributor, bukti_masuk_base64) values('$barangnya','$penerima','$qty', '$keterangan', '$deskripsi', '$distributor', '$bukti_masuk_base64')");
+    $addtomasuk = mysqli_query($conn,"insert into masuk (idbarang, penerima, qty, keterangan, unit, distributor, bukti_masuk_base64) values('$barangnya','$penerima','$qty', '$keterangan', '$unit', '$distributor', '$bukti_masuk_base64')");
     $updatestockmasuk = mysqli_query($conn,"update stock set stock='$tambahkanstocksekarangdenganquantity' where idbarang='$barangnya'");
     if($addtomasuk&&$updatestockmasuk){
         header('location:barang_masuk.php');

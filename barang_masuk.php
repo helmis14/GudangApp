@@ -79,7 +79,7 @@ require 'cek.php';
                                                 <th>distributor</th>
                                                 <th>Penerima</th>
                                                 <th>Unit</th>
-                                                <th>Vendor</th>
+                                                <th>Distributor</th>
                                                 <th>Keterangan</th>
                                                 <th>Bukti Masuk</th>
                                                 <th>Aksi</th>
@@ -96,7 +96,7 @@ require 'cek.php';
                                                 $qty = $data['qty'];
                                                 $keterangan = $data['keterangan'];
                                                 $penerima = $data['penerima'];
-                                                $deskripsi = $data['deskripsi'];
+                                                $unit = $data['unit'];
                                                 $distributor = $data['distributor'];
                                                 $bukti_masuk_base64 = $data['bukti_masuk_base64'];
                                             
@@ -105,14 +105,14 @@ require 'cek.php';
                                             <tr>
                                                 <td><?=$tanggal;?></td>
                                                 <td><?=$namabarang;?></td>
-                                                <td><?=$deskripsi;?></td>
+                                                <td><?=$unit;?></td>
                                                 <td><?=$qty;?></td>
                                                 <td><?=$distributor;?></td>
                                                 <td><?=$penerima;?></td>
                                                 <td><?=$keterangan;?></td>
                                                 <td><img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;"></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idb;?>">
+                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idm;?>">
                                                     Edit
                                                      </button>
                                                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idb;?>">
@@ -122,7 +122,7 @@ require 'cek.php';
                                             </tr>
 
                                             <!-- Edit Modal -->
-                                            <div class="modal fade" id="edit<?=$idb;?>">
+                                            <div class="modal fade" id="edit<?=$idm;?>">
                                                     <div class="modal-dialog">
                                                     <div class="modal-content">
                                                     
