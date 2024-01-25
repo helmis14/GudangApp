@@ -1,26 +1,24 @@
 <?php
 session_start();
 
-//koneksi ke database
-$conn = mysqli_connect("localhost","root","","stokbarangs");
+// Koneksi ke database
+$conn = mysqli_connect("localhost", "root", "", "stokbarangs");
 
-//menambah barang baru
-if(isset($_POST['addnewbarang'])){
+// Menambah barang baru
+if (isset($_POST['addnewbarang'])) {
     $namabarang = $_POST['namabarang'];
     $deskripsi = $_POST['deskripsi'];
     $stock = $_POST['stock'];
     $lok = $_POST['lokasi'];
 
-    $addtotable = mysqli_query($conn,"insert into stock (namabarang, deskripsi, stock, lokasi) values('$namabarang','$deskripsi','$stock','$lok')");
-    if($addtotable){
+    $addtotable = mysqli_query($conn, "INSERT INTO stock (namabarang, deskripsi, stock, lokasi) VALUES ('$namabarang', '$deskripsi', '$stock', '$lok')");
+    if ($addtotable) {
         header('location:index.php');
     } else {
         echo 'Gagal';
         header('location:index.php');
-    
     }
-};
-
+}
 
 function convertToBase64($file_path)
 {
@@ -29,55 +27,54 @@ function convertToBase64($file_path)
     return $base64_image;
 }
 
-if(isset($_POST['barangmasuk'])){
+// Menambah barang masuk
+if (isset($_POST['barangmasuk'])) {
     $barangnya = $_POST['barangnya'];
     $penerima = $_POST['penerima'];
     $qty = $_POST['qty'];
     $keterangan = $_POST['keterangan'];
     $distributor = $_POST['distributor'];
-    $unit = $_POST['unit'];
-     // Proses konversi gambar ke base64
-     $bukti_masuk_base64 = $_FILES['bukti_masuk_base64'];
-     $tmp_name = $bukti_masuk_base64['tmp_name'];
-     // $bukti_masuk_base64 = $_POST['bukti_masuk_base64'];
- 
-     if (!empty($tmp_name)) {
-     // Konversi gambar ke base64
-     $bukti_masuk_base64 = convertToBase64($tmp_name);
-   
+    $deskripsi = $_POST['deskripsi'];
 
-    $cekstocksekarang = mysqli_query($conn,"select * from stock where idbarang='$barangnya'");
-    $ambildatanya = mysqli_fetch_array($cekstocksekarang);
+    // Proses konversi gambar ke base64
+    $bukti_masuk_base64 = $_FILES['bukti_masuk_base64'];
+    $tmp_name = $bukti_masuk_base64['tmp_name'];
 
-    $stocksekarang = $ambildatanya['stock'];
-    $tambahkanstocksekarangdenganquantity = $stocksekarang+$qty;
+    if (!empty($tmp_name)) {
+        // Konversi gambar ke base64
+        $bukti_masuk_base64 = convertToBase64($tmp_name);
 
-    $addtomasuk = mysqli_query($conn,"insert into masuk (idbarang, penerima, qty, keterangan, unit, distributor, bukti_masuk_base64) values('$barangnya','$penerima','$qty', '$keterangan', '$unit', '$distributor', '$bukti_masuk_base64')");
-    $updatestockmasuk = mysqli_query($conn,"update stock set stock='$tambahkanstocksekarangdenganquantity' where idbarang='$barangnya'");
-    if($addtomasuk&&$updatestockmasuk){
-        header('location:barang_masuk.php');
+        $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$barangnya'");
+        $ambildatanya = mysqli_fetch_array($cekstocksekarang);
+
+        $stocksekarang = $ambildatanya['stock'];
+        $tambahkanstocksekarangdenganquantity = $stocksekarang + $qty;
+
+        $addtomasuk = mysqli_query($conn, "INSERT INTO masuk (idbarang, penerima, qty, keterangan, deskripsi, distributor, bukti_masuk_base64) VALUES ('$barangnya','$penerima','$qty', '$keterangan', '$deskripsi', '$distributor', '$bukti_masuk_base64')");
+        $updatestockmasuk = mysqli_query($conn, "UPDATE stock SET stock='$tambahkanstocksekarangdenganquantity' WHERE idbarang='$barangnya'");
+        if ($addtomasuk && $updatestockmasuk) {
+            header('location:barang_masuk.php');
+        } else {
+            echo 'Gagal';
+            header('location:barang_masuk.php');
+        }
     } else {
-        echo 'Gagal';
-        header('location:barang_masuk.php');
+        echo 'Gambar Tidak ada';
+        exit;
     }
-}else{
-    echo 'Gambar Tidak ada';
-    exit;
-}
 }
 
-//menambah barang keluar
-if(isset($_POST['addbarangkeluar'])){
+// Menambah barang keluar
+if (isset($_POST['addbarangkeluar'])) {
     $barangnya = $_POST['barangnya'];
     $penerima = $_POST['penerima'];
-    // $deskripsi = $_POST['deskripsi'];
     $qty = $_POST['qty'];
     $keterangan = $_POST['keterangan'];
 
     // Proses konversi gambar ke base64
     $gambar_base64 = $_FILES['gambar_base64'];
     $tmp_name = $gambar_base64['tmp_name'];
-    
+
     // Pastikan berkas gambar sudah diunggah
     if (!empty($tmp_name)) {
         // Konversi gambar ke base64
@@ -96,8 +93,8 @@ if(isset($_POST['addbarangkeluar'])){
         mysqli_stmt_execute($addtokeluar);
 
         $updatestockmasuk = mysqli_query($conn, "UPDATE stock SET stock='$tambahkanstocksekarangdenganquantity' WHERE idbarang='$barangnya'");
-        
-        if($addtokeluar && $updatestockmasuk){
+
+        if ($addtokeluar && $updatestockmasuk) {
             header('location:barang_keluar.php');
         } else {
             echo 'Gagal';
@@ -110,20 +107,15 @@ if(isset($_POST['addbarangkeluar'])){
     }
 }
 
-
-
-
-
-
-//Update info barang
-if(isset($_POST['updatebarang'])){
+// Update info barang
+if (isset($_POST['updatebarang'])) {
     $idb = $_POST['idb'];
     $namabarang = $_POST['namabarang'];
     $deskripsi = $_POST['deskripsi'];
     $lok = $_POST['lokasi'];
 
-    $update = mysqli_query($conn,"update stock set namabarang='$namabarang', deskripsi='$deskripsi', lokasi='$lok' where idbarang ='$idb'");
-    if($update){
+    $update = mysqli_query($conn, "UPDATE stock SET namabarang='$namabarang', deskripsi='$deskripsi', lokasi='$lok' WHERE idbarang ='$idb'");
+    if ($update) {
         header('location:index.php');
     } else {
         echo 'Gagal';
@@ -131,14 +123,12 @@ if(isset($_POST['updatebarang'])){
     }
 }
 
-
-
-//Menghapus barang dari stock
-if(isset($_POST['hapusbarang'])){
+// Menghapus barang dari stock
+if (isset($_POST['hapusbarang'])) {
     $idb = $_POST['idb'];
 
-    $hapus = mysqli_query($conn, "delete from stock where idbarang='$idb'");
-    if($hapus){
+    $hapus = mysqli_query($conn, "DELETE FROM stock WHERE idbarang='$idb'");
+    if ($hapus) {
         header('location:index.php');
     } else {
         echo 'Gagal';
@@ -146,9 +136,8 @@ if(isset($_POST['hapusbarang'])){
     }
 }
 
-
-//Mengubah data barang masuk
-if(isset($_POST['updatebarangmasuk'])){
+// Mengubah data barang masuk
+if (isset($_POST['updatebarangmasuk'])) {
     $idb = $_POST['idb'];
     $idm = $_POST['idm'];
     $deskripsi = $_POST['deskripsi'];
@@ -158,7 +147,7 @@ if(isset($_POST['updatebarangmasuk'])){
     $keterangan = $_POST['keterangan'];
 
     // Handle the updated image
-    if(isset($_FILES['update_bukti_masuk']) && $_FILES['update_bukti_masuk']['error'] == 0) {
+    if (isset($_FILES['update_bukti_masuk']) && $_FILES['update_bukti_masuk']['error'] == 0) {
         $tmp_path = $_FILES['update_bukti_masuk']['tmp_name'];
         $update_bukti_masuk_base64 = convertToBase64($tmp_path);
 
@@ -174,67 +163,63 @@ if(isset($_POST['updatebarangmasuk'])){
             exit;
         }
     }
-    
 
-    $lihatstock = mysqli_query($conn,"select * from stock where idbarang='$idb'");
+    $lihatstock = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$idb'");
     $stocknya = mysqli_fetch_array($lihatstock);
     $stocksekarang = $stocknya['stock'];
 
-    $qtysekarang = mysqli_query($conn, "select * from masuk where idmasuk='$idm'");
+    $qtysekarang = mysqli_query($conn, "SELECT * FROM masuk WHERE idmasuk='$idm'");
     $qtynya = mysqli_fetch_array($qtysekarang);
     $qtysekarang = $qtynya['qty'];
 
-    if($qty>$qtysekarang){
-        $selisih = $qty-$qtysekarang;
+    if ($qty > $qtysekarang) {
+        $selisih = $qty - $qtysekarang;
         $kurangin = $stocksekarang + $selisih;
-        $kurangistocknya = mysqli_query($conn, "update stock set stock='$kurangin' where idbarang='$idb'");
-        $updatenya = mysqli_query($conn,"update masuk set qty='$qty', keterangan='$deskripsi' where idmasuk='$idm'");
-            if($kurangistocknya&&$updatenya){
-                header('location:barang_masuk.php');
-                } else {
-                    echo 'Gagal';
-                    header('location:barang_masuk.php');
-                }
+        $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
+        $updatenya = mysqli_query($conn, "UPDATE masuk SET qty='$qty', keterangan='$deskripsi' WHERE idmasuk='$idm'");
+        if ($kurangistocknya && $updatenya) {
+            header('location:barang_masuk.php');
+        } else {
+            echo 'Gagal';
+            header('location:barang_masuk.php');
+        }
     } else {
-        $selisih = $qtysekarang-$qty;
+        $selisih = $qtysekarang - $qty;
         $kurangin = $stocksekarang - $selisih;
-        $kurangistocknya = mysqli_query($conn, "update stock set stock='$kurangin' where idbarang='$idb'");
-        $updatenya = mysqli_query($conn,"update masuk set qty='$qty', keterangan='$deskripsi' where idmasuk='$idm'");
-            if($kurangistocknya&&$updatenya){
-                header('location:barang_masuk.php');
-                } else {
-                    echo 'Gagal';
-                    header('location:barang_masuk.php');
-                }  
+        $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
+        $updatenya = mysqli_query($conn, "UPDATE masuk SET qty='$qty', keterangan='$deskripsi' WHERE idmasuk='$idm'");
+        if ($kurangistocknya && $updatenya) {
+            header('location:barang_masuk.php');
+        } else {
+            echo 'Gagal';
+            header('location:barang_masuk.php');
+        }
     }
 }
 
-
-//Menghapus data barang masuk
-
-if(isset($_POST['hapusbarangmasuk'])){
+// Menghapus data barang masuk
+if (isset($_POST['hapusbarangmasuk'])) {
     $idb = $_POST['idb'];
     $qty = $_POST['qty'];
     $idm = $_POST['idm'];
 
-    $ambildatastock = mysqli_query($conn, "select * from stock where idbarang='$idb'");
+    $ambildatastock = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$idb'");
     $data = mysqli_fetch_array($ambildatastock);
     $stok = $data['stock'];
-    $selisih = $stok-$qty;
+    $selisih = $stok - $qty;
 
-    $update = mysqli_query($conn,"update stock set stock='$selisih' where idbarang='$idb'");
-    $hapusdata = mysqli_query($conn,"delete from masuk where idmasuk='$idm'");
+    $update = mysqli_query($conn, "UPDATE stock SET stock='$selisih' WHERE idbarang='$idb'");
+    $hapusdata = mysqli_query($conn, "DELETE FROM masuk WHERE idmasuk='$idm'");
 
-    if($update&&$hapusdata){
+    if ($update && $hapusdata) {
         header('location:barang_masuk.php');
     } else {
         header('location:barang_masuk.php');
     }
 }
 
-
-//Mengubah data barang keluar
-if(isset($_POST['updatebarangkeluar'])){
+// Mengubah data barang keluar
+if (isset($_POST['updatebarangkeluar'])) {
     $idb = $_POST['idb'];
     $idk = $_POST['idk'];
     $penerima = $_POST['penerima'];
@@ -242,7 +227,7 @@ if(isset($_POST['updatebarangkeluar'])){
     $keterangan = $_POST['keterangan'];
 
     // Handle the updated image
-    if(isset($_FILES['update_gambar']) && $_FILES['update_gambar']['error'] == 0) {
+    if (isset($_FILES['update_gambar']) && $_FILES['update_gambar']['error'] == 0) {
         $tmp_path = $_FILES['update_gambar']['tmp_name'];
         $update_gambar_base64 = convertToBase64($tmp_path);
 
@@ -259,7 +244,7 @@ if(isset($_POST['updatebarangkeluar'])){
         }
     }
 
-    $lihatstock = mysqli_query($conn,"SELECT * FROM stock WHERE idbarang='$idb'");
+    $lihatstock = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$idb'");
     $stocknya = mysqli_fetch_array($lihatstock);
     $stocksekarang = $stocknya['stock'];
 
@@ -267,12 +252,12 @@ if(isset($_POST['updatebarangkeluar'])){
     $qtynya = mysqli_fetch_array($qtysekarang);
     $qtysekarang = $qtynya['qty'];
 
-    if($qty > $qtysekarang){
+    if ($qty > $qtysekarang) {
         $selisih = $qty - $qtysekarang;
         $kurangin = $stocksekarang - $selisih;
         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-        $updatenya = mysqli_query($conn,"UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idkeluar='$idk'");
-        if($kurangistocknya && $updatenya){
+        $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idkeluar='$idk'");
+        if ($kurangistocknya && $updatenya) {
             header('location:barang_keluar.php');
         } else {
             echo 'Gagal: ' . mysqli_error($conn);
@@ -282,66 +267,60 @@ if(isset($_POST['updatebarangkeluar'])){
         $selisih = $qtysekarang - $qty;
         $kurangin = $stocksekarang + $selisih;
         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-        $updatenya = mysqli_query($conn,"UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idkeluar='$idk'");
-        if($kurangistocknya && $updatenya){
+        $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idkeluar='$idk'");
+        if ($kurangistocknya && $updatenya) {
             header('location:barang_keluar.php');
         } else {
             echo 'Gagal: ' . mysqli_error($conn);
             header('location:barang_keluar.php');
-        }  
+        }
     }
 }
 
-
-
-
-//Menghapus data barang keluar
-
-if(isset($_POST['hapusbarangkeluar'])){
+// Menghapus data barang keluar
+if (isset($_POST['hapusbarangkeluar'])) {
     $idb = $_POST['idb'];
     $qty = $_POST['qty'];
     $idk = $_POST['idk'];
 
-    $ambildatastock = mysqli_query($conn, "select * from stock where idbarang='$idb'");
+    $ambildatastock = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$idb'");
     $data = mysqli_fetch_array($ambildatastock);
     $stok = $data['stock'];
-    $selisih = $stok+$qty;
+    $selisih = $stok + $qty;
 
-    $update = mysqli_query($conn,"update stock set stock='$selisih' where idbarang='$idb'");
-    $hapusdata = mysqli_query($conn,"delete from keluar where idkeluar='$idk'");
+    $update = mysqli_query($conn, "UPDATE stock SET stock='$selisih' WHERE idbarang='$idb'");
+    $hapusdata = mysqli_query($conn, "DELETE FROM keluar WHERE idkeluar='$idk'");
 
-    if($update&&$hapusdata){
+    if ($update && $hapusdata) {
         header('location:barang_keluar.php');
     } else {
         header('location:barang_keluar.php');
     }
 }
 
-
-//menambah admin baru
-if(isset($_POST['addnewadmin'])){
+// Menambah admin baru
+if (isset($_POST['addnewadmin'])) {
     $em = $_POST['email'];
     $iduser = $_POST['iduser'];
     $pass = $_POST['password'];
 
-    $addtotable = mysqli_query($conn,"insert into login (email, iduser, password) values('$em','$iduser','$pass')");
-    if($addtotable){
+    $addtotable = mysqli_query($conn, "INSERT INTO login (email, iduser, password) VALUES ('$em','$iduser','$pass')");
+    if ($addtotable) {
         header('location:admin.php');
     } else {
         echo 'Gagal';
         header('location:admin.php');
-    
     }
-};
+}
 
-//Update perubahan user
-if(isset($_POST['updateadmin'])){
+// Update perubahan user
+if (isset($_POST['updateadmin'])) {
     $iduser = $_POST['iduser'];
     $em = $_POST['email'];
     $pass = $_POST['password'];
 
-    $update = mysqli_query($conn,"update login set email='$em', password='$pass' where iduser ='$iduser'");
-    if($update){
+    $update = mysqli_query($conn, "UPDATE login SET email='$em', password='$pass' WHERE iduser ='$iduser'");
+    if ($update) {
         header('location:admin.php');
     } else {
         echo 'Gagal';
@@ -349,12 +328,12 @@ if(isset($_POST['updateadmin'])){
     }
 }
 
-//Menghapus admin dari kelola admin
-if(isset($_POST['hapusadmin'])){
+// Menghapus admin dari kelola admin
+if (isset($_POST['hapusadmin'])) {
     $iduser = $_POST['iduser'];
 
-    $hapus = mysqli_query($conn,"delete from login where iduser='$iduser'");
-    if($hapus){
+    $hapus = mysqli_query($conn, "DELETE FROM login WHERE iduser='$iduser'");
+    if ($hapus) {
         header('location:admin.php');
     } else {
         echo 'Gagal';
@@ -362,41 +341,205 @@ if(isset($_POST['hapusadmin'])){
     }
 }
 
-
-//menambah permintaan barang
-if(isset($_POST['addnewpermintaan'])){
-    $namabarang = $_POST['namabarang'];
-    $unit = $_POST['unit'];
-    $qtypermintaan = $_POST['qtypermintaan'];
-    $ket = $_POST['keterangan'];
-    $status = $_POST['status'];
-
-    // Proses konversi gambar ke base64
-    $bukti_base64 = $_FILES['bukti_base64'];
-    $tmp_name = $bukti_base64['tmp_name'];
-    // $bukti_base64 = $_POST['bukti_base64'];
-
-    if (!empty($tmp_name)) {
-    // Konversi gambar ke base64
-    $bukti_base64 = convertToBase64($tmp_name);
-
-    $addtotable = mysqli_query($conn,"insert into permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) values('$namabarang','$unit','$qtypermintaan','$ket','$bukti_base64', '$status')");
-    if($addtotable){
-        header('location:permintaan.php');
-    } else {
-        echo 'Gagal';
-        header('location:permintaan.php');
+if (isset($_POST['addnewpermintaan'])) {
+    // Proses permintaan
+    $addPermintaan = mysqli_query($conn, "INSERT INTO permintaan (tanggal) VALUES (NOW())");
     
-    }
-} else {
-    echo 'Berkas gambar tidak diunggah';
-    exit;
-}
-};
+    if ($addPermintaan) {
+        $idPermintaan = mysqli_insert_id($conn); // Mendapatkan ID permintaan baru
 
-//mengubah data permintaan 
-if(isset($_POST['updatepermintaan'])){
-    $idpermintaan = $_POST['idpermintaan']; // Sesuaikan nama input dengan yang sesuai
+        if (!isset($namabarang)) {
+            echo 'Variabel $namabarang tidak terdefinisi.';
+            exit;
+        }
+        
+        // Proses untuk setiap barang
+        for ($i = 0; $i < count($namabarang); $i++) {
+            $currentNamabarang = mysqli_real_escape_string($conn, $namabarang[$i]);
+            $currentUnit = mysqli_real_escape_string($conn, $unit[$i]);
+            $currentQty = mysqli_real_escape_string($conn, $qtypermintaan[$i]);
+            $currentKet = mysqli_real_escape_string($conn, $ket[$i]);
+            $currentStatus = mysqli_real_escape_string($conn, $status[$i]);
+
+            // Proses konversi gambar ke base64
+            $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
+
+            if (!empty($currentBuktiBase64)) {
+                // Konversi gambar ke base64
+                $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
+
+                // Simpan detail barang dengan ID permintaan yang baru dibuat
+                $addBarang = mysqli_query($conn, "INSERT INTO barang_permintaan (id_permintaan, namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$idPermintaan','$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$currentStatus')");
+
+                if (!$addBarang) {
+                    echo 'Gagal menambahkan barang';
+                    header('location: permintaan.php');
+                    exit;
+                }
+            } else {
+                echo 'Berkas gambar tidak diunggah';
+                exit;
+            }
+        }
+
+        header('location: permintaan.php');
+    } else {
+        echo 'Gagal menambahkan permintaan';
+    }
+}
+
+
+// if (isset($_POST['addnewpermintaan'])) {
+//     $namabarang = $_POST['namabarang'];
+//     $unit = $_POST['unit'];
+//     $qtypermintaan = $_POST['qtypermintaan'];
+//     $ket = $_POST['keterangan'];
+//     $status = $_POST['status'];
+
+//     // Proses untuk setiap barang
+//     for ($i = 0; $i < count($namabarang); $i++) {
+//         $currentNamabarang = mysqli_real_escape_string($conn, $namabarang[$i]);
+//         $currentUnit = mysqli_real_escape_string($conn, $unit[$i]);
+//         $currentQty = mysqli_real_escape_string($conn, $qtypermintaan[$i]);
+//         $currentKet = mysqli_real_escape_string($conn, $ket[$i]);
+//         $currentStatus = mysqli_real_escape_string($conn, $status[$i]);
+
+//         // Proses konversi gambar ke base64
+//         $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
+
+//         if (!empty($currentBuktiBase64)) {
+//             // Konversi gambar ke base64
+//             $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
+
+//             $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$currentStatus')");
+
+//             if (!$addtotable) {
+//                 echo 'Gagal';
+//                 header('location: permintaan.php');
+//                 exit;
+//             }
+//         } else {
+//             echo 'Berkas gambar tidak diunggah';
+//             exit;
+//         }
+//     }
+
+//     header('location: permintaan.php');
+// }
+
+
+// if (isset($_POST['addnewpermintaan'])) {
+//     $namabarang = $_POST['namabarang'];
+//     $unit = $_POST['unit'];
+//     $qtypermintaan = $_POST['qtypermintaan'];
+//     $ket = $_POST['keterangan'];
+//     $status = $_POST['status'];
+
+//     // Proses untuk setiap barang
+//     for ($i = 0; $i < count($namabarang); $i++) {
+//         $currentNamabarang = $namabarang[$i];
+//         $currentUnit = $unit[$i];
+//         $currentQty = $qtypermintaan[$i];
+//         $currentKet = $ket[$i];
+
+//         // Proses konversi gambar ke base64
+//         $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
+
+//         if (!empty($currentBuktiBase64)) {
+//             // Konversi gambar ke base64
+//             $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
+
+//             $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$status')");
+//             if (!$addtotable) {
+//                 echo 'Gagal';
+//                 header('location:permintaan.php');
+//                 exit;
+//             }
+//         } else {
+//             echo 'Berkas gambar tidak diunggah';
+//             exit;
+//         }
+//     }
+
+//     header('location:permintaan.php');
+// }
+
+// if (isset($_POST['addnewpermintaan'])) {
+//     $namabarang = $_POST['namabarang'];
+//     $unit = $_POST['unit'];
+//     $qtypermintaan = $_POST['qtypermintaan'];
+//     $ket = $_POST['keterangan'];
+//     $status = $_POST['status'];
+
+//     // Check if arrays are set
+//     if (
+//         isset($namabarang) && isset($unit) &&
+//         isset($qtypermintaan) && isset($ket) &&
+//         isset($status)
+//     ) {
+//         // Proses untuk setiap barang
+//         for ($i = 0; $i < count($namabarang); $i++) {
+//             $currentNamabarang = mysqli_real_escape_string($conn, $namabarang[$i]);
+//             $currentUnit = mysqli_real_escape_string($conn, $unit[$i]);
+//             $currentQty = mysqli_real_escape_string($conn, $qtypermintaan[$i]);
+//             $currentKet = mysqli_real_escape_string($conn, $ket[$i]);
+
+//             // Proses konversi gambar ke base64
+//             $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
+
+//             if (!empty($currentBuktiBase64)) {
+//                 // Konversi gambar ke base64
+//                 $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
+
+//                 $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$status')");
+
+//                 if (!$addtotable) {
+//                     echo 'Gagal';
+//                     header('location:permintaan.php');
+//                     exit;
+//                 }
+//             } else {
+//                 echo 'Berkas gambar tidak diunggah';
+//                 exit;
+//             }
+//         }
+
+//         header('location:permintaan.php');
+//     } 
+
+
+// // Menambah permintaan barang
+// if (isset($_POST['addnewpermintaan'])) {
+//     $namabarang = $_POST['namabarang'];
+//     $unit = $_POST['unit'];
+//     $qtypermintaan = $_POST['qtypermintaan'];
+//     $ket = $_POST['keterangan'];
+//     $status = $_POST['status'];
+
+//     // Proses konversi gambar ke base64
+//     $bukti_base64 = $_FILES['bukti_base64'];
+//     $tmp_name = $bukti_base64['tmp_name'];
+
+//     if (!empty($tmp_name)) {
+//         // Konversi gambar ke base64
+//         $bukti_base64 = convertToBase64($tmp_name);
+
+//         $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$namabarang','$unit','$qtypermintaan','$ket','$bukti_base64', '$status')");
+//         if ($addtotable) {
+//             header('location:permintaan.php');
+//         } else {
+//             echo 'Gagal';
+//             header('location:permintaan.php');
+//         }
+//     } else {
+//         echo 'Berkas gambar tidak diunggah';
+//         exit;
+//     }
+// }
+
+// Mengubah data permintaan
+if (isset($_POST['updatepermintaan'])) {
+    $idpermintaan = $_POST['idpermintaan'];
     $namabarang = $_POST['namabarang'];
     $unit = $_POST['unit'];
     $qtypermintaan = $_POST['qtypermintaan'];
@@ -404,7 +547,7 @@ if(isset($_POST['updatepermintaan'])){
     $status = $_POST['status'];
 
     // Handle the updated image
-    if(isset($_FILES['update_permintaan']) && $_FILES['update_permintaan']['error'] == 0) {
+    if (isset($_FILES['update_permintaan']) && $_FILES['update_permintaan']['error'] == 0) {
         $tmp_path = $_FILES['update_permintaan']['tmp_name'];
         $update_permintaan_base64 = convertToBase64($tmp_path);
 
@@ -436,18 +579,16 @@ if(isset($_POST['updatepermintaan'])){
     header('location:permintaan.php');
 }
 
-
-//Menghapus permintaan barang
-if(isset($_POST['hapuspermintaan'])){
+// Menghapus permintaan barang
+if (isset($_POST['hapuspermintaan'])) {
     $idp = $_POST['idpermintaan'];
 
-    $hapus = mysqli_query($conn,"delete from permintaan where idpermintaan='$idp'");
-    if($hapus){
+    $hapus = mysqli_query($conn, "DELETE FROM permintaan WHERE idpermintaan='$idp'");
+    if ($hapus) {
         header('location:permintaan.php');
     } else {
         echo 'Gagal';
         header('location:permintaan.php');
     }
 }
-
 ?>

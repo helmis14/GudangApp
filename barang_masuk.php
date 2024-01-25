@@ -79,7 +79,7 @@ require 'cek.php';
                                                 <th>distributor</th>
                                                 <th>Penerima</th>
                                                 <th>Unit</th>
-                                                <th>Distributor</th>
+                                                <th>Vendor</th>
                                                 <th>Keterangan</th>
                                                 <th>Bukti Masuk</th>
                                                 <th>Aksi</th>
@@ -115,7 +115,7 @@ require 'cek.php';
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idm;?>">
                                                     Edit
                                                      </button>
-                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idb;?>">
+                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idm;?>">
                                                     Delete
                                                      </button>
                                                 </td>

@@ -68,8 +68,6 @@ require 'cek.php';
                              </button>
                             </div>
                             <div class="card-body">
-
-
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
@@ -214,6 +212,110 @@ require 'cek.php';
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
         <script src="assets/demo/datatables-demo.js"></script>
+        <!-- <script>
+            $(document).ready(function () {
+                var counter = 2; // Mulai dari nomor 2
+
+                // Tambahkan barang baru
+                $("#addBarangBtn").click(function () {
+                    var newBarang = `
+                        <div id="barang${counter}">
+                            <label for="namabarang">Nama Barang ${counter}:</label>
+                            <input type="text" name="namabarang${counter}" placeholder="Nama Barang" class="form-control" required>
+                            <br>
+                            <label for="unit">Unit:</label>
+                            <select name="unit${counter}" class="form-control">
+                                <option value="Pcs">PCS</option>
+                                <option value="Pack">Pack</option>
+                                <option value="Kg">KG</option>
+                                <option value="Ball">BALL</option>
+                            </select>
+                            <br>
+                            <label for="qtypermintaan">Jumlah:</label>
+                            <input type="Number" name="qtypermintaan${counter}" placeholder="Quantity" class="form-control" required>
+                            <br>
+                            <label for="keterangan">Keterangan:</label>
+                            <input type="text" name="keterangan${counter}" placeholder="Keterangan" class="form-control" required>
+                            <br>
+                            <label for="bukti_base64">Bukti Permintaan:</label>
+                            <input type="file" name="bukti_base64${counter}" class="form-control-file" required>
+                            <br>
+                            <label for="status">Status:</label>
+                            <select name="status${counter}" class="form-control">
+                                <option value="0">Pending</option>
+                                <option value="1" disabled>Diterima</option>
+                                <option value="2" disabled>Ditolak</option>
+                            </select>
+                            <br>
+                        </div>
+                    `;
+                    $("#barangContainer").append(newBarang);
+                    counter++;
+                });
+
+                // Hapus barang baru
+                $("#hapusBarangBtn").click(function () {
+                    if (counter > 2) {
+                        counter--;
+                        $("#barangContainer #barang" + counter).remove();
+                    }
+                });
+            });
+        </script> -->
+        <script>
+    $(document).ready(function () {
+        var counter = 2; // Mulai dari nomor 2
+
+        // Tambahkan barang baru
+        $("#addBarangBtn").click(function () {
+            var newBarang = `
+                <div id="barang${counter}">
+                    <label for="namabarang${counter}">Nama Barang ${counter}:</label>
+                    <input type="text" name="namabarang[]" placeholder="Nama Barang" class="form-control" required>
+                    <br>
+                    <label for="unit${counter}">Unit:</label>
+                    <select name="unit[]" class="form-control">
+                        <option value="Pcs">PCS</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Kg">KG</option>
+                        <option value="Ball">BALL</option>
+                    </select>
+                    <br>
+                    <label for="qtypermintaan${counter}">Jumlah:</label>
+                    <input type="Number" name="qtypermintaan[]" placeholder="Quantity" class="form-control" required>
+                    <br>
+                    <label for="keterangan${counter}">Keterangan:</label>
+                    <input type="text" name="keterangan[]" placeholder="Keterangan" class="form-control" required>
+                    <br>
+                    <label for="bukti_base64${counter}">Bukti Permintaan:</label>
+                    <input type="file" name="bukti_base64[]" class="form-control-file" required>
+                    <br>
+                    <label for="status${counter}">Status:</label>
+                    <select name="status[]" class="form-control">
+                        <option value="0">Pending</option>
+                        <option value="1" disabled>Diterima</option>
+                        <option value="2" disabled>Ditolak</option>
+                    </select>
+                    <br>
+                    <hr>
+                </div>
+            `;
+            $("#barangContainer").append(newBarang);
+            counter++;
+        });
+
+        // Hapus barang baru
+        $("#hapusBarangBtn").click(function () {
+            if (counter > 2) {
+                counter--;
+                $("#barangContainer #barang" + counter).remove();
+            }
+        });
+    });
+</script>
+
+
+
     </body>
 
                                 <!-- The Modal "Tambah Permintaan"-->
@@ -229,47 +331,53 @@ require 'cek.php';
                                     
                                     <!-- Modal body -->
                                     <form method="post" enctype="multipart/form-data">
-                                    <div class="modal-body">
-                                    <label for="namabarang">Nama Barang:</label>
-                                    <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
-                                    <br>
-                                    <label for="unit">Unit:</label>
-                                    <select name="unit" class="form-control">
-                                        <option value="Pcs">PCS</option>
-                                        <option value="Pack">Pack</option>
-                                        <option value="Kg">KG</option>
-                                        <option value="Ball">BALL</option>
-                                    </select>
-                                    <br>
-                                    <label for="qtypermintaan">Jumlah:</label>
-                                    <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
-                                    <br>
-                                    <label for="keterangan">Keterangan:</label>
-                                    <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
-                                    <br>
-                                    <!-- <input type="file" name="bukti_base64" placeholder="Bukti" class="form-control" required> -->
-                                    <label for="bukti_base64">Bukti Permintaan:</label>
-                                    <input type="file" name="bukti_base64" class="form-control-file" required>
-                                    <br>
-                                    <label for="status">Status:</label>
-                                    <select name="status" class="form-control">
-                                        <option value="0">Pending</option>
-                                        <option value="1" disabled>Diterima</option>
-                                        <option value="2" disabled>Ditolak</option>
-                                    </select>
+    <div class="modal-body">
+        <!-- Formulir utama -->
+        <label for="namabarang[]">Nama Barang:</label>
+        <input type="text" name="namabarang[]" placeholder="Nama Barang" class="form-control" required>
+        <br>
+        <label for="unit[]">Unit:</label>
+        <select name="unit[]" class="form-control">
+            <option value="Pcs">PCS</option>
+            <option value="Pack">Pack</option>
+            <option value="Kg">KG</option>
+            <option value="Ball">BALL</option>
+        </select>
+        <br>
+        <label for="qtypermintaan[]">Jumlah:</label>
+        <input type="Number" name="qtypermintaan[]" placeholder="Quantity" class="form-control" required>
+        <br>
+        <label for="keterangan[]">Keterangan:</label>
+        <input type="text" name="keterangan[]" placeholder="Keterangan" class="form-control" required>
+        <br>
+        <label for="bukti_base64[]">Bukti Permintaan:</label>
+        <input type="file" name="bukti_base64[]" class="form-control-file" required>
+        <br>
+        <label for="status[]">Status:</label>
+        <select name="status[]" class="form-control">
+            <option value="0">Pending</option>
+            <option value="1" disabled>Diterima</option>
+            <option value="2" disabled>Ditolak</option>
+        </select>
+        <hr>
+        <br>
+        <!-- Tempat untuk menambahkan barang-barang baru -->
+        <div id="barangContainer"></div>
+        <!-- Tombol untuk menambahkan barang baru -->
+        <button type="button" class="btn btn-success" id="addBarangBtn">Tambah Barang</button>
+        <!-- Tombol untuk menghapus barang baru -->
+        <button type="button" class="btn btn-danger" id="hapusBarangBtn">Hapus Barang</button>
+        <!-- Tombol untuk mengirim -->
+        <button type="submit" class="btn btn-primary" name="addnewpermintaan">Submit</button>
+    </div>
+</form>
 
-                                    <br>
-                                    <button type="submit" class="btn btn-primary" name="addnewpermintaan">Submit</button>
-                                    </div>
-                                    </form>
 
-                                    <!-- Modal footer -->
-                                    <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                    </div>
-                                    
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>                               
                                 </div>
                                 </div>
-                            </div>
-
+                                </div>
 </html>
