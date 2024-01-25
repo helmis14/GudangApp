@@ -78,6 +78,8 @@ require 'cek.php';
                                                 <th>Jumlah</th>
                                                 <th>distributor</th>
                                                 <th>Penerima</th>
+                                                <th>Unit</th>
+                                                <th>Vendor</th>
                                                 <th>Keterangan</th>
                                                 <th>Bukti Masuk</th>
                                                 <th>Aksi</th>
@@ -94,7 +96,7 @@ require 'cek.php';
                                                 $qty = $data['qty'];
                                                 $keterangan = $data['keterangan'];
                                                 $penerima = $data['penerima'];
-                                                $deskripsi = $data['deskripsi'];
+                                                $unit = $data['unit'];
                                                 $distributor = $data['distributor'];
                                                 $bukti_masuk_base64 = $data['bukti_masuk_base64'];
                                             
@@ -103,7 +105,7 @@ require 'cek.php';
                                             <tr>
                                                 <td><?=$tanggal;?></td>
                                                 <td><?=$namabarang;?></td>
-                                                <td><?=$deskripsi;?></td>
+                                                <td><?=$unit;?></td>
                                                 <td><?=$qty;?></td>
                                                 <td><?=$distributor;?></td>
                                                 <td><?=$penerima;?></td>
