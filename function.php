@@ -20,12 +20,19 @@ if (isset($_POST['addnewbarang'])) {
     }
 }
 
-function convertToBase64($file_path)
+function convertToBase64($file)
 {
-    $image_data = file_get_contents($file_path);
-    $base64_image = base64_encode($image_data);
-    return $base64_image;
+    // Memastikan bahwa argumen adalah string yang valid
+    if (is_string($file)) {
+        // Membaca konten dari file dan mengonversinya ke base64
+        $base64 = base64_encode(file_get_contents($file));
+        return $base64;
+    } else {
+        // Menangani kasus di mana argumen bukan string
+        return false;
+    }
 }
+
 
 // Menambah barang masuk
 if (isset($_POST['barangmasuk'])) {
@@ -341,201 +348,56 @@ if (isset($_POST['hapusadmin'])) {
     }
 }
 
+
+
+// tambah permintaan
 if (isset($_POST['addnewpermintaan'])) {
     // Proses permintaan
-    $addPermintaan = mysqli_query($conn, "INSERT INTO permintaan (tanggal) VALUES (NOW())");
-    
-    if ($addPermintaan) {
-        $idPermintaan = mysqli_insert_id($conn); // Mendapatkan ID permintaan baru
+    $buktiBase64 = $_FILES['bukti_base64']['tmp_name'];
+    if (!empty($buktiBase64)) {
+        $buktiBase64 = convertToBase64($buktiBase64);
 
-        if (!isset($namabarang)) {
-            echo 'Variabel $namabarang tidak terdefinisi.';
-            exit;
-        }
-        
-        // Proses untuk setiap barang
-        for ($i = 0; $i < count($namabarang); $i++) {
-            $currentNamabarang = mysqli_real_escape_string($conn, $namabarang[$i]);
-            $currentUnit = mysqli_real_escape_string($conn, $unit[$i]);
-            $currentQty = mysqli_real_escape_string($conn, $qtypermintaan[$i]);
-            $currentKet = mysqli_real_escape_string($conn, $ket[$i]);
-            $currentStatus = mysqli_real_escape_string($conn, $status[$i]);
+        $addPermintaan = mysqli_query($conn, "INSERT INTO permintaan (tanggal, status, bukti_base64) VALUES (NOW(), '0', '$buktiBase64')");
 
-            // Proses konversi gambar ke base64
-            $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
+        if ($addPermintaan) {
+            $idPermintaan = mysqli_insert_id($conn); // Mendapatkan ID permintaan baru
 
-            if (!empty($currentBuktiBase64)) {
-                // Konversi gambar ke base64
-                $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
+            // Ambil data dari formulir barang
+            $namabarang = $_POST['namabarang'];
+            $unit = $_POST['unit'];
+            $qtypermintaan = $_POST['qtypermintaan'];
+            $keterangan = $_POST['keterangan'];
+            $status = $_POST['status'];
+
+            // Proses untuk setiap barang
+            for ($i = 0; $i < count($namabarang); $i++) {
+                $currentNamabarang = mysqli_real_escape_string($conn, $namabarang[$i]);
+                $currentUnit = mysqli_real_escape_string($conn, $unit[$i]);
+                $currentQty = mysqli_real_escape_string($conn, $qtypermintaan[$i]);
+                $currentKet = mysqli_real_escape_string($conn, $keterangan[$i]);
+                $currentStatus = mysqli_real_escape_string($conn, $status[$i]);
 
                 // Simpan detail barang dengan ID permintaan yang baru dibuat
-                $addBarang = mysqli_query($conn, "INSERT INTO barang_permintaan (id_permintaan, namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$idPermintaan','$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$currentStatus')");
+                $addBarang = mysqli_query($conn, "INSERT INTO barang_permintaan (idpermintaan, namabarang, unit, qtypermintaan, keterangan, status_barang) VALUES ('$idPermintaan','$currentNamabarang','$currentUnit','$currentQty','$currentKet', '$currentStatus')");
 
                 if (!$addBarang) {
                     echo 'Gagal menambahkan barang';
                     header('location: permintaan.php');
                     exit;
                 }
-            } else {
-                echo 'Berkas gambar tidak diunggah';
-                exit;
             }
-        }
 
-        header('location: permintaan.php');
+            header('location: permintaan.php');
+        } else {
+            echo 'Gagal menambahkan permintaan';
+        }
     } else {
-        echo 'Gagal menambahkan permintaan';
+        echo 'Berkas gambar tidak diunggah';
+        exit;
     }
 }
 
 
-// if (isset($_POST['addnewpermintaan'])) {
-//     $namabarang = $_POST['namabarang'];
-//     $unit = $_POST['unit'];
-//     $qtypermintaan = $_POST['qtypermintaan'];
-//     $ket = $_POST['keterangan'];
-//     $status = $_POST['status'];
-
-//     // Proses untuk setiap barang
-//     for ($i = 0; $i < count($namabarang); $i++) {
-//         $currentNamabarang = mysqli_real_escape_string($conn, $namabarang[$i]);
-//         $currentUnit = mysqli_real_escape_string($conn, $unit[$i]);
-//         $currentQty = mysqli_real_escape_string($conn, $qtypermintaan[$i]);
-//         $currentKet = mysqli_real_escape_string($conn, $ket[$i]);
-//         $currentStatus = mysqli_real_escape_string($conn, $status[$i]);
-
-//         // Proses konversi gambar ke base64
-//         $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
-
-//         if (!empty($currentBuktiBase64)) {
-//             // Konversi gambar ke base64
-//             $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
-
-//             $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$currentStatus')");
-
-//             if (!$addtotable) {
-//                 echo 'Gagal';
-//                 header('location: permintaan.php');
-//                 exit;
-//             }
-//         } else {
-//             echo 'Berkas gambar tidak diunggah';
-//             exit;
-//         }
-//     }
-
-//     header('location: permintaan.php');
-// }
-
-
-// if (isset($_POST['addnewpermintaan'])) {
-//     $namabarang = $_POST['namabarang'];
-//     $unit = $_POST['unit'];
-//     $qtypermintaan = $_POST['qtypermintaan'];
-//     $ket = $_POST['keterangan'];
-//     $status = $_POST['status'];
-
-//     // Proses untuk setiap barang
-//     for ($i = 0; $i < count($namabarang); $i++) {
-//         $currentNamabarang = $namabarang[$i];
-//         $currentUnit = $unit[$i];
-//         $currentQty = $qtypermintaan[$i];
-//         $currentKet = $ket[$i];
-
-//         // Proses konversi gambar ke base64
-//         $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
-
-//         if (!empty($currentBuktiBase64)) {
-//             // Konversi gambar ke base64
-//             $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
-
-//             $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$status')");
-//             if (!$addtotable) {
-//                 echo 'Gagal';
-//                 header('location:permintaan.php');
-//                 exit;
-//             }
-//         } else {
-//             echo 'Berkas gambar tidak diunggah';
-//             exit;
-//         }
-//     }
-
-//     header('location:permintaan.php');
-// }
-
-// if (isset($_POST['addnewpermintaan'])) {
-//     $namabarang = $_POST['namabarang'];
-//     $unit = $_POST['unit'];
-//     $qtypermintaan = $_POST['qtypermintaan'];
-//     $ket = $_POST['keterangan'];
-//     $status = $_POST['status'];
-
-//     // Check if arrays are set
-//     if (
-//         isset($namabarang) && isset($unit) &&
-//         isset($qtypermintaan) && isset($ket) &&
-//         isset($status)
-//     ) {
-//         // Proses untuk setiap barang
-//         for ($i = 0; $i < count($namabarang); $i++) {
-//             $currentNamabarang = mysqli_real_escape_string($conn, $namabarang[$i]);
-//             $currentUnit = mysqli_real_escape_string($conn, $unit[$i]);
-//             $currentQty = mysqli_real_escape_string($conn, $qtypermintaan[$i]);
-//             $currentKet = mysqli_real_escape_string($conn, $ket[$i]);
-
-//             // Proses konversi gambar ke base64
-//             $currentBuktiBase64 = $_FILES['bukti_base64']['tmp_name'][$i];
-
-//             if (!empty($currentBuktiBase64)) {
-//                 // Konversi gambar ke base64
-//                 $currentBuktiBase64 = convertToBase64($currentBuktiBase64);
-
-//                 $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$currentNamabarang','$currentUnit','$currentQty','$currentKet','$currentBuktiBase64', '$status')");
-
-//                 if (!$addtotable) {
-//                     echo 'Gagal';
-//                     header('location:permintaan.php');
-//                     exit;
-//                 }
-//             } else {
-//                 echo 'Berkas gambar tidak diunggah';
-//                 exit;
-//             }
-//         }
-
-//         header('location:permintaan.php');
-//     } 
-
-
-// // Menambah permintaan barang
-// if (isset($_POST['addnewpermintaan'])) {
-//     $namabarang = $_POST['namabarang'];
-//     $unit = $_POST['unit'];
-//     $qtypermintaan = $_POST['qtypermintaan'];
-//     $ket = $_POST['keterangan'];
-//     $status = $_POST['status'];
-
-//     // Proses konversi gambar ke base64
-//     $bukti_base64 = $_FILES['bukti_base64'];
-//     $tmp_name = $bukti_base64['tmp_name'];
-
-//     if (!empty($tmp_name)) {
-//         // Konversi gambar ke base64
-//         $bukti_base64 = convertToBase64($tmp_name);
-
-//         $addtotable = mysqli_query($conn, "INSERT INTO permintaan (namabarang, unit, qtypermintaan, keterangan, bukti_base64, status) VALUES ('$namabarang','$unit','$qtypermintaan','$ket','$bukti_base64', '$status')");
-//         if ($addtotable) {
-//             header('location:permintaan.php');
-//         } else {
-//             echo 'Gagal';
-//             header('location:permintaan.php');
-//         }
-//     } else {
-//         echo 'Berkas gambar tidak diunggah';
-//         exit;
-//     }
-// }
 
 // Mengubah data permintaan
 if (isset($_POST['updatepermintaan'])) {
@@ -546,49 +408,64 @@ if (isset($_POST['updatepermintaan'])) {
     $ket = $_POST['keterangan'];
     $status = $_POST['status'];
 
-    // Handle the updated image
-    if (isset($_FILES['update_permintaan']) && $_FILES['update_permintaan']['error'] == 0) {
-        $tmp_path = $_FILES['update_permintaan']['tmp_name'];
-        $update_permintaan_base64 = convertToBase64($tmp_path);
+    // Memulai transaksi
+    mysqli_begin_transaction($conn);
 
-        // Update the image in the database
-        $queryUpdatePermintaan = "UPDATE permintaan SET bukti_base64 = ? WHERE idpermintaan = ?";
-        $stmtUpdatePermintaan = mysqli_prepare($conn, $queryUpdatePermintaan);
-        mysqli_stmt_bind_param($stmtUpdatePermintaan, "si", $update_permintaan_base64, $idpermintaan);
+    // Hapus data lama dari tabel barang_permintaan
+    $hapus_barang = mysqli_query($conn, "DELETE FROM barang_permintaan WHERE idpermintaan='$idpermintaan'");
 
-        if (!mysqli_stmt_execute($stmtUpdatePermintaan)) {
-            echo 'Error updating image: ' . mysqli_error($conn);
+    // Tambahkan kembali data yang diperbarui ke tabel barang_permintaan
+    for ($i = 0; $i < count($namabarang); $i++) {
+        $nama_barang = $namabarang[$i];
+        $unit_barang = $unit[$i];
+        $qty_barang = $qtypermintaan[$i];
+        $keterangan_barang = $ket[$i];
+        $status_barang = $status[$i];
+
+        $query = "INSERT INTO barang_permintaan (idpermintaan, namabarang, unit, qtypermintaan, keterangan, status) VALUES ('$idpermintaan', '$nama_barang', '$unit_barang', '$qty_barang', '$keterangan_barang', '$status_barang')";
+        $result = mysqli_query($conn, $query);
+
+        if (!$result) {
+            // Jika ada kesalahan, rollback transaksi
+            mysqli_rollback($conn);
+            echo 'Gagal memperbarui permintaan';
             exit;
         }
-
-        mysqli_stmt_close($stmtUpdatePermintaan);
     }
 
-    // Update other fields in the database
-    $queryUpdateDataPermintaan = "UPDATE permintaan SET namabarang = ?, unit = ?, qtypermintaan = ?, keterangan = ?, status = ? WHERE idpermintaan = ?";
-    $stmtUpdateDataPermintaan = mysqli_prepare($conn, $queryUpdateDataPermintaan);
-    mysqli_stmt_bind_param($stmtUpdateDataPermintaan, "sssisi", $namabarang, $unit, $qtypermintaan, $ket, $status, $idpermintaan);
-
-    if (!mysqli_stmt_execute($stmtUpdateDataPermintaan)) {
-        echo 'Error updating data: ' . mysqli_error($conn);
-        exit;
-    }
-
-    mysqli_stmt_close($stmtUpdateDataPermintaan);
-
+    // Jika semua data berhasil dimasukkan, commit transaksi
+    mysqli_commit($conn);
     header('location:permintaan.php');
+    echo 'Berhasil memperbarui permintaan';
+} else {
+    echo 'ID permintaan tidak diterima';
 }
+
+
 
 // Menghapus permintaan barang
-if (isset($_POST['hapuspermintaan'])) {
-    $idp = $_POST['idpermintaan'];
+if (isset($_POST['hapuspermintaan']) && isset($_POST['idpermintaan'])) {
+    $idpermintaan = $_POST['idpermintaan'];
 
-    $hapus = mysqli_query($conn, "DELETE FROM permintaan WHERE idpermintaan='$idp'");
-    if ($hapus) {
+    // Memulai transaksi
+    mysqli_begin_transaction($conn);
+
+    // Hapus data dari tabel barang_permintaan
+    $hapus_barang = mysqli_query($conn, "DELETE FROM barang_permintaan WHERE idpermintaan='$idpermintaan'");
+
+    // Hapus data dari tabel permintaan
+    $hapus_permintaan = mysqli_query($conn, "DELETE FROM permintaan WHERE idpermintaan='$idpermintaan'");
+
+    if ($hapus_barang && $hapus_permintaan) {
+        // Jika kedua penghapusan berhasil, commit transaksi
+        mysqli_commit($conn);
         header('location:permintaan.php');
+        echo 'berhasil menghapus';
     } else {
-        echo 'Gagal';
-        header('location:permintaan.php');
+        // Jika ada kesalahan, rollback transaksi
+        mysqli_rollback($conn);
+        echo 'Gagal menghapus permintaan';
     }
+} else {
+    echo 'ID permintaan tidak diterima';
 }
-?>
