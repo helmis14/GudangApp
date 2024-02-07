@@ -108,7 +108,6 @@ if (isset($_POST['addbarangkeluar'])) {
             header('location:barang_keluar.php');
         }
     } else {
-        // Handle jika berkas gambar tidak diunggah
         echo 'Berkas gambar tidak diunggah.';
         exit;
     }
@@ -399,47 +398,62 @@ if (isset($_POST['addnewpermintaan'])) {
 
 
 
+
+
 // Mengubah data permintaan
 if (isset($_POST['updatepermintaan'])) {
-    $idpermintaan = $_POST['idpermintaan'];
+    $idpermintaan = $_POST['id'];
     $namabarang = $_POST['namabarang'];
     $unit = $_POST['unit'];
     $qtypermintaan = $_POST['qtypermintaan'];
-    $ket = $_POST['keterangan'];
-    $status = $_POST['status'];
+    $ket = $_POST['ket'];
 
     // Memulai transaksi
     mysqli_begin_transaction($conn);
 
-    // Hapus data lama dari tabel barang_permintaan
-    $hapus_barang = mysqli_query($conn, "DELETE FROM barang_permintaan WHERE idpermintaan='$idpermintaan'");
-
-    // Tambahkan kembali data yang diperbarui ke tabel barang_permintaan
+    // Update data barang_permintaan
     for ($i = 0; $i < count($namabarang); $i++) {
-        $nama_barang = $namabarang[$i];
-        $unit_barang = $unit[$i];
-        $qty_barang = $qtypermintaan[$i];
-        $keterangan_barang = $ket[$i];
-        $status_barang = $status[$i];
+        $queryUpdateBarangPermintaan = "UPDATE barang_permintaan SET namabarang = ?, unit = ?, qtypermintaan = ?, keterangan = ? WHERE idpermintaan = ?";
+        $stmtUpdateBarangPermintaan = mysqli_prepare($conn, $queryUpdateBarangPermintaan);
+        mysqli_stmt_bind_param($stmtUpdateBarangPermintaan, "ssisi", $namabarang[$i], $unit[$i], $qtypermintaan[$i], $ket[$i], $idpermintaan);
 
-        $query = "INSERT INTO barang_permintaan (idpermintaan, namabarang, unit, qtypermintaan, keterangan, status) VALUES ('$idpermintaan', '$nama_barang', '$unit_barang', '$qty_barang', '$keterangan_barang', '$status_barang')";
-        $result = mysqli_query($conn, $query);
-
-        if (!$result) {
-            // Jika ada kesalahan, rollback transaksi
+        if (!mysqli_stmt_execute($stmtUpdateBarangPermintaan)) {
+            echo 'Error updating barang_permintaan: ' . mysqli_error($conn);
             mysqli_rollback($conn);
-            echo 'Gagal memperbarui permintaan';
             exit;
         }
+
+        mysqli_stmt_close($stmtUpdateBarangPermintaan);
     }
 
-    // Jika semua data berhasil dimasukkan, commit transaksi
+    // Handle the updated image
+    if (isset($_FILES['update_permintaan']) && $_FILES['update_permintaan']['error'] == 0) {
+        $tmp_path = $_FILES['update_permintaan']['tmp_name'];
+        $update_permintaan_base64 = convertToBase64($tmp_path);
+
+        // Update the image in the database
+        $queryUpdatePermintaan = "UPDATE permintaan SET bukti_base64 = ? WHERE idpermintaan = ?";
+        $stmtUpdatePermintaan = mysqli_prepare($conn, $queryUpdatePermintaan);
+        mysqli_stmt_bind_param($stmtUpdatePermintaan, "si", $update_permintaan_base64, $idpermintaan);
+
+        if (!mysqli_stmt_execute($stmtUpdatePermintaan)) {
+            echo 'Error updating image: ' . mysqli_error($conn);
+            mysqli_rollback($conn);
+            exit;
+        }
+
+        mysqli_stmt_close($stmtUpdatePermintaan);
+    }
+
+    // Commit transaksi
     mysqli_commit($conn);
-    header('location:permintaan.php');
-    echo 'Berhasil memperbarui permintaan';
-} else {
-    echo 'ID permintaan tidak diterima';
+
+    header('location: permintaan.php');
+    exit;
 }
+
+
+
 
 
 
