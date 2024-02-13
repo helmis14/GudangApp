@@ -397,7 +397,66 @@ if (isset($_POST['addnewpermintaan'])) {
 }
 
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['action'])) {
+        // Ambil tindakan yang diminta
+        $action = $_POST['action'];
 
+        // Tangani tindakan penghapusan
+        if ($action === 'delete_barang') {
+            if (isset($_POST['idbarang'])) {
+                $idbarang = $_POST['idbarang'];
+                if (delete_barang($idbarang)) {
+                    echo 'success';
+                } else {
+                    echo 'error';
+                }
+            }
+        }
+
+        // Tangani tindakan pembaruan
+        elseif ($action === 'update_barang') {
+            if (isset($_POST['idbarang'])) {
+                $idbarang = $_POST['idbarang'];
+                $namabarang = $_POST['namabarang'];
+                $unit = $_POST['unit'];
+                $qty = $_POST['qty'];
+                $keterangan = $_POST['keterangan'];
+                if (update_barangpermin($idbarang, $namabarang, $unit, $qty, $keterangan)) {
+                    echo 'success';
+                } else {
+                    echo 'error';
+                }
+            }
+        }
+    }
+}
+
+// Fungsi penghapusan barang
+function delete_barang($idbarang)
+{
+    global $conn;
+    $query = "DELETE FROM barang_permintaan WHERE idbarang = $idbarang";
+    if (mysqli_query($conn, $query)) {
+        return true;
+    } else {
+        echo '<script>console.log("Gagal menghapus barang: ' . mysqli_error($conn) . '");</script>';
+        return false;
+    }
+}
+
+// Fungsi pembaruan barang
+function update_barangpermin($idbarang, $nama_barang, $unit, $qty, $keterangan)
+{
+    global $conn;
+    $query = "UPDATE barang_permintaan SET namabarang = '$nama_barang', unit = '$unit', qtypermintaan = '$qty', keterangan = '$keterangan' WHERE idbarang = $idbarang";
+    if (mysqli_query($conn, $query)) {
+        return true;
+    } else {
+        echo '<script>console.log("Gagal memperbarui barang: ' . mysqli_error($conn) . '");</script>';
+        return false;
+    }
+}
 
 
 // Mengubah data permintaan
@@ -413,9 +472,17 @@ if (isset($_POST['updatepermintaan'])) {
 
     // Update data barang_permintaan
     for ($i = 0; $i < count($namabarang); $i++) {
-        $queryUpdateBarangPermintaan = "UPDATE barang_permintaan SET namabarang = ?, unit = ?, qtypermintaan = ?, keterangan = ? WHERE idpermintaan = ?";
+        // Ambil nilai yang sesuai dari array
+        $id_barang = $idbarang[$i];
+        $nama_barang = $namabarang[$i];
+        $unit_barang = $unit[$i];
+        $qty_barang = $qtypermintaan[$i];
+        $keterangan_barang = $ket[$i];
+
+        // Perbarui data sesuai dengan idbarang dan idpermintaan
+        $queryUpdateBarangPermintaan = "UPDATE barang_permintaan SET namabarang = ?, unit = ?, qtypermintaan = ?, keterangan = ? WHERE idpermintaan = ? AND idbarang = ?";
         $stmtUpdateBarangPermintaan = mysqli_prepare($conn, $queryUpdateBarangPermintaan);
-        mysqli_stmt_bind_param($stmtUpdateBarangPermintaan, "ssisi", $namabarang[$i], $unit[$i], $qtypermintaan[$i], $ket[$i], $idpermintaan);
+        mysqli_stmt_bind_param($stmtUpdateBarangPermintaan, "ssisii", $nama_barang, $unit_barang, $qty_barang, $keterangan_barang, $idpermintaan, $id_barang);
 
         if (!mysqli_stmt_execute($stmtUpdateBarangPermintaan)) {
             echo 'Error updating barang_permintaan: ' . mysqli_error($conn);
@@ -461,25 +528,18 @@ if (isset($_POST['updatepermintaan'])) {
 if (isset($_POST['hapuspermintaan']) && isset($_POST['idpermintaan'])) {
     $idpermintaan = $_POST['idpermintaan'];
 
-    // Memulai transaksi
+
     mysqli_begin_transaction($conn);
-
-    // Hapus data dari tabel barang_permintaan
     $hapus_barang = mysqli_query($conn, "DELETE FROM barang_permintaan WHERE idpermintaan='$idpermintaan'");
-
-    // Hapus data dari tabel permintaan
     $hapus_permintaan = mysqli_query($conn, "DELETE FROM permintaan WHERE idpermintaan='$idpermintaan'");
-
     if ($hapus_barang && $hapus_permintaan) {
-        // Jika kedua penghapusan berhasil, commit transaksi
         mysqli_commit($conn);
         header('location:permintaan.php');
         echo 'berhasil menghapus';
     } else {
-        // Jika ada kesalahan, rollback transaksi
         mysqli_rollback($conn);
         echo 'Gagal menghapus permintaan';
     }
 } else {
-    echo 'ID permintaan tidak diterima';
+    echo ' ';
 }

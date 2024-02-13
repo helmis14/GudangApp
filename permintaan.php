@@ -158,55 +158,67 @@ require 'cek.php';
                                             <div class="modal fade" id="edit<?= $idpermintaan; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <form method="post" enctype="multipart/form-data">
+                                                        <form method="post" enctype="multipart/form-data" action="process_form.php">
                                                             <div class="modal-header">
-                                                                <h4 class="modal-title">Update Permintaan</h4>
+                                                                <h4 class="modal-title">Ubah Permintaan</h4>
                                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                             </div>
                                                             <div class="modal-body">
+                                                                <label for="update_permintaan">Bukti:</label>
+                                                                <input type="file" name="update_permintaan" class="form-control-file" accept="image/*">
+                                                                <br>
+                                                                <button type="submit" class="btn btn-primary" name="updatepermintaan">Ubah Bukti</button>
+                                                                <br>
+                                                                <br>
                                                                 <?php
-                                                                // Query untuk mendapatkan data barang berdasarkan id permintaan
                                                                 $query_barang = "SELECT * FROM barang_permintaan WHERE idpermintaan = $idpermintaan";
                                                                 $result_barang = mysqli_query($conn, $query_barang);
                                                                 $nomor_barang = 1;
                                                                 while ($row_barang = mysqli_fetch_assoc($result_barang)) {
+                                                                    $idbarang = $row_barang['idbarang'];
                                                                     $namabarang = $row_barang['namabarang'];
                                                                     $unit = $row_barang['unit'];
                                                                     $qtypermintaan = $row_barang['qtypermintaan'];
                                                                     $keterangan = $row_barang['keterangan'];
                                                                 ?>
+
                                                                     <!-- Nomor barang -->
-                                                                    <label for="namabarang">Nama Barang <?= $nomor_barang; ?>:</label>
-                                                                    <input type="text" name="namabarang[]" value="<?= $namabarang; ?>" class="form-control">
-                                                                    <br>
-                                                                    <label for="unit">Unit:</label>
-                                                                    <input type="text" name="unit[]" value="<?= $unit; ?>" class="form-control">
-                                                                    <br>
-                                                                    <label for="qtypermintaan">Jumlah:</label>
-                                                                    <input type="text" name="qtypermintaan[]" value="<?= $qtypermintaan; ?>" class="form-control">
-                                                                    <br>
-                                                                    <label for="ket">Keterangan:</label>
-                                                                    <input type="text" name="ket[]" value="<?= $keterangan; ?>" class="form-control">
-                                                                    <br>
-                                                                    <hr>
+                                                                    <div class="barang" id="barang<?= $idbarang; ?>">
+                                                                        <input type="hidden" name="idbarang[]" value="<?= $idbarang; ?>" class="form-control" id="idbarang<?= $idbarang; ?>">
+                                                                        <br>
+                                                                        <label for="namabarang<?= $idbarang; ?>">Nama Barang <?= $nomor_barang; ?>:</label>
+                                                                        <input type="text" name="namabarang[]" value="<?= $namabarang; ?>" class="form-control" id="namabarang<?= $idbarang; ?>">
+                                                                        <br>
+                                                                        <label for="unit<?= $idbarang; ?>">Unit:</label>
+                                                                        <input type="text" name="unit[]" value="<?= $unit; ?>" class="form-control" id="unit<?= $idbarang; ?>">
+                                                                        <br>
+                                                                        <label for="qtypermintaan<?= $idbarang; ?>">Jumlah:</label>
+                                                                        <input type="text" name="qtypermintaan[]" value="<?= $qtypermintaan; ?>" class="form-control" id="qtypermintaan<?= $idbarang; ?>">
+                                                                        <br>
+                                                                        <label for="ket<?= $idbarang; ?>">Keterangan:</label>
+                                                                        <input type="text" name="ket[]" value="<?= $keterangan; ?>" class="form-control" id="ket<?= $idbarang; ?>">
+                                                                        <br>
+                                                                        <button type="submit" class="btn btn-danger" name="deletebarang" value="<?= $idbarang; ?>">Hapus</button>
+                                                                        <button type="submit" class="btn btn-primary" name="updatebarangpermin" value="<?= $idbarang; ?>">Ubah</button>
+                                                                        <hr>
+                                                                    </div>
                                                                 <?php
                                                                     $nomor_barang++;
                                                                 }
                                                                 ?>
-                                                                <label for="update_permintaan">Bukti</label>
-                                                                <input type="file" name="update_permintaan" class="form-control-file" accept="image/*">
+
                                                                 <br>
                                                                 <input type="hidden" name="id" value="<?= $idpermintaan; ?>">
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="submit" class="btn btn-primary" name="updatepermintaan">Submit</button>
+
                                                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                                                             </div>
                                                         </form>
+
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <!-- Delete Modal -->
                                             <div class="modal fade" id="deletModal<?= $idpermintaan; ?>">
                                                 <div class="modal-dialog">
@@ -232,6 +244,7 @@ require 'cek.php';
                                                     </div>
                                                 </div>
                                             </div>
+
                                         <?php
                                         };
 
@@ -266,7 +279,6 @@ require 'cek.php';
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/datatables-demo.js"></script>
-
     <script>
         $(document).ready(function() {
             var counter = 2; // Mulai dari nomor 2
