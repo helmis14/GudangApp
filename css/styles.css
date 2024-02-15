@@ -10246,3 +10246,8 @@ body {
 }
 .sb-sidenav-light .sb-sidenav-footer {
   background-color: #e9ecef;
+}
+.center-button {
+  text-align: center;
+  color: red;
+}

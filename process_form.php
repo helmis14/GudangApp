@@ -1,13 +1,10 @@
 <?php
 
-
 require 'function.php';
 require 'cek.php';
 
-// Inisialisasi pesan default
 $message = "";
 
-// Pastikan formulir dikirimkan menggunakan metode POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['deletebarang'])) {
         $idbarang_to_delete = $_POST['deletebarang'];
@@ -33,14 +30,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $message = "Gagal memperbarui barang";
         }
+    } elseif (isset($_POST['barangbaru'])) {
+        $idpermintaan = $_POST['idpermintaan'];
+        $namabarang = $_POST['namabarang'];
+        $unit = $_POST['unit'];
+        $qtypermintaan = $_POST['qtypermintaan'];
+        $keterangan = $_POST['keterangan'];
+
+        tambahBarangBaru($idpermintaan, $namabarang, $unit, $qtypermintaan, $keterangan);
     } else {
         $message = "Tidak ada tindakan yang sesuai";
     }
 
-    // Set pesan sesuai dengan keberhasilan atau kegagalan operasi
     $_SESSION['message'] = $message;
 
-    // Redirect ke halaman tujuan
     header('Location: permintaan.php');
     exit;
 } else {

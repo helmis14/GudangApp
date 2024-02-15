@@ -396,6 +396,24 @@ if (isset($_POST['addnewpermintaan'])) {
     }
 }
 
+function tambahBarangBaru($idpermintaan, $namabarang, $unit, $qtypermintaan, $keterangan)
+{
+    global $conn;
+    $sql = "INSERT INTO barang_permintaan (idpermintaan, namabarang, unit, qtypermintaan, keterangan) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        die("Error saat membuat prepared statement: " . $conn->error);
+    }
+    $stmt->bind_param("issis", $idpermintaan, $namabarang, $unit, $qtypermintaan, $keterangan);
+
+    if ($stmt->execute() === true) {
+        echo "Barang baru berhasil ditambahkan!";
+    } else {
+        echo "Gagal menambahkan barang baru: " . $stmt->error;
+    }
+    $stmt->close();
+}
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['action'])) {
@@ -472,7 +490,7 @@ if (isset($_POST['updatepermintaan'])) {
 
     // Update data barang_permintaan
     for ($i = 0; $i < count($namabarang); $i++) {
-        // Ambil nilai yang sesuai dari array
+
         $id_barang = $idbarang[$i];
         $nama_barang = $namabarang[$i];
         $unit_barang = $unit[$i];
@@ -493,12 +511,10 @@ if (isset($_POST['updatepermintaan'])) {
         mysqli_stmt_close($stmtUpdateBarangPermintaan);
     }
 
-    // Handle the updated image
     if (isset($_FILES['update_permintaan']) && $_FILES['update_permintaan']['error'] == 0) {
         $tmp_path = $_FILES['update_permintaan']['tmp_name'];
         $update_permintaan_base64 = convertToBase64($tmp_path);
 
-        // Update the image in the database
         $queryUpdatePermintaan = "UPDATE permintaan SET bukti_base64 = ? WHERE idpermintaan = ?";
         $stmtUpdatePermintaan = mysqli_prepare($conn, $queryUpdatePermintaan);
         mysqli_stmt_bind_param($stmtUpdatePermintaan, "si", $update_permintaan_base64, $idpermintaan);
@@ -512,7 +528,7 @@ if (isset($_POST['updatepermintaan'])) {
         mysqli_stmt_close($stmtUpdatePermintaan);
     }
 
-    // Commit transaksi
+
     mysqli_commit($conn);
 
     header('location: permintaan.php');

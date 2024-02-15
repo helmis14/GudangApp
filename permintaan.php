@@ -32,26 +32,27 @@ require 'cek.php';
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <a class="nav-link" href="permintaan.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
                             Permintaan Barang
                         </a>
                         <a class="nav-link" href="index.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
                             Stock Barang
                         </a>
                         <a class="nav-link" href="barang_masuk.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
                             Barang Masuk
                         </a>
                         <a class="nav-link" href="barang_keluar.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
                             Barang Keluar
                         </a>
                         <a class="nav-link" href="admin.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Kelola Admin
                         </a>
                         <a class="nav-link" href="logout.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>
                             Logout
                         </a>
                     </div>
@@ -167,7 +168,7 @@ require 'cek.php';
                                                                 <label for="update_permintaan">Bukti:</label>
                                                                 <input type="file" name="update_permintaan" class="form-control-file" accept="image/*">
                                                                 <br>
-                                                                <button type="submit" class="btn btn-primary" name="updatepermintaan">Ubah Bukti</button>
+                                                                <button type="submit" class="btn btn-warning" name="updatepermintaan">Ubah Bukti</button>
                                                                 <br>
                                                                 <br>
                                                                 <?php
@@ -182,7 +183,7 @@ require 'cek.php';
                                                                     $keterangan = $row_barang['keterangan'];
                                                                 ?>
 
-                                                                    <!-- Nomor barang -->
+
                                                                     <div class="barang" id="barang<?= $idbarang; ?>">
                                                                         <input type="hidden" name="idbarang[]" value="<?= $idbarang; ?>" class="form-control" id="idbarang<?= $idbarang; ?>">
                                                                         <br>
@@ -193,32 +194,78 @@ require 'cek.php';
                                                                         <input type="text" name="unit[]" value="<?= $unit; ?>" class="form-control" id="unit<?= $idbarang; ?>">
                                                                         <br>
                                                                         <label for="qtypermintaan<?= $idbarang; ?>">Jumlah:</label>
-                                                                        <input type="text" name="qtypermintaan[]" value="<?= $qtypermintaan; ?>" class="form-control" id="qtypermintaan<?= $idbarang; ?>">
+                                                                        <input type="number" name="qtypermintaan[]" value="<?= $qtypermintaan; ?>" class="form-control" id="qtypermintaan<?= $idbarang; ?>">
                                                                         <br>
                                                                         <label for="ket<?= $idbarang; ?>">Keterangan:</label>
                                                                         <input type="text" name="ket[]" value="<?= $keterangan; ?>" class="form-control" id="ket<?= $idbarang; ?>">
                                                                         <br>
                                                                         <button type="submit" class="btn btn-danger" name="deletebarang" value="<?= $idbarang; ?>">Hapus</button>
-                                                                        <button type="submit" class="btn btn-primary" name="updatebarangpermin" value="<?= $idbarang; ?>">Ubah</button>
+                                                                        <button type="submit" class="btn btn-warning" name="updatebarangpermin" value="<?= $idbarang; ?>">Ubah</button>
                                                                         <hr>
                                                                     </div>
                                                                 <?php
                                                                     $nomor_barang++;
                                                                 }
                                                                 ?>
-
-                                                                <br>
                                                                 <input type="hidden" name="id" value="<?= $idpermintaan; ?>">
+                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModaledit<?= $idpermintaan; ?>" data-idpermintaan="<?= $idpermintaan; ?>">
+                                                                    Tambah Barang
+                                                                </button>
+
                                                             </div>
                                                             <div class="modal-footer">
-
-                                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
                                                             </div>
                                                         </form>
 
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!-- The Modal "Tambah barang dengan id yang"-->
+                                            <div class="modal fade" id="myModaledit<?= $idpermintaan; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Tambah Barang <?= $idbarang; ?></h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <form method="post" enctype="multipart/form-data" action="process_form.php">
+                                                            <div class="modal-body">
+                                                                <label for="namabarang">Nama Barang: <?= $idpermintaan; ?></label>
+                                                                <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
+                                                                <br>
+                                                                <label for="unit">Unit:</label>
+                                                                <select name="unit" class="form-control">
+                                                                    <option value="Pcs">PCS</option>
+                                                                    <option value="Pack">Pack</option>
+                                                                    <option value="Kg">KG</option>
+                                                                    <option value="Ball">BALL</option>
+                                                                </select>
+                                                                <br>
+                                                                <label for="qtypermintaan">Jumlah:</label>
+                                                                <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
+                                                                <br>
+                                                                <label for="keterangan">Keterangan:</label>
+                                                                <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
+                                                                <br>
+                                                                <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
+                                                                <br>
+                                                                <div id="barangContainer">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary" name="barangbaru">Submit</button>
+                                                            </div>
+                                                        </form>
+                                                        <!-- Modal footer -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <!-- Delete Modal -->
                                             <div class="modal fade" id="deletModal<?= $idpermintaan; ?>">
                                                 <div class="modal-dialog">
@@ -334,10 +381,16 @@ require 'cek.php';
                 }
             });
         });
+
+        // Mengatur nilai idpermintaan ke dalam input tersembunyi di form "Tambah Barang"
+        $("#myModaledit").on('show.bs.modal', function(e) {
+            var idpermintaan = $(e.relatedTarget).data('idpermintaan');
+            $("#idpermintaanInput").val(idpermintaan);
+        });
     </script>
 
-</body>
 
+</body>
 <!-- The Modal "Tambah Permintaan"-->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
@@ -395,10 +448,13 @@ require 'cek.php';
             </form>
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
 </div>
+
+
+
 
 </html>

@@ -30,26 +30,27 @@ require 'cek.php';
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <a class="nav-link" href="permintaan.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
                             Permintaan Barang
                         </a>
                         <a class="nav-link" href="index.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
                             Stock Barang
                         </a>
                         <a class="nav-link" href="barang_masuk.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
                             Barang Masuk
                         </a>
                         <a class="nav-link" href="barang_keluar.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
                             Barang Keluar
                         </a>
                         <a class="nav-link" href="admin.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Kelola Admin
                         </a>
                         <a class="nav-link" href="logout.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>
                             Logout
                         </a>
                     </div>
