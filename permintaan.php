@@ -140,7 +140,11 @@ require 'cek.php';
                                                     }
                                                     ?>
                                                 </td>
-                                                <td><img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;"></td>
+                                                <td>
+                                                    <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
+                                                        <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
+                                                    </a>
+                                                </td>
                                                 <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Diterima' : 'Ditolak'); ?></td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
@@ -153,6 +157,24 @@ require 'cek.php';
                                                     </button>
                                                 </td>
                                             </tr>
+
+                                            <!-- Modal untuk menampilkan gambar penuh -->
+                                            <div class="modal fade" id="gambarModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="gambarModalLabel">Gambar Permintaan</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" class="img-fluid">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
 
 
                                             <!-- Edit Modal -->
@@ -386,6 +408,12 @@ require 'cek.php';
         $("#myModaledit").on('show.bs.modal', function(e) {
             var idpermintaan = $(e.relatedTarget).data('idpermintaan');
             $("#idpermintaanInput").val(idpermintaan);
+        });
+
+
+        $('.gambar-modal-trigger').click(function() {
+            var idPermintaan = $(this).data('idpermintaan');
+            $('#gambarModal' + idPermintaan).modal('show');
         });
     </script>
 
