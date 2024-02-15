@@ -110,7 +110,11 @@ require 'cek.php';
                                                 <td><?= $distributor; ?></td>
                                                 <td><?= $penerima; ?></td>
                                                 <td><?= $keterangan; ?></td>
-                                                <td><img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;"></td>
+                                                <td>
+                                                    <a href="#" class="gambar-modal-trigger" data-gambar-src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>">
+                                                        <img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;">
+                                                    </a>
+                                                </td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
                                                         Edit
@@ -120,6 +124,24 @@ require 'cek.php';
                                                     </button>
                                                 </td>
                                             </tr>
+
+                                            <!-- Modal untuk menampilkan gambar penuh -->
+                                            <div class="modal fade" id="gambarModal" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="gambarModalLabel">Bukti Masuk</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <img src="" id="gambarModalImage" class="img-fluid">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
 
                                             <!-- Edit Modal -->
                                             <div class="modal fade" id="edit<?= $idm; ?>">
@@ -206,7 +228,7 @@ require 'cek.php';
     <footer class="py-4 bg-light mt-auto">
         <div class="container-fluid">
             <div class="d-flex align-items-center justify-content-between small">
-                <div class="text-muted">Copyright &copy; Your Website 2024</div>
+                <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
                 <div>
                     <a href="#">Privacy Policy</a>
                     &middot;
@@ -226,6 +248,17 @@ require 'cek.php';
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/datatables-demo.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Menampilkan modal saat gambar diklik
+            $('.gambar-modal-trigger').click(function() {
+                var gambarSrc = $(this).data('gambar-src');
+                $('#gambarModalImage').attr('src', gambarSrc);
+                $('#gambarModal').modal('show');
+            });
+        });
+    </script>
+
 </body>
 
 <!-- The Modal -->

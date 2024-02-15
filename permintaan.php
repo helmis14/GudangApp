@@ -244,19 +244,19 @@ require 'cek.php';
                                                 </div>
                                             </div>
 
-                                            <!-- The Modal "Tambah barang dengan id yang"-->
+                                            <!-- The Modal "Tambah barang dengan id yang sama"-->
                                             <div class="modal fade" id="myModaledit<?= $idpermintaan; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
 
                                                         <!-- Modal Header -->
                                                         <div class="modal-header">
-                                                            <h4 class="modal-title">Tambah Barang <?= $idbarang; ?></h4>
+                                                            <h4 class="modal-title">Tambah Barang <?= $tanggal; ?></h4>
                                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                         </div>
                                                         <form method="post" enctype="multipart/form-data" action="process_form.php">
                                                             <div class="modal-body">
-                                                                <label for="namabarang">Nama Barang: <?= $idpermintaan; ?></label>
+                                                                <label for="namabarang">Nama Barang: </label>
                                                                 <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
                                                                 <br>
                                                                 <label for="unit">Unit:</label>
@@ -328,7 +328,7 @@ require 'cek.php';
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2024</div>
+                        <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;
