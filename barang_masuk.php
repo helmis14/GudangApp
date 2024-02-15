@@ -119,7 +119,7 @@ require 'cek.php';
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
                                                         Edit
                                                     </button>
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idm; ?>">
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
                                                         Delete
                                                     </button>
                                                 </td>
@@ -157,7 +157,7 @@ require 'cek.php';
                                                         <!-- Modal body -->
                                                         <form method="post" enctype="multipart/form-data">
                                                             <div class="modal-body">
-                                                                <label for="penerima">Penerima:</label>
+                                                                <label for="penerima">Penerima</label>
                                                                 <input type="text" name="penerima" value="<?= $penerima; ?>" class="form-control">
                                                                 <br>
                                                                 <label for="qty">Jumlah:</label>

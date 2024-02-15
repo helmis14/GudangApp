@@ -146,21 +146,21 @@ if (isset($_POST['hapusbarang'])) {
 if (isset($_POST['updatebarangmasuk'])) {
     $idb = $_POST['idb'];
     $idm = $_POST['idm'];
-    $deskripsi = $_POST['deskripsi'];
+    $deskripsi = $_POST['keterangan'];
     $qty = $_POST['qty'];
-    $distributor = $_POST['distributor'];
-    $penerima = $_POST['penerima'];
+    $penerima = $_POST['penerima']; 
+    $distributor = $_POST['distributor']; 
     $keterangan = $_POST['keterangan'];
 
-    // Handle the updated image
+    
     if (isset($_FILES['update_bukti_masuk']) && $_FILES['update_bukti_masuk']['error'] == 0) {
         $tmp_path = $_FILES['update_bukti_masuk']['tmp_name'];
         $update_bukti_masuk_base64 = convertToBase64($tmp_path);
 
-        // Update the image in the database
-        $queryUpdateGambarMasuk = "UPDATE keluar SET bukti_masuk_base64 = ? WHERE idmasuk = ?";
+        
+        $queryUpdateGambarMasuk = "UPDATE masuk SET bukti_masuk_base64 = ? WHERE idmasuk = ?";
         $stmtUpdateGambarMasuk = mysqli_prepare($conn, $queryUpdateGambarMasuk);
-        mysqli_stmt_bind_param($stmtUpdateGambarMasuk, "si", $update_bukti_masuk_base64, $idk);
+        mysqli_stmt_bind_param($stmtUpdateGambarMasuk, "si", $update_bukti_masuk_base64, $idm);
 
         if (mysqli_stmt_execute($stmtUpdateGambarMasuk)) {
             mysqli_stmt_close($stmtUpdateGambarMasuk);
@@ -182,7 +182,7 @@ if (isset($_POST['updatebarangmasuk'])) {
         $selisih = $qty - $qtysekarang;
         $kurangin = $stocksekarang + $selisih;
         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-        $updatenya = mysqli_query($conn, "UPDATE masuk SET qty='$qty', keterangan='$deskripsi' WHERE idmasuk='$idm'");
+        $updatenya = mysqli_query($conn, "UPDATE masuk SET qty='$qty', keterangan='$deskripsi', penerima='$penerima', distributor='$distributor' WHERE idmasuk='$idm'");
         if ($kurangistocknya && $updatenya) {
             header('location:barang_masuk.php');
         } else {
@@ -193,7 +193,7 @@ if (isset($_POST['updatebarangmasuk'])) {
         $selisih = $qtysekarang - $qty;
         $kurangin = $stocksekarang - $selisih;
         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-        $updatenya = mysqli_query($conn, "UPDATE masuk SET qty='$qty', keterangan='$deskripsi' WHERE idmasuk='$idm'");
+        $updatenya = mysqli_query($conn, "UPDATE masuk SET qty='$qty', keterangan='$deskripsi', penerima='$penerima', distributor='$distributor' WHERE idmasuk='$idm'");
         if ($kurangistocknya && $updatenya) {
             header('location:barang_masuk.php');
         } else {
@@ -202,6 +202,7 @@ if (isset($_POST['updatebarangmasuk'])) {
         }
     }
 }
+
 
 // Menghapus data barang masuk
 if (isset($_POST['hapusbarangmasuk'])) {
@@ -232,12 +233,12 @@ if (isset($_POST['updatebarangkeluar'])) {
     $qty = $_POST['qty'];
     $keterangan = $_POST['keterangan'];
 
-    // Handle the updated image
+    
     if (isset($_FILES['update_gambar']) && $_FILES['update_gambar']['error'] == 0) {
         $tmp_path = $_FILES['update_gambar']['tmp_name'];
         $update_gambar_base64 = convertToBase64($tmp_path);
 
-        // Update the image in the database
+        
         $queryUpdateGambar = "UPDATE keluar SET gambar_base64 = ? WHERE idkeluar = ?";
         $stmtUpdateGambar = mysqli_prepare($conn, $queryUpdateGambar);
         mysqli_stmt_bind_param($stmtUpdateGambar, "si", $update_gambar_base64, $idk);
