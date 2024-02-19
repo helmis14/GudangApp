@@ -1,6 +1,13 @@
 <?php
 require 'function.php';
 require 'cek.php';
+
+
+if (!isset($_SESSION['iduser'])) {
+    header('Location: login.php');
+    exit();
+}
+$iduser = $_SESSION['iduser'];
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +67,7 @@ require 'cek.php';
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid">
-                    <h1 class="mt-4">Barang Keluar</h1>
+                    <h1 class="mt-4">Barang Keluar <?= $iduser; ?></h1>
 
 
                     <div class="card mb-4">

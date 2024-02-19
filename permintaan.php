@@ -16,8 +16,6 @@ require 'cek.php';
     <link href="css/styles.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
-
-
 </head>
 
 <body class="sb-nav-fixed">
@@ -457,7 +455,7 @@ require 'cek.php';
                     <label for="status[]">Status:</label>
                     <select name="status[]" class="form-control">
                         <option value="0">Pending</option>
-                        <option value="1" disabled>Diterima</option>
+                        <option value="1" disabled>Disetujui</option>
                         <option value="2" disabled>Ditolak</option>
                     </select>
                     <hr>

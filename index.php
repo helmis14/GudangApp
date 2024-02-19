@@ -3,6 +3,7 @@ require 'function.php';
 require 'cek.php';
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,6 +56,7 @@ require 'cek.php';
                         </a>
                     </div>
                 </div>
+            </nav>
         </div>
         <div id="layoutSidenav_content">
             <main>
@@ -68,8 +70,8 @@ require 'cek.php';
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                                 Tambah Barang
                             </button>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#export">
-                                Export
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
+                                Export/Import
                             </button>
                         </div>
                         <div class="card-body">
@@ -202,20 +204,20 @@ require 'cek.php';
                     </div>
                 </div>
         </div>
-        <footer class="py-4 bg-light mt-auto">
-            <div class="container-fluid">
-                <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
-                    <div>
-                        <a href="#">Privacy Policy</a>
-                        &middot;
-                        <a href="#">Terms &amp; Conditions</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
     </div>
     </main>
+    <footer class="py-4 bg-light mt-auto">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between small">
+                <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
+                <div>
+                    <a href="#">Privacy Policy</a>
+                    &middot;
+                    <a href="#">Terms &amp; Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
@@ -277,14 +279,14 @@ require 'cek.php';
 </div>
 
 
-<!-- The Modal "Tambah Barang"-->
+<!-- The Modal "Export"-->
 <div class="modal fade" id="export">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Export Data Stock Barang</h4>
+                <h4 class="modal-title">Export/Import Data Stock Barang</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
@@ -292,8 +294,12 @@ require 'cek.php';
             <form method="post">
                 <div class="modal-body">
                     <br>
-                    <button type="button" class="btn btn-primary" name="excel">Export to Excel</button>
-                    <button type="button" class="btn btn-primary" name="pdf">Export to PDF</button>
+                    <button type="submit" class="btn btn-outline-success" name="export">Export to Excel</button>
+                    <br>
+                    <br>
+                    <input type="file" name="import_file" class="form-control" />
+                    <br>
+                    <button type="submit" class="btn btn-outline-warning" name="import">Import to Excel</button>
                 </div>
             </form>
 

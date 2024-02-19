@@ -1,6 +1,12 @@
 <?php
 require 'function.php';
 require 'cek.php';
+
+if (!isset($_SESSION['iduser'])) {
+    header('Location: login.php');
+    exit();
+}
+$iduser = $_SESSION['iduser'];
 ?>
 
 <!DOCTYPE html>
@@ -110,29 +116,27 @@ require 'cek.php';
                                             <div class="modal fade" id="edit<?= $iduser; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-
                                                         <!-- Modal Header -->
                                                         <div class="modal-header">
                                                             <h4 class="modal-title">Edit Admin</h4>
                                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                         </div>
-
                                                         <!-- Modal body -->
                                                         <form method="post">
                                                             <div class="modal-body">
+                                                                <!-- Input hidden untuk menyimpan iduser -->
+                                                                <input type="hidden" name="iduser" value="<?= $iduser; ?>">
                                                                 <input type="text" name="email" value="<?= $em; ?>" class="form-control" required>
                                                                 <br>
                                                                 <input type="password" name="password" value="<?= $pass; ?>" class="form-control" required>
                                                                 <br>
-                                                                <input type="hidden" name="id" value="<?= $iduser; ?>">
                                                                 <button type="submit" class="btn btn-primary" name="updateadmin">Submit</button>
                                                             </div>
                                                         </form>
-
                                                     </div>
-
                                                 </div>
                                             </div>
+
                             </div>
 
                             <!-- Delete Modal -->
@@ -153,6 +157,7 @@ require 'cek.php';
                                                 <input type="hidden" name="iduser" value="<?= $iduser; ?>">
                                                 <br>
                                                 <br>
+                                                <input type="hidden" name="email" value="<?= $em; ?>">
                                                 <button type="submit" class="btn btn-danger" name="hapusadmin">Hapus</button>
                                             </div>
                                         </form>

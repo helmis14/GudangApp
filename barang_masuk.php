@@ -1,6 +1,14 @@
 <?php
 require 'function.php';
 require 'cek.php';
+
+session_start();
+
+if (!isset($_SESSION['iduser'])) {
+    header('Location: login.php');
+    exit(); 
+}
+$iduser = $_SESSION['iduser'];
 ?>
 
 <!DOCTYPE html>

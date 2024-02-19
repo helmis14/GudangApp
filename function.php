@@ -20,6 +20,8 @@ if (isset($_POST['addnewbarang'])) {
     }
 }
 
+
+
 function convertToBase64($file)
 {
     // Memastikan bahwa argumen adalah string yang valid
@@ -148,16 +150,16 @@ if (isset($_POST['updatebarangmasuk'])) {
     $idm = $_POST['idm'];
     $deskripsi = $_POST['keterangan'];
     $qty = $_POST['qty'];
-    $penerima = $_POST['penerima']; 
-    $distributor = $_POST['distributor']; 
+    $penerima = $_POST['penerima'];
+    $distributor = $_POST['distributor'];
     $keterangan = $_POST['keterangan'];
 
-    
+
     if (isset($_FILES['update_bukti_masuk']) && $_FILES['update_bukti_masuk']['error'] == 0) {
         $tmp_path = $_FILES['update_bukti_masuk']['tmp_name'];
         $update_bukti_masuk_base64 = convertToBase64($tmp_path);
 
-        
+
         $queryUpdateGambarMasuk = "UPDATE masuk SET bukti_masuk_base64 = ? WHERE idmasuk = ?";
         $stmtUpdateGambarMasuk = mysqli_prepare($conn, $queryUpdateGambarMasuk);
         mysqli_stmt_bind_param($stmtUpdateGambarMasuk, "si", $update_bukti_masuk_base64, $idm);
@@ -233,12 +235,12 @@ if (isset($_POST['updatebarangkeluar'])) {
     $qty = $_POST['qty'];
     $keterangan = $_POST['keterangan'];
 
-    
+
     if (isset($_FILES['update_gambar']) && $_FILES['update_gambar']['error'] == 0) {
         $tmp_path = $_FILES['update_gambar']['tmp_name'];
         $update_gambar_base64 = convertToBase64($tmp_path);
 
-        
+
         $queryUpdateGambar = "UPDATE keluar SET gambar_base64 = ? WHERE idkeluar = ?";
         $stmtUpdateGambar = mysqli_prepare($conn, $queryUpdateGambar);
         mysqli_stmt_bind_param($stmtUpdateGambar, "si", $update_gambar_base64, $idk);
@@ -305,6 +307,7 @@ if (isset($_POST['hapusbarangkeluar'])) {
     }
 }
 
+
 // Menambah admin baru
 if (isset($_POST['addnewadmin'])) {
     $em = $_POST['email'];
@@ -313,12 +316,19 @@ if (isset($_POST['addnewadmin'])) {
 
     $addtotable = mysqli_query($conn, "INSERT INTO login (email, iduser, password) VALUES ('$em','$iduser','$pass')");
     if ($addtotable) {
+        $iduser_logged = $_SESSION['iduser'];
+        $email_logged = $_SESSION['email'];
+        $activity = "$email_logged menambah admin baru $em";
+        catatLog($conn, $activity, $iduser_logged);
         header('location:admin.php');
     } else {
         echo 'Gagal';
         header('location:admin.php');
     }
 }
+
+
+
 
 // Update perubahan user
 if (isset($_POST['updateadmin'])) {
@@ -326,27 +336,53 @@ if (isset($_POST['updateadmin'])) {
     $em = $_POST['email'];
     $pass = $_POST['password'];
 
+    // Ambil data admin sebelum update
+    $query_before_update = mysqli_query($conn, "SELECT email FROM login WHERE iduser = '$iduser'");
+    $data_before_update = mysqli_fetch_assoc($query_before_update);
+    $email_before_update = $data_before_update['email'];
+
+    // Lakukan pembaruan pada admin
     $update = mysqli_query($conn, "UPDATE login SET email='$em', password='$pass' WHERE iduser ='$iduser'");
     if ($update) {
+        // Ambil data admin setelah update
+        $query_after_update = mysqli_query($conn, "SELECT email FROM login WHERE iduser = '$iduser'");
+        $data_after_update = mysqli_fetch_assoc($query_after_update);
+        $email_after_update = $data_after_update['email'];
+
+        // Catat log dengan menyertakan informasi sebelum dan sesudah update
+        $iduser_logged = $_SESSION['iduser'];
+        $email_logged = $_SESSION['email'];
+        $activity = "$email_logged mengubah admin sebelumnya ($email_before_update) menjadi $em";
+        catatLog($conn, $activity, $iduser_logged);
         header('location:admin.php');
     } else {
         echo 'Gagal';
         header('location:admin.php');
     }
 }
+
 
 // Menghapus admin dari kelola admin
 if (isset($_POST['hapusadmin'])) {
     $iduser = $_POST['iduser'];
-
+    $em = $_POST['email'];
     $hapus = mysqli_query($conn, "DELETE FROM login WHERE iduser='$iduser'");
+
     if ($hapus) {
+
+        $iduser_logged = $_SESSION['iduser'];
+        $email_logged = $_SESSION['email'];
+        $activity = "$email_logged menghapus admin: $em";
+        catatLog($conn, $activity, $iduser_logged);
+
         header('location:admin.php');
     } else {
-        echo 'Gagal';
+
+        echo 'Gagal menghapus admin';
         header('location:admin.php');
     }
 }
+
 
 
 
@@ -539,8 +575,6 @@ if (isset($_POST['updatepermintaan'])) {
 
 
 
-
-
 // Menghapus permintaan barang
 if (isset($_POST['hapuspermintaan']) && isset($_POST['idpermintaan'])) {
     $idpermintaan = $_POST['idpermintaan'];
@@ -559,4 +593,30 @@ if (isset($_POST['hapuspermintaan']) && isset($_POST['idpermintaan'])) {
     }
 } else {
     echo ' ';
+}
+
+
+/// EXPORT EXCEL STOK BARANG
+if (isset($_POST['import'])) {
+
+    $importExcel = mysqli_query($conn, "select * from stock");
+    if ($importExcel) {
+        header('location:excelstock.php');
+    } else {
+        echo 'Gagal';
+        header('location:imstock.php');
+    }
+}
+
+// Fungsi untuk mencatat log
+function catatLog($conn, $activity, $iduser)
+{
+    $activity = mysqli_real_escape_string($conn, $activity);
+    $query = "INSERT INTO log (activity, iduser) VALUES ('$activity', '$iduser')";
+    $result = mysqli_query($conn, $query);
+    if ($result) {
+        return true;
+    } else {
+        return false;
+    }
 }
