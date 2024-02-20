@@ -68,9 +68,9 @@ $result = mysqli_query($conn, $query);
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Kelola Admin
                         </a>
-                        <a class="nav-link" href="logout.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>
-                            Log
+                        <a class="nav-link" href="log.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
+                            Log Aktivitas
                         </a>
                         <a class="nav-link" href="logout.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>

@@ -2,11 +2,9 @@
 require 'function.php';
 require 'cek.php';
 
-session_start();
-
 if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
-    exit(); 
+    exit();
 }
 $iduser = $_SESSION['iduser'];
 ?>
@@ -57,12 +55,17 @@ $iduser = $_SESSION['iduser'];
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                             Kelola Admin
                         </a>
+                        <a class="nav-link" href="log.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
+                            Log Aktivitas
+                        </a>
                         <a class="nav-link" href="logout.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>
                             Logout
                         </a>
                     </div>
                 </div>
+            </nav>
         </div>
         <div id="layoutSidenav_content">
             <main>
