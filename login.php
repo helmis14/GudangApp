@@ -1,20 +1,19 @@
 <?php
 require 'function.php';
 
-
 // cek login, terdaftar atau tidak
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
     // Gunakan prepared statement untuk mencegah SQL Injection
-    $stmt = mysqli_prepare($conn, "SELECT iduser FROM login WHERE email=? AND password=?");
+    $stmt = mysqli_prepare($conn, "SELECT iduser, role FROM login WHERE email=? AND password=?");
     mysqli_stmt_bind_param($stmt, "ss", $email, $password);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_store_result($stmt);
 
     // Binding hasil query
-    mysqli_stmt_bind_result($stmt, $iduser);
+    mysqli_stmt_bind_result($stmt, $iduser, $role);
     mysqli_stmt_fetch($stmt);
 
     // Verifikasi hasil query
@@ -23,15 +22,26 @@ if (isset($_POST['login'])) {
         session_start();
         $_SESSION['iduser'] = $iduser;
         $_SESSION['email'] = $email;
+        $_SESSION['role'] = $role;
         $_SESSION['log'] = true;
 
         // Catat log aktivitas
         $activity = "Login berhasil: $email";
         catatLog($conn, $activity, $iduser);
 
-        header('location:index.php');
+        // Periksa peran pengguna dan arahkan ke halaman yang sesuai
+        if ($role === 'superadmin' || $role === 'gudang' || $role === 'dev') {
+            header('Location: index.php');
+            exit();
+        } else if ($role === 'supervisor') {
+            header('Location: permintaan.php');
+            exit();
+        } else {
+            header('Location: access_denied.php');
+            exit();
+        }
     } else {
-        header('location:login.php');
+        header('Location: login.php');
     }
 
     // Tutup statement
@@ -39,11 +49,9 @@ if (isset($_POST['login'])) {
 }
 
 if (isset($_SESSION['log'])) {
-    header('location:index.php');
+    header('Location: index.php');
+    exit();
 }
-
-
-
 ?>
 
 

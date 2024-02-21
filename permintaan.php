@@ -6,6 +6,11 @@ if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
     exit();
 }
+
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'supervisor') {
+    header('Location: access_denied.php');
+    exit();
+}
 $iduser = $_SESSION['iduser'];
 ?>
 
@@ -35,30 +40,48 @@ $iduser = $_SESSION['iduser'];
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="permintaan.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
-                            Permintaan Barang
-                        </a>
-                        <a class="nav-link" href="index.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
-                            Stock Barang
-                        </a>
-                        <a class="nav-link" href="barang_masuk.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
-                            Barang Masuk
-                        </a>
-                        <a class="nav-link" href="barang_keluar.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
-                            Barang Keluar
-                        </a>
-                        <a class="nav-link" href="admin.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                            Kelola Admin
-                        </a>
-                        <a class="nav-link" href="log.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
-                            Log Aktivitas
-                        </a>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'supervisor') { ?>
+                            <a class="nav-link" href="permintaan.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
+                                Permintaan Barang
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="index.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
+                                Stock Barang
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="barang_masuk.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
+                                Barang Masuk
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="barang_keluar.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
+                                Barang Keluar
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                            <a class="nav-link" href="admin.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Kelola Admin
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                            <a class="nav-link" href="log.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
+                                Log Aktivitas
+                            </a>
+                        <?php } ?>
+
                         <a class="nav-link" href="logout.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>
                             Logout
@@ -153,18 +176,52 @@ $iduser = $_SESSION['iduser'];
                                                         <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
                                                     </a>
                                                 </td>
-                                                <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Diterima' : 'Ditolak'); ?></td>
+                                                <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Disetujui' : 'Ditolak'); ?></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
-                                                        Edit
-                                                    </button>
-                                                    <?php
-                                                    ?>
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
-                                                        Delete
-                                                    </button>
+                                                    <?php if ($_SESSION['role'] !== 'superadmin') { ?>
+                                                        <!-- Jika bukan superadmin, tombol Edit dan Delete -->
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+                                                            Edit
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?= $idpermintaan; ?>">
+                                                            Delete
+                                                        </button>
+                                                    <?php } else { ?>
+                                                        <!-- Jika peran adalah superadmin, tombol untuk mengubah status permintaan -->
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                            Ubah Status
+                                                        </button>
+                                                    <?php } ?>
                                                 </td>
                                             </tr>
+
+                                            <!-- Modal untuk mengubah status permintaan -->
+                                            <div class="modal fade" id="statusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="statusModalLabel">Ubah Status Permintaan</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="update_status.php" method="POST">
+                                                                <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
+                                                                <div class="form-group">
+                                                                    <label for="status">Status:</label>
+                                                                    <select class="form-control" id="status" name="status">
+                                                                        <option value="1">Disetujui</option>
+                                                                        <option value="2">Tidak Disetujui</option>
+                                                                    </select>
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
 
                                             <!-- Modal untuk menampilkan gambar penuh -->
                                             <div class="modal fade" id="gambarModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">

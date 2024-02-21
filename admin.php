@@ -6,6 +6,11 @@ if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
     exit();
 }
+
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev') {
+    header('Location: access_denied.php');
+    exit();
+}
 $iduser = $_SESSION['iduser'];
 ?>
 
@@ -35,30 +40,48 @@ $iduser = $_SESSION['iduser'];
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="permintaan.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
-                            Permintaan Barang
-                        </a>
-                        <a class="nav-link" href="index.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
-                            Stock Barang
-                        </a>
-                        <a class="nav-link" href="barang_masuk.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
-                            Barang Masuk
-                        </a>
-                        <a class="nav-link" href="barang_keluar.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
-                            Barang Keluar
-                        </a>
-                        <a class="nav-link" href="admin.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                            Kelola Admin
-                        </a>
-                        <a class="nav-link" href="log.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
-                            Log Aktivitas
-                        </a>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'supervisor') { ?>
+                            <a class="nav-link" href="permintaan.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
+                                Permintaan Barang
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="index.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
+                                Stock Barang
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="barang_masuk.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
+                                Barang Masuk
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="barang_keluar.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
+                                Barang Keluar
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                            <a class="nav-link" href="admin.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Kelola Admin
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                            <a class="nav-link" href="log.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
+                                Log Aktivitas
+                            </a>
+                        <?php } ?>
+
                         <a class="nav-link" href="logout.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>
                             Logout
@@ -71,8 +94,6 @@ $iduser = $_SESSION['iduser'];
             <main>
                 <div class="container-fluid">
                     <h1 class="mt-4">Kelola Admin</h1>
-
-
                     <div class="card mb-4">
                         <div class="card-header">
                             <!-- Button to Open the Modal "Tambah Barang"-->
@@ -81,20 +102,18 @@ $iduser = $_SESSION['iduser'];
                             </button>
                         </div>
                         <div class="card-body">
-
-
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Email Admin</th>
-                                            <th>Password</pass>
+                                            <th>Role</th>
+                                            <th>Email</th>
+                                            <th>Password</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
                                         <?php
                                         $ambilsemuadataadmin = mysqli_query($conn, "select * from login");
                                         $i = 1;
@@ -102,12 +121,22 @@ $iduser = $_SESSION['iduser'];
                                             $em = $data['email'];
                                             $iduser = $data['iduser'];
                                             $pass = $data['password'];
+                                            $role = $data['role'];
                                         ?>
-
                                             <tr>
                                                 <td><?= $i++; ?></td>
+                                                <td><?= $role; ?></td>
                                                 <td><?= $em; ?></td>
-                                                <td><?= $pass; ?></td>
+                                                <td>
+                                                    <?php
+                                                    // Periksa peran pengguna
+                                                    if ($_SESSION['role'] === 'dev') {
+                                                        echo $pass;
+                                                    } else {
+                                                        echo '••••••••••';
+                                                    }
+                                                    ?>
+                                                </td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $iduser; ?>">
                                                         Edit
@@ -131,9 +160,14 @@ $iduser = $_SESSION['iduser'];
                                                             <div class="modal-body">
                                                                 <!-- Input hidden untuk menyimpan iduser -->
                                                                 <input type="hidden" name="iduser" value="<?= $iduser; ?>">
+                                                                <label for="email">Email</label>
                                                                 <input type="text" name="email" value="<?= $em; ?>" class="form-control" required>
                                                                 <br>
+                                                                <label for="password">Password</label>
                                                                 <input type="password" name="password" value="<?= $pass; ?>" class="form-control" required>
+                                                                <br>
+                                                                <label for="role">Role</label>
+                                                                <input type="role" name="role" value="<?= $role; ?>" class="form-control" required>
                                                                 <br>
                                                                 <button type="submit" class="btn btn-primary" name="updateadmin">Submit</button>
                                                             </div>
@@ -141,64 +175,52 @@ $iduser = $_SESSION['iduser'];
                                                     </div>
                                                 </div>
                                             </div>
-
-                            </div>
-
-                            <!-- Delete Modal -->
-                            <div class="modal fade" id="delete<?= $iduser; ?>">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-
-                                        <!-- Modal Header -->
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Hapus Admin</h4>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        </div>
-
-                                        <!-- Modal body -->
-                                        <form method="post">
-                                            <div class="modal-body">
-                                                Apakah Anda Yakin Ingin Menghapus <?= $em; ?>?
-                                                <input type="hidden" name="iduser" value="<?= $iduser; ?>">
-                                                <br>
-                                                <br>
-                                                <input type="hidden" name="email" value="<?= $em; ?>">
-                                                <button type="submit" class="btn btn-danger" name="hapusadmin">Hapus</button>
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="delete<?= $iduser; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus Admin</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+                                                        <!-- Modal body -->
+                                                        <form method="post">
+                                                            <div class="modal-body">
+                                                                Apakah Anda Yakin Ingin Menghapus <?= $em; ?>?
+                                                                <input type="hidden" name="iduser" value="<?= $iduser; ?>">
+                                                                <br>
+                                                                <br>
+                                                                <input type="hidden" name="email" value="<?= $em; ?>">
+                                                                <button type="submit" class="btn btn-danger" name="hapusadmin">Hapus</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </form>
-
-                                    </div>
-
-                                </div>
+                                        <?php
+                                        };
+                                        ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
-
-                    <?php
-                                        };
-
-                    ?>
-
-                    </tbody>
-                    </table>
                     </div>
                 </div>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </main>
         </div>
-        <footer class="py-4 bg-light mt-auto">
-            <div class="container-fluid">
-                <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
-                    <div>
-                        <a href="#">Privacy Policy</a>
-                        &middot;
-                        <a href="#">Terms &amp; Conditions</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-    </main>
-    </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -215,29 +237,30 @@ $iduser = $_SESSION['iduser'];
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
-
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Tambah Admin</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-
             <!-- Modal body -->
             <form method="post">
                 <div class="modal-body">
+                    <label for="email">Email</label>
                     <input type="text" name="email" placeholder="email" class="form-control" required>
                     <br>
+                    <label for="password">Password</label>
                     <input type="password" name="password" placeholder="password" class="form-control" required>
+                    <br>
+                    <label for="role">Role</label>
+                    <input type="text" name="role" placeholder="role" class="form-control" required>
                     <br>
                     <button type="submit" class="btn btn-primary" name="addnewadmin">Submit</button>
                 </div>
             </form>
-
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
-
         </div>
     </div>
 </div>

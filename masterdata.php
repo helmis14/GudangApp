@@ -6,6 +6,7 @@ if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
     exit();
 }
+
 if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang') {
     header('Location: access_denied.php');
     exit();
@@ -13,6 +14,7 @@ if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESS
 
 $iduser = $_SESSION['iduser'];
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +25,7 @@ $iduser = $_SESSION['iduser'];
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Barang Masuk</title>
+    <title>Master Data</title>
     <link href="css/styles.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
@@ -68,6 +70,13 @@ $iduser = $_SESSION['iduser'];
                             </a>
                         <?php } ?>
 
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="masterdata.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
+                                Master Data
+                            </a>
+                        <?php } ?>
+
                         <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
                             <a class="nav-link" href="admin.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
@@ -93,64 +102,59 @@ $iduser = $_SESSION['iduser'];
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid">
-                    <h1 class="mt-4">Barang Masuk </h1>
+                    <h1 class="mt-4">Master Data</h1>
 
 
                     <div class="card mb-4">
                         <div class="card-header">
-                            <!-- Button to Open the Modal -->
+                            <!-- Button to Open the Modal "Tambah Barang"-->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                                 Tambah Barang
                             </button>
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
+                                Export/Import
+                            </button>
                         </div>
                         <div class="card-body">
+
+                            <?php
+                            $ambildatastock = mysqli_query($conn, "select * from stock where stock < 1");
+                            while ($fetch = mysqli_fetch_array($ambildatastock)) {
+                                $barang = $fetch['namabarang'];
+
+
+                            ?>
+                            <?php
+                            }
+                            ?>
+
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Tanggal</th>
+                                            <th>No</th>
                                             <th>Nama Barang</th>
                                             <th>Unit</th>
-                                            <th>Jumlah</th>
-                                            <th>distributor</th>
-                                            <th>Penerima</th>
-                                            <th>Keterangan</th>
-                                            <th>Bukti Masuk</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        $ambilsemuadatastock = mysqli_query($conn, "select * from masuk m, stock s where s.idbarang = m.idbarang");
-                                        while ($data = mysqli_fetch_array($ambilsemuadatastock)) {
-                                            $idb = $data['idbarang'];
-                                            $idm = $data['idmasuk'];
-                                            $tanggal = $data['tanggal'];
-                                            $namabarang = $data['namabarang'];
-                                            $qty = $data['qty'];
-                                            $keterangan = $data['keterangan'];
-                                            $penerima = $data['penerima'];
-                                            $deskripsi = $data['deskripsi'];
-                                            $distributor = $data['distributor'];
-                                            $bukti_masuk_base64 = $data['bukti_masuk_base64'];
 
+                                        <?php
+                                        $ambilsemuadatamaster = mysqli_query($conn, "select * from masterdata");
+                                        $i = 1;
+                                        while ($data = mysqli_fetch_array($ambilsemuadatamaster)) {
+                                            $namabarang = $data['namabarang'];
+                                            $deskripsi = $data['deskripsi'];
+                                            $idb = $data['idbarang'];
                                         ?>
 
                                             <tr>
-                                                <td><?= $tanggal; ?></td>
+                                                <td><?= $i++; ?></td>
                                                 <td><?= $namabarang; ?></td>
                                                 <td><?= $deskripsi; ?></td>
-                                                <td><?= $qty; ?></td>
-                                                <td><?= $distributor; ?></td>
-                                                <td><?= $penerima; ?></td>
-                                                <td><?= $keterangan; ?></td>
                                                 <td>
-                                                    <a href="#" class="gambar-modal-trigger" data-gambar-src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>">
-                                                        <img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;">
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
+                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idb; ?>">
                                                         Edit
                                                     </button>
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
@@ -158,27 +162,8 @@ $iduser = $_SESSION['iduser'];
                                                     </button>
                                                 </td>
                                             </tr>
-
-                                            <!-- Modal untuk menampilkan gambar penuh -->
-                                            <div class="modal fade" id="gambarModal" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="gambarModalLabel">Bukti Masuk</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <img src="" id="gambarModalImage" class="img-fluid">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
                                             <!-- Edit Modal -->
-                                            <div class="modal fade" id="edit<?= $idm; ?>">
+                                            <div class="modal fade" id="edit<?= $idb; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
 
@@ -189,26 +174,19 @@ $iduser = $_SESSION['iduser'];
                                                         </div>
 
                                                         <!-- Modal body -->
-                                                        <form method="post" enctype="multipart/form-data">
+                                                        <form method="post">
                                                             <div class="modal-body">
-                                                                <label for="penerima">Penerima</label>
-                                                                <input type="text" name="penerima" value="<?= $penerima; ?>" class="form-control">
+                                                                <label for="namabarang">Nama Barang</label>
+                                                                <input type="text" name="namabarang" value="<?= $namabarang; ?>" class="form-control" required>
                                                                 <br>
-                                                                <label for="qty">Jumlah:</label>
-                                                                <input type="text" name="qty" value="<?= $qty; ?>" class="form-control">
+                                                                <label for="deskripsi">Unit:</label>
+                                                                <input type="text" name="deskripsi" value="<?= $deskripsi; ?>" class="form-control" required>
                                                                 <br>
-                                                                <label for="keterangan">keterangan:</label>
-                                                                <input type="text" name="keterangan" value="<?= $keterangan; ?>" class="form-control">
-                                                                <br>
-                                                                <label for="distributor">Distributor:</label>
-                                                                <input type="text" name="distributor" value="<?= $distributor; ?>" class="form-control">
-                                                                <br>
-                                                                <label for="update_bukti_masuk">Bukti Masuk:</label>
-                                                                <input type="file" name="update_bukti_masuk" class="form-control-file" accept="image/*">
+                                                                <label for="lokasi">Lokasi:</label>
+                                                                <input type="text" name="lokasi" value="<?= $lok; ?>" class="form-control" required>
                                                                 <br>
                                                                 <input type="hidden" name="idb" value="<?= $idb; ?>">
-                                                                <input type="hidden" name="idm" value="<?= $idm; ?>">
-                                                                <button type="submit" class="btn btn-primary" name="updatebarangmasuk">Submit</button>
+                                                                <button type="submit" class="btn btn-primary" name="updatebarang">Submit</button>
                                                             </div>
                                                         </form>
 
@@ -234,11 +212,9 @@ $iduser = $_SESSION['iduser'];
                                             <div class="modal-body">
                                                 Apakah Anda Yakin Ingin Menghapus <?= $namabarang; ?>?
                                                 <input type="hidden" name="idb" value="<?= $idb; ?>">
-                                                <input type="hidden" name="qty" value="<?= $qty; ?>">
-                                                <input type="hidden" name="idm" value="<?= $idm; ?>">
                                                 <br>
                                                 <br>
-                                                <button type="submit" class="btn btn-danger" name="hapusbarangmasuk">Hapus</button>
+                                                <button type="submit" class="btn btn-danger" name="hapusbarang">Hapus</button>
                                             </div>
                                         </form>
 
@@ -248,10 +224,12 @@ $iduser = $_SESSION['iduser'];
                             </div>
                         </div>
 
+
                     <?php
                                         };
 
                     ?>
+
                     </tbody>
                     </table>
                     </div>
@@ -282,66 +260,35 @@ $iduser = $_SESSION['iduser'];
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/datatables-demo.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Menampilkan modal saat gambar diklik
-            $('.gambar-modal-trigger').click(function() {
-                var gambarSrc = $(this).data('gambar-src');
-                $('#gambarModalImage').attr('src', gambarSrc);
-                $('#gambarModal').modal('show');
-            });
-        });
-    </script>
-
 </body>
 
-<!-- The Modal -->
+<!-- The Modal "Tambah Barang"-->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Tambah Barang Masuk</h4>
+                <h4 class="modal-title">Tambah Barang</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <!-- Modal body -->
-            <form method="post" enctype="multipart/form-data">
+            <form method="post">
                 <div class="modal-body">
-                    <label for="barangnya">Nama Barang:</label>
-                    <select name="barangnya" class="form-control">
-                        <?php
-                        $ambilsemuadatanya = mysqli_query($conn, "select * from stock");
-                        while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
-                            $namabarangnya = $fetcharray['namabarang'];
-                            $idbarangnya = $fetcharray['idbarang'];
-
-                        ?>
-
-                            <option value="<?= $idbarangnya; ?>"><?= $namabarangnya; ?></option>
-
-                        <?php
-                        }
-                        ?>
+                    <label for="namabarang">Nama Barang:</label>
+                    <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
+                    <br>
+                    <label for="deskripsi">Deskripsi:</label>
+                    <select name="deskripsi" class="form-control">
+                        <option value="Pcs">PCS</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Kg">KG</option>
+                        <option value="Ball">BALL</option>
                     </select>
+
                     <br>
-                    <label for="jumlah">Jumlah:</label>
-                    <input type="number" name="qty" placeholder="Quantity" class="form-control" required>
-                    </br>
-                    <label for="distributor">Distributor:</label>
-                    <input type="text" name="distributor" placeholder="Distributor" class="form-control" required>
-                    </br>
-                    <label for="penerima">Penerima</label>
-                    <input type="text" name="penerima" placeholder="Penerima" class="form-control" required>
-                    </br>
-                    <label for="keterangan">Keterangan</label>
-                    <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
-                    </br>
-                    <label for="bukti_masuk_base64">Bukti Masuk:</label>
-                    <input type="file" name="bukti_masuk_base64" class="form-control-file" required>
-                    <br>
-                    <button type="submit" class="btn btn-primary" name="barangmasuk">Submit</button>
+                    <button type="submit" class="btn btn-primary" name="addnewmaster">Submit</button>
                 </div>
             </form>
 
@@ -353,5 +300,40 @@ $iduser = $_SESSION['iduser'];
         </div>
     </div>
 </div>
+
+
+<!-- The Modal "Export"-->
+<div class="modal fade" id="export">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Export/Import Data Stock Barang</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <form method="post">
+                <div class="modal-body">
+                    <br>
+                    <button type="submit" class="btn btn-outline-success" name="export">Export to Excel</button>
+                    <br>
+                    <br>
+                    <input type="file" name="import_file" class="form-control" />
+                    <br>
+                    <button type="submit" class="btn btn-outline-warning" name="import">Import to Excel</button>
+                </div>
+            </form>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 </html>

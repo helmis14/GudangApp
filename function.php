@@ -18,6 +18,24 @@ function convertToBase64($file)
     }
 }
 
+// Menambah barang baru master
+if (isset($_POST['addnewmaster'])) {
+    $namabarang = $_POST['namabarang'];
+    $deskripsi = $_POST['deskripsi'];
+
+    $addtotable = mysqli_query($conn, "INSERT INTO masterdata (namabarang, deskripsi) VALUES ('$namabarang', '$deskripsi')");
+    if ($addtotable) {
+        $iduser_logged = $_SESSION['iduser'];
+        $email_logged = $_SESSION['email'];
+        $activity = "$email_logged menambah data barang master: $namabarang ($deskripsi)";
+        catatLog($conn, $activity, $iduser_logged);
+        header('location:masterdata.php');
+    } else {
+        echo 'Gagal';
+        header('location:masterdata.php');
+    }
+}
+
 // Menambah barang baru stock
 if (isset($_POST['addnewbarang'])) {
     $namabarang = $_POST['namabarang'];
@@ -408,8 +426,9 @@ if (isset($_POST['addnewadmin'])) {
     $em = $_POST['email'];
     $iduser = $_POST['iduser'];
     $pass = $_POST['password'];
+    $role = $_POST['role'];
 
-    $addtotable = mysqli_query($conn, "INSERT INTO login (email, iduser, password) VALUES ('$em','$iduser','$pass')");
+    $addtotable = mysqli_query($conn, "INSERT INTO login (email, iduser, password, role) VALUES ('$em','$iduser','$pass','$role')");
     if ($addtotable) {
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
@@ -430,6 +449,7 @@ if (isset($_POST['updateadmin'])) {
     $iduser = $_POST['iduser'];
     $em = $_POST['email'];
     $pass = $_POST['password'];
+    $role = $_POST['role'];
 
     // Ambil data admin sebelum update
     $query_before_update = mysqli_query($conn, "SELECT email FROM login WHERE iduser = '$iduser'");
@@ -437,7 +457,7 @@ if (isset($_POST['updateadmin'])) {
     $email_before_update = $data_before_update['email'];
 
     // Lakukan pembaruan pada admin
-    $update = mysqli_query($conn, "UPDATE login SET email='$em', password='$pass' WHERE iduser ='$iduser'");
+    $update = mysqli_query($conn, "UPDATE login SET email='$em', password='$pass', role='$role' WHERE iduser ='$iduser'");
     if ($update) {
         // Ambil data admin setelah update
         $query_after_update = mysqli_query($conn, "SELECT email FROM login WHERE iduser = '$iduser'");

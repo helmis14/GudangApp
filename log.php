@@ -2,13 +2,19 @@
 require 'function.php';
 require 'cek.php';
 
-session_start();
 
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
     exit();
 }
+
+// Periksa peran pengguna
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev') {
+    header('Location: access_denied.php');
+    exit();
+}
+
 
 // Ambil user ID dari sesi
 $iduser = $_SESSION['iduser'];
@@ -19,6 +25,7 @@ $query = "SELECT log.id, log.activity, log.timestamp, login.email
           ORDER BY log.timestamp DESC";
 $result = mysqli_query($conn, $query);
 ?>
+
 
 
 
@@ -48,30 +55,48 @@ $result = mysqli_query($conn, $query);
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="permintaan.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
-                            Permintaan Barang
-                        </a>
-                        <a class="nav-link" href="index.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
-                            Stock Barang
-                        </a>
-                        <a class="nav-link" href="barang_masuk.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
-                            Barang Masuk
-                        </a>
-                        <a class="nav-link" href="barang_keluar.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
-                            Barang Keluar
-                        </a>
-                        <a class="nav-link" href="admin.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                            Kelola Admin
-                        </a>
-                        <a class="nav-link" href="log.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
-                            Log Aktivitas
-                        </a>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'supervisor') { ?>
+                            <a class="nav-link" href="permintaan.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
+                                Permintaan Barang
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="index.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
+                                Stock Barang
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="barang_masuk.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
+                                Barang Masuk
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="barang_keluar.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
+                                Barang Keluar
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                            <a class="nav-link" href="admin.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                Kelola Admin
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                            <a class="nav-link" href="log.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
+                                Log Aktivitas
+                            </a>
+                        <?php } ?>
+
                         <a class="nav-link" href="logout.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-power-off"></i></div>
                             Logout
