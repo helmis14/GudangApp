@@ -18,36 +18,19 @@ function convertToBase64($file)
     }
 }
 
-// Menambah barang baru master
-if (isset($_POST['addnewmaster'])) {
-    $namabarang = $_POST['namabarang'];
-    $deskripsi = $_POST['deskripsi'];
-
-    $addtotable = mysqli_query($conn, "INSERT INTO masterdata (namabarang, deskripsi) VALUES ('$namabarang', '$deskripsi')");
-    if ($addtotable) {
-        $iduser_logged = $_SESSION['iduser'];
-        $email_logged = $_SESSION['email'];
-        $activity = "$email_logged menambah data barang master: $namabarang ($deskripsi)";
-        catatLog($conn, $activity, $iduser_logged);
-        header('location:masterdata.php');
-    } else {
-        echo 'Gagal';
-        header('location:masterdata.php');
-    }
-}
 
 // Menambah barang baru stock
 if (isset($_POST['addnewbarang'])) {
     $namabarang = $_POST['namabarang'];
-    $deskripsi = $_POST['deskripsi'];
+    $unit = $_POST['unit'];
     $stock = $_POST['stock'];
     $lok = $_POST['lokasi'];
 
-    $addtotable = mysqli_query($conn, "INSERT INTO stock (namabarang, deskripsi, stock, lokasi) VALUES ('$namabarang', '$deskripsi', '$stock', '$lok')");
+    $addtotable = mysqli_query($conn, "INSERT INTO stock (namabarang, unit, stock, lokasi) VALUES ('$namabarang', '$unit', '$stock', '$lok')");
     if ($addtotable) {
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
-        $activity = "$email_logged menambah data barang stok: $namabarang ($stock $deskripsi) lokasi $lok";
+        $activity = "$email_logged menambah data barang stok: $namabarang ($stock $unit) lokasi $lok";
         catatLog($conn, $activity, $iduser_logged);
         header('location:index.php');
     } else {
@@ -60,10 +43,10 @@ if (isset($_POST['addnewbarang'])) {
 if (isset($_POST['updatebarang'])) {
     $idb = $_POST['idb'];
     $namabarang = $_POST['namabarang'];
-    $deskripsi = $_POST['deskripsi'];
+    $unit = $_POST['unit'];
     $lok = $_POST['lokasi'];
 
-    $update = mysqli_query($conn, "UPDATE stock SET namabarang='$namabarang', deskripsi='$deskripsi', lokasi='$lok' WHERE idbarang ='$idb'");
+    $update = mysqli_query($conn, "UPDATE stock SET namabarang='$namabarang', unit='$unit', lokasi='$lok' WHERE idbarang ='$idb'");
     if ($update) {
         // Ambil informasi barang sebelum diubah
         $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
@@ -73,7 +56,7 @@ if (isset($_POST['updatebarang'])) {
         // Catat log dengan informasi yang diinginkan
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
-        $activity = "$email_logged melakukan pembaruan informasi stock barang: $nama_barang (ID: $idb) menjadi $namabarang, $deskripsi, $lok";
+        $activity = "$email_logged melakukan pembaruan informasi stock barang: $nama_barang (ID: $idb) menjadi $namabarang, $unit, $lok";
         catatLog($conn, $activity, $iduser_logged);
 
         header('location:index.php');

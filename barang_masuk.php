@@ -104,6 +104,50 @@ $iduser = $_SESSION['iduser'];
                             </button>
                         </div>
                         <div class="card-body">
+                            <?php
+                            $ambilsemuadatastock = mysqli_query($conn, "SELECT * FROM masuk m JOIN stock s ON s.idbarang = m.idbarang WHERE m.penerima = '' OR m.distributor = '' OR m.keterangan = '' OR m.bukti_masuk_base64 = ''");
+                            while ($data = mysqli_fetch_array($ambilsemuadatastock)) {
+                                $idb = $data['idbarang'];
+                                $idm = $data['idmasuk'];
+                                $tanggal = $data['tanggal'];
+                                $namabarang = $data['namabarang'];
+                                $qty = $data['qty'];
+                                $keterangan = $data['keterangan'];
+                                $penerima = $data['penerima'];
+                                $unit = $data['unit'];
+                                $distributor = $data['distributor'];
+                                $bukti_masuk_base64 = $data['bukti_masuk_base64'];
+
+                                // Array untuk menyimpan nama kolom yang kosong
+                                $kolom_kosong = array();
+
+                                // Periksa setiap kolom dan tambahkan ke array jika kosong
+                                if (empty($penerima)) {
+                                    $kolom_kosong[] = 'Penerima';
+                                }
+                                if (empty($distributor)) {
+                                    $kolom_kosong[] = 'Distributor';
+                                }
+                                if (empty($keterangan)) {
+                                    $kolom_kosong[] = 'Keterangan';
+                                }
+                                if (empty($bukti_masuk_base64)) {
+                                    $kolom_kosong[] = 'Bukti Masuk';
+                                }
+
+                                // Tampilkan pesan alert
+                                if (!empty($kolom_kosong)) {
+                            ?>
+                                    <div class="alert alert-danger alert-dismissible fade show">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <strong>Perhatian!</strong> Mohon isi kolom kosong data barang <?= $namabarang; ?> pada waktu <?= $tanggal; ?> berikut : <?= implode(', ', $kolom_kosong); ?>
+                                    </div>
+                            <?php
+                                }
+                            }
+                            ?>
+
+
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
@@ -130,7 +174,7 @@ $iduser = $_SESSION['iduser'];
                                             $qty = $data['qty'];
                                             $keterangan = $data['keterangan'];
                                             $penerima = $data['penerima'];
-                                            $deskripsi = $data['deskripsi'];
+                                            $unit = $data['unit'];
                                             $distributor = $data['distributor'];
                                             $bukti_masuk_base64 = $data['bukti_masuk_base64'];
 
@@ -139,7 +183,7 @@ $iduser = $_SESSION['iduser'];
                                             <tr>
                                                 <td><?= $tanggal; ?></td>
                                                 <td><?= $namabarang; ?></td>
-                                                <td><?= $deskripsi; ?></td>
+                                                <td><?= $unit; ?></td>
                                                 <td><?= $qty; ?></td>
                                                 <td><?= $distributor; ?></td>
                                                 <td><?= $penerima; ?></td>

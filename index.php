@@ -1,6 +1,7 @@
 <?php
 require 'function.php';
 require 'cek.php';
+require 'vendor/autoload.php';
 
 if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
@@ -13,7 +14,106 @@ if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESS
 }
 
 $iduser = $_SESSION['iduser'];
+
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+
+// Function to establish database connection
+function connectToDatabase()
+{
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "stokbarangs";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    return $conn;
+}
+
+// Function to import data from Excel to MySQL
+function importDataFromExcel($excelFilePath, $conn)
+{
+    $reader = new Xlsx();
+    $spreadsheet = $reader->load($excelFilePath);
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Assuming the first row contains column names
+    $columns = [];
+    $highestColumn = $sheet->getHighestColumn();
+    foreach (range('A', $highestColumn) as $col) {
+        $columns[] = $sheet->getCell($col . '1')->getValue();
+    }
+
+    for ($row = 2; $row <= $sheet->getHighestRow(); $row++) {
+        $rowData = [];
+        foreach ($columns as $col) {
+            $colIndex = array_search($col, $columns) + 1;
+            $rowData[$col] = $sheet->getCellByColumnAndRow($colIndex, $row)->getValue();
+        }
+
+        // Prepare and execute the MySQL insert query using prepared statements
+        $stmt = $conn->prepare("INSERT INTO stock (idbarang, namabarang, unit, stock, lokasi)
+                        VALUES (?, ?, ?, ?, ?)");
+
+        // Check if 'unit' is empty, provide a default value if needed
+        $unitValue = !empty($rowData['unit']) ? $rowData['unit'] : 'Default unit';
+
+        $stmt->bind_param("sssss", $rowData['No'], $rowData['Nama Barang'], $unitValue, $rowData['Stock'], $rowData['Lokasi/rak']);
+
+        if (!$stmt->execute()) {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
+}
+
+// Check if the form is submitted
+if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
+    $conn = connectToDatabase();
+    $target_dir = "uploads/";
+    $target_file = $target_dir . basename($_FILES["excel_file"]["name"]);
+    $uploadOk = 1;
+    $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    // Check if the file is an Excel file
+    if ($fileType != "xlsx" && $fileType != "xls") {
+        echo "Sorry, only Excel files are allowed.";
+        $uploadOk = 0;
+    }
+
+    // Check if file already exists
+    if (file_exists($target_file)) {
+        echo "Sorry, file already exists.";
+        $uploadOk = 0;
+    }
+
+    // Check file size
+    if ($_FILES["excel_file"]["size"] > 500000) {
+        echo "Sorry, your file is too large.";
+        $uploadOk = 0;
+    }
+
+    if ($uploadOk == 1) {
+        if (move_uploaded_file($_FILES["excel_file"]["tmp_name"], $target_file)) {
+            // Import data from Excel to MySQL
+            importDataFromExcel($target_file, $conn);
+            echo "File uploaded and data imported successfully.";
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+        }
+    }
+
+    // Close the connection outside the form submission condition
+    $conn->close();
+}
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -105,12 +205,17 @@ $iduser = $_SESSION['iduser'];
                                 Tambah Barang
                             </button>
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
-                                Export/Import
+                                Export
+                            </button>
+                            </button>
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import">
+                                Import
                             </button>
                         </div>
                         <div class="card-body">
 
                             <?php
+                            $conn = mysqli_connect("localhost", "root", "", "stokbarangs");
                             $ambildatastock = mysqli_query($conn, "select * from stock where stock < 1");
                             while ($fetch = mysqli_fetch_array($ambildatastock)) {
                                 $barang = $fetch['namabarang'];
@@ -144,7 +249,7 @@ $iduser = $_SESSION['iduser'];
                                         $i = 1;
                                         while ($data = mysqli_fetch_array($ambilsemuadatastock)) {
                                             $namabarang = $data['namabarang'];
-                                            $deskripsi = $data['deskripsi'];
+                                            $unit = $data['unit'];
                                             $stock = $data['stock'];
                                             $lok = $data['lokasi'];
                                             $idb = $data['idbarang'];
@@ -153,7 +258,7 @@ $iduser = $_SESSION['iduser'];
                                             <tr>
                                                 <td><?= $i++; ?></td>
                                                 <td><?= $namabarang; ?></td>
-                                                <td><?= $deskripsi; ?></td>
+                                                <td><?= $unit; ?></td>
                                                 <td><?= $stock; ?></td>
                                                 <td><?= $lok; ?></td>
                                                 <td>
@@ -182,8 +287,8 @@ $iduser = $_SESSION['iduser'];
                                                                 <label for="namabarang">Nama Barang</label>
                                                                 <input type="text" name="namabarang" value="<?= $namabarang; ?>" class="form-control" required>
                                                                 <br>
-                                                                <label for="deskripsi">Unit:</label>
-                                                                <input type="text" name="deskripsi" value="<?= $deskripsi; ?>" class="form-control" required>
+                                                                <label for="unit">Unit:</label>
+                                                                <input type="text" name="unit" value="<?= $unit; ?>" class="form-control" required>
                                                                 <br>
                                                                 <label for="lokasi">Lokasi:</label>
                                                                 <input type="text" name="lokasi" value="<?= $lok; ?>" class="form-control" required>
@@ -240,18 +345,6 @@ $iduser = $_SESSION['iduser'];
         </div>
     </div>
     </main>
-    <footer class="py-4 bg-light mt-auto">
-        <div class="container-fluid">
-            <div class="d-flex align-items-center justify-content-between small">
-                <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
-                <div>
-                    <a href="#">Privacy Policy</a>
-                    &middot;
-                    <a href="#">Terms &amp; Conditions</a>
-                </div>
-            </div>
-        </div>
-    </footer>
     </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
@@ -282,8 +375,8 @@ $iduser = $_SESSION['iduser'];
                     <label for="namabarang">Nama Barang:</label>
                     <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
                     <br>
-                    <label for="deskripsi">Deskripsi:</label>
-                    <select name="deskripsi" class="form-control">
+                    <label for="unit">Unit:</label>
+                    <select name="unit" class="form-control">
                         <option value="Pcs">PCS</option>
                         <option value="Pack">Pack</option>
                         <option value="Kg">KG</option>
@@ -291,7 +384,7 @@ $iduser = $_SESSION['iduser'];
                     </select>
 
                     <br>
-                    <!-- <input type="text" name="deskripsi" placeholder="Deskripsi" class="form-control" required>
+                    <!-- <input type="text" name="unit" placeholder="unit" class="form-control" required>
                                     <br> -->
                     <label for="stock">Stock:</label>
                     <input type="number" name="stock" placeholder="Jumlah" class="form-control" required>
@@ -320,20 +413,17 @@ $iduser = $_SESSION['iduser'];
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Export/Import Data Stock Barang</h4>
+                <h4 class="modal-title">Export Data Stock Barang</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <!-- Modal body -->
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 <div class="modal-body">
+                    Apakah Anda Yakin Ingin Mengexport Data Stock Barang
+                    <br>
                     <br>
                     <button type="submit" class="btn btn-outline-success" name="export">Export to Excel</button>
-                    <br>
-                    <br>
-                    <input type="file" name="import_file" class="form-control" />
-                    <br>
-                    <button type="submit" class="btn btn-outline-warning" name="import">Import to Excel</button>
                 </div>
             </form>
 
@@ -346,5 +436,39 @@ $iduser = $_SESSION['iduser'];
     </div>
 </div>
 
+
+
+<!-- The Modal "Import"-->
+<div class="modal fade" id="import">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Import Data Stock Barang</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    Apakah Anda Yakin Ingin Mengimport Data Stock Barang
+                    <br>
+                    <br>
+                    Select Excel file to upload:
+                    <input type="file" name="excel_file" id="excel_file">
+                    <input type="submit" value="Upload and Import" name="import">
+            </form>
+        </div>
+        </form>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+
+    </div>
+</div>
+</div>
 
 </html>

@@ -13,7 +13,6 @@ if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSI
 }
 $iduser = $_SESSION['iduser'];
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,6 +26,8 @@ $iduser = $_SESSION['iduser'];
     <link href="css/styles.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+
+
 </head>
 
 <body class="sb-nav-fixed">
@@ -171,19 +172,35 @@ $iduser = $_SESSION['iduser'];
                                                     }
                                                     ?>
                                                 </td>
+                                                <!-- Modal untuk menampilkan gambar penuh -->
+                                                <div class="modal fade" id="gambarModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="gambarModalLabel">Gambar Permintaan</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" class="img-fluid">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <td>
                                                     <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
                                                         <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
                                                     </a>
                                                 </td>
-                                                <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Disetujui' : 'Ditolak'); ?></td>
+                                                <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Diterima' : 'Ditolak'); ?></td>
                                                 <td>
                                                     <?php if ($_SESSION['role'] !== 'superadmin') { ?>
                                                         <!-- Jika bukan superadmin, tombol Edit dan Delete -->
                                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
                                                             Edit
                                                         </button>
-                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?= $idpermintaan; ?>">
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
                                                             Delete
                                                         </button>
                                                     <?php } else { ?>
@@ -221,26 +238,6 @@ $iduser = $_SESSION['iduser'];
                                                     </div>
                                                 </div>
                                             </div>
-
-
-                                            <!-- Modal untuk menampilkan gambar penuh -->
-                                            <div class="modal fade" id="gambarModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="gambarModalLabel">Gambar Permintaan</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" class="img-fluid">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
 
                                             <!-- Edit Modal -->
                                             <div class="modal fade" id="edit<?= $idpermintaan; ?>">
@@ -309,45 +306,52 @@ $iduser = $_SESSION['iduser'];
                                                 </div>
                                             </div>
 
-                                            <!-- The Modal "Tambah barang dengan id yang sama"-->
-                                            <div class="modal fade" id="myModaledit<?= $idpermintaan; ?>">
-                                                <div class="modal-dialog">
+                                            <!-- Modal tambah barang permintaan edit -->
+                                            <div class="modal fade" id="myModaledit<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
-
-                                                        <!-- Modal Header -->
                                                         <div class="modal-header">
-                                                            <h4 class="modal-title">Tambah Barang <?= $tanggal; ?></h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h5 class="modal-title" id="statusModalLabel">Ubah Status Permintaan</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
                                                         </div>
-                                                        <form method="post" enctype="multipart/form-data" action="process_form.php">
-                                                            <div class="modal-body">
-                                                                <label for="namabarang">Nama Barang: </label>
-                                                                <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
-                                                                <br>
-                                                                <label for="unit">Unit:</label>
-                                                                <select name="unit" class="form-control">
-                                                                    <option value="Pcs">PCS</option>
-                                                                    <option value="Pack">Pack</option>
-                                                                    <option value="Kg">KG</option>
-                                                                    <option value="Ball">BALL</option>
-                                                                </select>
-                                                                <br>
-                                                                <label for="qtypermintaan">Jumlah:</label>
-                                                                <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
-                                                                <br>
-                                                                <label for="keterangan">Keterangan:</label>
-                                                                <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
-                                                                <br>
+                                                        <div class="modal-body">
+                                                            <form action="process_form.php" method="POST">
                                                                 <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
-                                                                <br>
-                                                                <div id="barangContainer">
+                                                                <div class="form-group">
+                                                                    <!-- Formulir utama -->
+                                                                    <label for="namabarang">Nama Barang:</label>
+                                                                    <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
+                                                                    <br>
+                                                                    <label for="unit">Unit:</label>
+                                                                    <select name="unit" class="form-control">
+                                                                        <option value="Pcs">PCS</option>
+                                                                        <option value="Pack">Pack</option>
+                                                                        <option value="Kg">KG</option>
+                                                                        <option value="Ball">BALL</option>
+                                                                    </select>
+                                                                    <br>
+                                                                    <label for="qtypermintaan">Jumlah:</label>
+                                                                    <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
+                                                                    <br>
+                                                                    <label for="keterangan">Keterangan:</label>
+                                                                    <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
+                                                                    <br>
+
+                                                                    <label for="status">Status:</label>
+                                                                    <select name="status" class="form-control">
+                                                                        <option value="0">Pending</option>
+                                                                        <option value="1" disabled>Diterima</option>
+                                                                        <option value="2" disabled>Ditolak</option>
+                                                                    </select>
+                                                                    <hr>
+                                                                    <br>
+                                                                    <div>
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-primary" name="barangbaru">Submit</button>
                                                                 </div>
-                                                                <button type="submit" class="btn btn-primary" name="barangbaru">Submit</button>
-                                                            </div>
-                                                        </form>
-                                                        <!-- Modal footer -->
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -378,7 +382,6 @@ $iduser = $_SESSION['iduser'];
                                                     </div>
                                                 </div>
                                             </div>
-
                                         <?php
                                         };
 
@@ -393,7 +396,7 @@ $iduser = $_SESSION['iduser'];
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
+                        <div class="text-muted">Copyright &copy; Your Website 2024</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;
@@ -413,6 +416,7 @@ $iduser = $_SESSION['iduser'];
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/datatables-demo.js"></script>
+
     <script>
         $(document).ready(function() {
             var counter = 2; // Mulai dari nomor 2
@@ -468,22 +472,25 @@ $iduser = $_SESSION['iduser'];
                 }
             });
         });
-
-        // Mengatur nilai idpermintaan ke dalam input tersembunyi di form "Tambah Barang"
-        $("#myModaledit").on('show.bs.modal', function(e) {
-            var idpermintaan = $(e.relatedTarget).data('idpermintaan');
-            $("#idpermintaanInput").val(idpermintaan);
-        });
-
-
-        $('.gambar-modal-trigger').click(function() {
-            var idPermintaan = $(this).data('idpermintaan');
-            $('#gambarModal' + idPermintaan).modal('show');
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#myModaledit").on('show.bs.modal', function(e) {
+                var idpermintaan = $(e.relatedTarget).data('idpermintaan');
+                $("#idpermintaanInput").val(idpermintaan);
+            });
         });
     </script>
-
-
+    <script>
+        $(document).ready(function() {
+            $('.gambar-modal-trigger').click(function() {
+                var idPermintaan = $(this).data('idpermintaan');
+                $('#gambarModal' + idPermintaan).modal('show');
+            });
+        });
+    </script>
 </body>
+
 <!-- The Modal "Tambah Permintaan"-->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
@@ -522,7 +529,7 @@ $iduser = $_SESSION['iduser'];
                     <label for="status[]">Status:</label>
                     <select name="status[]" class="form-control">
                         <option value="0">Pending</option>
-                        <option value="1" disabled>Disetujui</option>
+                        <option value="1" disabled>Diterima</option>
                         <option value="2" disabled>Ditolak</option>
                     </select>
                     <hr>
@@ -541,12 +548,57 @@ $iduser = $_SESSION['iduser'];
             </form>
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
+
+
+<!-- The Modal "Tambah barang dengan id yang sama"-->
+<div class="modal fade" id="tes<?= $idpermintaan; ?>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Tambah Barang <?= $tanggal; ?></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="process_form.php">
+                <div class="modal-body">
+                    <label for="namabarang">Nama Barang: </label>
+                    <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
+                    <br>
+                    <label for="unit">Unit:</label>
+                    <select name="unit" class="form-control">
+                        <option value="Pcs">PCS</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Kg">KG</option>
+                        <option value="Ball">BALL</option>
+                    </select>
+                    <br>
+                    <label for="qtypermintaan">Jumlah:</label>
+                    <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
+                    <br>
+                    <label for="keterangan">Keterangan:</label>
+                    <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
+                    <br>
+                    <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
+                    <br>
+                    <div id="barangContainer">
+                    </div>
+                    <button type="submit" class="btn btn-primary" name="barangbaru">Submit</button>
+                </div>
+            </form>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

@@ -131,7 +131,7 @@ $iduser = $_SESSION['iduser'];
                                             $namabarang = $data['namabarang'];
                                             $qty = $data['qty'];
                                             $penerima = $data['penerima'];
-                                            $deskripsi = $data['deskripsi'];
+                                            $unit = $data['unit'];
                                             $keterangan = $data['keterangan'];
                                             $gambar_base64 = $data['gambar_base64'];
 
@@ -140,7 +140,7 @@ $iduser = $_SESSION['iduser'];
                                             <tr>
                                                 <td><?= $tanggal; ?></td>
                                                 <td><?= $namabarang; ?></td>
-                                                <td><?= $deskripsi; ?></td>
+                                                <td><?= $unit; ?></td>
                                                 <td><?= $qty; ?></td>
                                                 <td><?= $penerima; ?></td>
                                                 <td><?= $keterangan; ?></td>

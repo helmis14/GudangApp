@@ -20,26 +20,40 @@ if (isset($_POST['idpermintaan']) && isset($_POST['status'])) {
             $stmt_barang->execute();
             $result_barang = $stmt_barang->get_result();
 
-            // Loop untuk memasukkan data barang ke dalam tabel barang_masuk
+            // Loop untuk memasukkan data barang ke dalam tabel barang_masuk dan stock
             while ($row_barang = $result_barang->fetch_assoc()) {
                 $idbarang = $row_barang['idbarang'];
                 $namabarang = $row_barang['namabarang'];
                 $qty = $row_barang['qtypermintaan'];
-                $keterangan = "Barang diterima dari permintaan $idpermintaan";
-                $tanggal = date('Y-m-d');
+                $keterangan = "Barang diterima dari permintaan $idpermintaan"; // Perbaikan di sini
+                $unit = $row_barang['unit']; // Perbaikan di sini
+                $tanggal = $row_barang['tanggal'];
                 $penerima = $_SESSION['email']; // Sesuaikan dengan pengguna yang menerima barang
 
-                // Masukkan data barang ke dalam tabel barang_masuk
-                $query_insert = "INSERT INTO masuk (idbarang, tanggal, keterangan, qty, penerima) VALUES (?, ?, ?, ?, ?)";
-                $stmt_insert = $conn->prepare($query_insert);
-                $stmt_insert->bind_param("issss", $idbarang, $tanggal, $keterangan, $qty, $penerima);
-                $stmt_insert->execute();
+                $query_insert_masuk = "INSERT INTO masuk (idbarang, tanggal, keterangan, qty, penerima) VALUES (?, ?, ?, ?, ?)";
+                $stmt_insert_masuk = $conn->prepare($query_insert_masuk);
+                $stmt_insert_masuk->bind_param("isssi", $idbarang, $tanggal, $keterangan, $qty, $penerima);
+                $stmt_insert_masuk->execute();
+
+                $query_check_stock = "SELECT * FROM stock WHERE idbarang = ?";
+                $stmt_check_stock = $conn->prepare($query_check_stock);
+                $stmt_check_stock->bind_param("i", $idbarang);
+                $stmt_check_stock->execute();
+                $result_check_stock = $stmt_check_stock->get_result();
+
+                if ($result_check_stock->num_rows === 0) {
+                    $query_insert_stock = "INSERT INTO stock (idbarang, namabarang, unit) VALUES (?, ?, ?)";
+                    $stmt_insert_stock = $conn->prepare($query_insert_stock);
+                    $stmt_insert_stock->bind_param("iss", $idbarang, $namabarang, $unit);
+                    $stmt_insert_stock->execute();
+                }
             }
+
 
             // Catat log aktivitas
             $iduser_logged = $_SESSION['iduser'];
             $email_logged = $_SESSION['email'];
-            $activity = "$email_logged mengubah status permintaan dengan id ($idpermintaan) menjadi Diterima dan memasukkan barang ke dalam tabel barang_masuk";
+            $activity = "$email_logged mengubah status permintaan dengan id ($idpermintaan) menjadi Diterima dan memasukkan barang ke dalam tabel barang_masuk serta stock";
             catatLog($conn, $activity, $iduser_logged);
 
             header('Location: permintaan.php');
@@ -48,10 +62,17 @@ if (isset($_POST['idpermintaan']) && isset($_POST['status'])) {
             echo "Gagal mengupdate status permintaan: " . $stmt->error;
         }
     } elseif ($status == 2) { // Jika status permintaan adalah 'Ditolak'
-        $query_delete = "DELETE FROM masuk WHERE tanggal = (SELECT tanggal FROM permintaan WHERE idpermintaan = ?)";
-        $stmt_delete = $conn->prepare($query_delete);
-        $stmt_delete->bind_param("i", $idpermintaan);
-        $stmt_delete->execute();
+        // Hapus stok terkait dengan permintaan yang ditolak
+        $query_delete_stock = "DELETE FROM stock WHERE idbarang IN (SELECT idbarang FROM barang_permintaan WHERE idpermintaan = ?)";
+        $stmt_delete_stock = $conn->prepare($query_delete_stock);
+        $stmt_delete_stock->bind_param("i", $idpermintaan);
+        $stmt_delete_stock->execute();
+
+        // Hapus data masuk terkait dengan permintaan yang ditolak
+        $query_delete_masuk = "DELETE FROM masuk WHERE idbarang IN (SELECT idbarang FROM barang_permintaan WHERE idpermintaan = ?)";
+        $stmt_delete_masuk = $conn->prepare($query_delete_masuk);
+        $stmt_delete_masuk->bind_param("i", $idpermintaan);
+        $stmt_delete_masuk->execute();
 
         // Update status permintaan menjadi 'Ditolak'
         $query_update = "UPDATE permintaan SET status = ? WHERE idpermintaan = ?";
@@ -62,7 +83,7 @@ if (isset($_POST['idpermintaan']) && isset($_POST['status'])) {
         // Catat log aktivitas
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
-        $activity = "$email_logged mengubah status permintaan dengan id ($idpermintaan) menjadi Ditolak dan menghapus data barang dari tabel barang_masuk";
+        $activity = "$email_logged mengubah status permintaan dengan id ($idpermintaan) menjadi Ditolak dan menghapus stok serta data masuk terkait";
         catatLog($conn, $activity, $iduser_logged);
 
         header('Location: permintaan.php');
