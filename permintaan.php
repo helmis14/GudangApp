@@ -116,7 +116,7 @@ $iduser = $_SESSION['iduser'];
                                     ?>
                                     <thead>
                                         <tr>
-                                            <th>No</th>
+                                            <th>No </th>
                                             <th>Tanggal</th>
                                             <th>Nama barang</th>
                                             <th>Unit</th>
@@ -129,22 +129,21 @@ $iduser = $_SESSION['iduser'];
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $no = 1;
+                                        $total_rows = mysqli_num_rows($result);
+                                        $no = $total_rows;
                                         while ($row = mysqli_fetch_assoc($result)) {
                                             $idpermintaan = $row['idpermintaan'];
                                             $tanggal = $row['tanggal'];
                                             $status_permintaan = $row['status'];
                                         ?>
                                             <tr>
-                                                <td><?= $no++; ?></td>
+                                                <td><?= $no--; ?></td>
                                                 <td><?= $tanggal; ?></td>
                                                 <td>
                                                     <?php
                                                     $detail_barang = explode(",", $row['detail_barang']);
-                                                    $nomor_barang =  "1";
-                                                    foreach ($detail_barang as $barang) {
-                                                        echo $nomor_barang . ". " . $barang . "<br>";
-                                                        $nomor_barang++;
+                                                    foreach ($detail_barang as $key => $barang) {
+                                                        echo ($key + 1) . ". " . $barang . "<br>";
                                                     }
                                                     ?>
                                                 </td>
