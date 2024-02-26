@@ -144,8 +144,28 @@ $iduser = $_SESSION['iduser'];
                                                 <td><?= $qty; ?></td>
                                                 <td><?= $penerima; ?></td>
                                                 <td><?= $keterangan; ?></td>
+                                                <!-- Modal untuk menampilkan gambar penuh -->
+                                                <div class="modal fade" id="gambarModal<?= $idk; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="gambarModalLabel">Bukti Keluar</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <img src="data:image/jpeg;base64,<?= $gambar_base64; ?>" class="img-fluid">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <a href="download_gambar_keluar.php?id=<?= $idk; ?>&type=keluar" class="btn btn-primary" download>Download</a>
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <td>
-                                                    <a href="#" class="gambar-modal-trigger" data-gambar-src="data:image/jpeg;base64,<?= $gambar_base64; ?>">
+                                                    <a href="#" class="gambar-mini-trigger" data-toggle="modal" data-target="#gambarModal<?= $idk; ?>" data-id="<?= $idk; ?>">
                                                         <img src="data:image/jpeg;base64,<?= $gambar_base64; ?>" alt="Bukti Keluar" style="max-width: 100px; max-height: 100px;">
                                                     </a>
                                                 </td>
@@ -158,23 +178,6 @@ $iduser = $_SESSION['iduser'];
                                                     </button>
                                                 </td>
                                             </tr>
-
-                                            <!-- Modal untuk menampilkan gambar penuh -->
-                                            <div class="modal fade" id="gambarModal" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="gambarModalLabel">Bukti Keluar</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <img src="" id="gambarModalImage" class="img-fluid">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
 
 
 
@@ -278,11 +281,9 @@ $iduser = $_SESSION['iduser'];
     <script src="assets/demo/datatables-demo.js"></script>
     <script>
         $(document).ready(function() {
-            // Menampilkan modal saat gambar diklik
-            $('.gambar-modal-trigger').click(function() {
-                var gambarSrc = $(this).data('gambar-src');
-                $('#gambarModalImage').attr('src', gambarSrc);
-                $('#gambarModal').modal('show');
+            $('.gambar-mini-trigger').click(function() {
+                var id = $(this).data('id');
+                $('#gambarModal' + id).modal('show');
             });
         });
     </script>

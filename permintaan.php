@@ -103,6 +103,21 @@ $iduser = $_SESSION['iduser'];
                             </button>
                         </div>
                         <div class="card-body">
+                            <?php
+                            $conn = mysqli_connect("localhost", "root", "", "stokbarangs");
+                            if ($_SESSION['role'] == 'superadmin' || $_SESSION['role'] == 'dev') {
+                                $ambildatastock = mysqli_query($conn, "SELECT * FROM permintaan WHERE status = 0");
+                                $count_pending = mysqli_num_rows($ambildatastock);
+                                if ($count_pending > 0) {
+                            ?>
+                                    <div class="alert alert-danger alert-dismissible fade show">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <strong>Perhatian!</strong> Mohon tanggapi permintaan yang masih status pending.
+                                    </div>
+                            <?php
+                                }
+                            }
+                            ?>
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <?php
@@ -184,9 +199,14 @@ $iduser = $_SESSION['iduser'];
                                                             <div class="modal-body">
                                                                 <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" class="img-fluid">
                                                             </div>
+                                                            <div class="modal-footer">
+                                                                <a href="download_gambar_permintaan.php?id=<?= $idpermintaan; ?>" class="btn btn-primary" download>Download</a>
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                                 <td>
                                                     <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
                                                         <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
@@ -194,19 +214,30 @@ $iduser = $_SESSION['iduser'];
                                                 </td>
                                                 <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Diterima' : 'Ditolak'); ?></td>
                                                 <td>
-                                                    <?php if ($_SESSION['role'] !== 'superadmin') { ?>
-                                                        <!-- Jika bukan superadmin, tombol Edit dan Delete -->
+                                                    <?php if ($_SESSION['role'] === 'supervisor') { ?>
                                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
                                                             Edit
                                                         </button>
                                                         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
                                                             Delete
                                                         </button>
-                                                    <?php } else { ?>
-                                                        <!-- Jika peran adalah superadmin, tombol untuk mengubah status permintaan -->
+                                                    <?php } elseif ($_SESSION['role'] === 'superadmin') { ?>
                                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
                                                             Ubah Status
                                                         </button>
+                                                    <?php } elseif ($_SESSION['role'] === 'dev') { ?>
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+                                                            Edit
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
+                                                            Delete
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                            Ubah Status
+                                                        </button>
+                                                    <?php } else { ?>
+
                                                     <?php } ?>
                                                 </td>
                                             </tr>

@@ -118,10 +118,8 @@ $iduser = $_SESSION['iduser'];
                                 $distributor = $data['distributor'];
                                 $bukti_masuk_base64 = $data['bukti_masuk_base64'];
 
-                                // Array untuk menyimpan nama kolom yang kosong
                                 $kolom_kosong = array();
 
-                                // Periksa setiap kolom dan tambahkan ke array jika kosong
                                 if (empty($penerima)) {
                                     $kolom_kosong[] = 'Penerima';
                                 }
@@ -135,7 +133,6 @@ $iduser = $_SESSION['iduser'];
                                     $kolom_kosong[] = 'Bukti Masuk';
                                 }
 
-                                // Tampilkan pesan alert
                                 if (!empty($kolom_kosong)) {
                             ?>
                                     <div class="alert alert-danger alert-dismissible fade show">
@@ -159,7 +156,8 @@ $iduser = $_SESSION['iduser'];
                                             <th>distributor</th>
                                             <th>Penerima</th>
                                             <th>Keterangan</th>
-                                            <th>Bukti Masuk</th>
+                                            <th>Bukti</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -177,9 +175,9 @@ $iduser = $_SESSION['iduser'];
                                             $unit = $data['unit'];
                                             $distributor = $data['distributor'];
                                             $bukti_masuk_base64 = $data['bukti_masuk_base64'];
+                                            $status = $data['status'];
 
                                         ?>
-
                                             <tr>
                                                 <td><?= $tanggal; ?></td>
                                                 <td><?= $namabarang; ?></td>
@@ -189,22 +187,64 @@ $iduser = $_SESSION['iduser'];
                                                 <td><?= $penerima; ?></td>
                                                 <td><?= $keterangan; ?></td>
                                                 <td>
-                                                    <a href="#" class="gambar-modal-trigger" data-gambar-src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>">
+                                                    <a href="#" class="gambar-mini-trigger" data-toggle="modal" data-target="#gambarModal<?= $idm; ?>" data-id="<?= $idm; ?>">
                                                         <img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;">
                                                     </a>
                                                 </td>
+                                                <td><?= ($status == 0) ? 'Dalam Pengiriman' : ($status == 1 ? 'Diterima' : 'Tidak Diterima'); ?></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
-                                                        Edit
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
-                                                        Delete
-                                                    </button>
+                                                    <?php if ($_SESSION['role'] === 'superadmin') { ?>
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
+                                                            Edit
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
+                                                            Delete
+                                                        </button>
+                                                    <?php } elseif ($_SESSION['role'] === 'gudang' || $_SESSION['role'] === 'dev') { ?>
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
+                                                            Edit
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
+                                                            Delete
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idm; ?>">
+                                                            Status
+                                                        </button>
+                                                    <?php } ?>
                                                 </td>
+
                                             </tr>
 
+                                            <!-- Modal untuk mengubah status barang-->
+                                            <div class="modal fade" id="statusModal<?= $idm; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="statusModalLabel">Ubah Status Permintaan</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="update_status_masuk.php" method="POST">
+                                                                <input type="hidden" name="idm" value="<?= $idm; ?>">
+                                                                <div class="form-group">
+                                                                    <label for="status">Status Barang:</label>
+                                                                    <select class="form-control" id="status" name="status">
+                                                                        <option value="0">Dalam Pengiriman</option>
+                                                                        <option value="1">Diterima</option>
+                                                                        <option value="2">Tidak Diterima</option>
+                                                                    </select>
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <!-- Modal untuk menampilkan gambar penuh -->
-                                            <div class="modal fade" id="gambarModal" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="gambarModal<?= $idm; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -214,7 +254,11 @@ $iduser = $_SESSION['iduser'];
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <img src="" id="gambarModalImage" class="img-fluid">
+                                                            <img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" class="img-fluid">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a href="download_gambar_masuk.php?id=<?= $idm; ?>&type=keluar" class="btn btn-primary" download>Download</a>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -328,11 +372,9 @@ $iduser = $_SESSION['iduser'];
     <script src="assets/demo/datatables-demo.js"></script>
     <script>
         $(document).ready(function() {
-            // Menampilkan modal saat gambar diklik
-            $('.gambar-modal-trigger').click(function() {
-                var gambarSrc = $(this).data('gambar-src');
-                $('#gambarModalImage').attr('src', gambarSrc);
-                $('#gambarModal').modal('show');
+            $('.gambar-mini-trigger').click(function() {
+                var id = $(this).data('id');
+                $('#gambarModal' + id).modal('show');
             });
         });
     </script>
@@ -382,6 +424,13 @@ $iduser = $_SESSION['iduser'];
                     <label for="keterangan">Keterangan</label>
                     <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
                     </br>
+                    <label for="status">Status:</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="0">Dalam Pengiriman</option>
+                        <option value="1">Diterima</option>
+                        <option value="2">Tidak Diterima</option>
+                    </select>
+                    <br>
                     <label for="bukti_masuk_base64">Bukti Masuk:</label>
                     <input type="file" name="bukti_masuk_base64" class="form-control-file" required>
                     <br>

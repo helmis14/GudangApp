@@ -101,6 +101,7 @@ if (isset($_POST['barangmasuk'])) {
     $keterangan = $_POST['keterangan'];
     $distributor = $_POST['distributor'];
     $deskripsi = $_POST['deskripsi'];
+    $status = $_POST['status'];
 
     // Proses konversi gambar ke base64
     $bukti_masuk_base64 = $_FILES['bukti_masuk_base64'];
@@ -116,7 +117,7 @@ if (isset($_POST['barangmasuk'])) {
         $stocksekarang = $ambildatanya['stock'];
         $tambahkanstocksekarangdenganquantity = $stocksekarang + $qty;
 
-        $addtomasuk = mysqli_query($conn, "INSERT INTO masuk (idbarang, penerima, qty, keterangan, deskripsi, distributor, bukti_masuk_base64) VALUES ('$barangnya','$penerima','$qty', '$keterangan', '$deskripsi', '$distributor', '$bukti_masuk_base64')");
+        $addtomasuk = mysqli_query($conn, "INSERT INTO masuk (idbarang, penerima, qty, keterangan, deskripsi, distributor, status, bukti_masuk_base64) VALUES ('$barangnya','$penerima','$qty', '$keterangan', '$deskripsi', '$distributor', '$status', '$bukti_masuk_base64')");
         $updatestockmasuk = mysqli_query($conn, "UPDATE stock SET stock='$tambahkanstocksekarangdenganquantity' WHERE idbarang='$barangnya'");
         if ($addtomasuk && $updatestockmasuk) {
             // Ambil data nama barang untuk mencatat aktivitas
