@@ -114,6 +114,12 @@ $result = mysqli_query($conn, $query);
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
                                 Export Data
                             </button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#backup">
+                                Backup Data
+                            </button>
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#restoreModal">
+                                Restore Data
+                            </button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -133,8 +139,6 @@ $result = mysqli_query($conn, $query);
                                             echo "<td>" . htmlspecialchars($row['id']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['activity']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['timestamp']) . "</td>";
-
-                                            // Tampilkan email pengguna yang terkait dengan log aktivitas
                                             echo "<td>" . htmlspecialchars($row['email']) . "</td>";
 
                                             echo "</tr>";
@@ -143,6 +147,48 @@ $result = mysqli_query($conn, $query);
                                     </tbody>
                                 </table>
 
+                            </div>
+                        </div>
+                        <!-- backup data -->
+                        <div class="modal fade" id="backup" tabindex="-1" role="dialog" aria-labelledby="exportLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exportLabel">Export Database</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Apakah Anda yakin ingin melakukan backup database?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                        <button type="button" class="btn btn-primary" id="backupBtn">Backup Database</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal untuk restore data -->
+                        <div class="modal fade" id="restoreModal" tabindex="-1" role="dialog" aria-labelledby="restoreModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="restoreModalLabel">Restore Data</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="restoreForm" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <label for="fileToRestore">Pilih File Backup:</label>
+                                                <input type="file" class="form-control-file" id="fileToRestore" name="fileToRestore">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Restore</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -162,7 +208,7 @@ $result = mysqli_query($conn, $query);
             </footer>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
@@ -171,6 +217,51 @@ $result = mysqli_query($conn, $query);
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/datatables-demo.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#backupBtn').click(function() {
+                $.ajax({
+                    url: 'backup_database.php',
+                    method: 'GET',
+                    success: function(response) {
+                        $('#backup').modal('hide');
+                        alert("Backup database berhasil disimpan.");
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert("Backup database gagal. Terjadi kesalahan: " + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#restoreForm').submit(function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: 'restore_database.php',
+                    type: 'POST',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        alert(response);
+                        $('#restoreModal').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert("Restore database gagal. Terjadi kesalahan: " + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
 </body>
 
 </html>
