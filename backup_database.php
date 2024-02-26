@@ -5,7 +5,6 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Tentukan path lengkap ke folder database
 $backup_folder = 'database/';
 $backup_file = $backup_folder . 'backup_' . date("Y-m-d_H-i-s") . '.sql';
 

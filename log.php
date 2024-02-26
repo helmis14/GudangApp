@@ -114,6 +114,7 @@ $result = mysqli_query($conn, $query);
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
                                 Export Data
                             </button>
+                            <button type="button" class="btn btn-danger" id="hapusLogBtn">Hapus Log</button>
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#backup">
                                 Backup Data
                             </button>
@@ -259,6 +260,27 @@ $result = mysqli_query($conn, $query);
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('#hapusLogBtn').click(function() {
+                if (confirm("Apakah Anda yakin ingin menghapus semua data log?")) {
+                    $.ajax({
+                        url: 'hapus_log.php',
+                        method: 'GET',
+                        success: function(response) {
+                            alert(response);
+                            location.reload(); 
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                            alert("Gagal menghapus data log. Terjadi kesalahan: " + xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
 
 
 
