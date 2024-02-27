@@ -156,3 +156,47 @@ input {
     margin:  20px; 
   }
 }
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #f5c6cb;
+}
+
+/* Small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  body, html {
+    padding: 0 20px; 
+}
+
+.session {
+    flex-direction: column; 
+}
+
+.left {
+    width: 100%; 
+    border-radius: 0; 
+}
+
+form {
+    padding: 20px;
+}
+
+input, button {
+    width: 100%; 
+}
+
+}
+
+/* Medium devices (tablets, 600px and up) */
+@media only screen and (min-width: 601px) {
+  /* Your CSS here */
+}
+
+/* Large devices (desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  /* Your CSS here */
+}

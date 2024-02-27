@@ -18,18 +18,14 @@ if (isset($_POST['login'])) {
 
     // Verifikasi hasil query
     if (mysqli_stmt_num_rows($stmt) > 0) {
-        // Jika login berhasil, simpan informasi session login dan catat log aktivitas
         session_start();
         $_SESSION['iduser'] = $iduser;
         $_SESSION['email'] = $email;
         $_SESSION['role'] = $role;
         $_SESSION['log'] = true;
 
-        // Catat log aktivitas
         $activity = "Login berhasil: $email";
-        catatLog($conn, $activity, $iduser);
 
-        // Periksa peran pengguna dan arahkan ke halaman yang sesuai
         if ($role === 'superadmin' || $role === 'gudang' || $role === 'dev') {
             header('Location: index.php');
             exit();
@@ -41,9 +37,8 @@ if (isset($_POST['login'])) {
             exit();
         }
     } else {
-        header('Location: login.php');
+        $error = 'Username atau password salah!';
     }
-
     // Tutup statement
     mysqli_stmt_close($stmt);
 }
@@ -82,10 +77,10 @@ if (isset($_SESSION['log'])) {
         </div>
         <form method="post" class="log-in" autocomplete="off">
             <h4>Gudang <span>PLAZA OLEOS</span></h4>
-            <?php if (isset($error)) { ?>
-                <div class="alert alert-danger"><?php echo $error; ?></div>
-            <?php } ?>
             <p>Selamat Datang! Login untuk melihat aktivitas gudang</p>
+            <?php if (isset($error)) { ?>
+                <div class="error-message"><?php echo $error; ?></div>
+            <?php } ?>
             <div class="floating-label">
                 <input placeholder="Email" type="text" name="email" id="inputEmailAddress" autocomplete="off">
                 <label for="inputEmailAddress">Email:</label>
@@ -100,5 +95,14 @@ if (isset($_SESSION['log'])) {
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+<script>
+    document.getElementById("inputPassword").addEventListener("keyup", function(event) {
+        var capsLockOn = event.getModifierState("CapsLock");
+        if (capsLockOn) {
+            alert("Caps Lock aktif!");
+        }
+    });
+</script>
+
 
 </html>
