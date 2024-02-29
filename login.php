@@ -26,7 +26,7 @@ if (isset($_POST['login'])) {
 
         $activity = "Login berhasil: $email";
 
-        if ($role === 'superadmin' || $role === 'gudang' || $role === 'dev') {
+        if ($role === 'superadmin' || $role === 'gudang' || $role === 'dev' || $role === 'user') {
             header('Location: index.php');
             exit();
         } else if ($role === 'supervisor') {
@@ -60,7 +60,7 @@ if (isset($_SESSION['log'])) {
     <meta name="author" content="" />
     <title>Gudang - Login</title>
     <link href="css/login.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
 </head>
 
 <body>
@@ -80,6 +80,7 @@ if (isset($_SESSION['log'])) {
             <p>Selamat Datang! Login untuk melihat aktivitas gudang</p>
             <?php if (isset($error)) { ?>
                 <div class="error-message"><?php echo $error; ?></div>
+                <div id="capsLockAlert" class="caps-message" style="display: none;">Caps Lock aktif!</div>
             <?php } ?>
             <div class="floating-label">
                 <input placeholder="Email" type="text" name="email" id="inputEmailAddress" autocomplete="off">
@@ -88,6 +89,9 @@ if (isset($_SESSION['log'])) {
             <div class="floating-label">
                 <input placeholder="Password" type="password" name="password" id="inputPassword" autocomplete="off">
                 <label for="inputPassword">Password:</label>
+                <span class="password-toggle" onclick="togglePassword()">
+                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                </span>
             </div>
             <button type="submit" name="login">Log in</button>
             <a href="https://rohedagroup.com/" class="discrete" target="_blank">V.1</a>
@@ -96,13 +100,31 @@ if (isset($_SESSION['log'])) {
 </body>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
 <script>
+    function togglePassword() {
+        var passwordInput = document.getElementById("inputPassword");
+        var passwordToggleIcon = document.getElementById("passwordToggleIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordToggleIcon.classList.remove("fa-eye");
+            passwordToggleIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            passwordToggleIcon.classList.remove("fa-eye-slash");
+            passwordToggleIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+<script>
     document.getElementById("inputPassword").addEventListener("keyup", function(event) {
-        var capsLockOn = event.getModifierState("CapsLock");
+        var capsLockOn = event.getModifierState && event.getModifierState("CapsLock");
+        var capsLockAlert = document.getElementById("capsLockAlert");
         if (capsLockOn) {
-            alert("Caps Lock aktif!");
+            capsLockAlert.style.display = "block";
+        } else {
+            capsLockAlert.style.display = "none";
         }
     });
 </script>
-
 
 </html>

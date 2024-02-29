@@ -8,12 +8,13 @@ if (!isset($_SESSION['iduser'])) {
     exit();
 }
 
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user') {
     header('Location: access_denied.php');
     exit();
 }
 
 $iduser = $_SESSION['iduser'];
+$role = $_SESSION['role'];
 ?>
 
 <!DOCTYPE html>
@@ -35,49 +36,58 @@ $iduser = $_SESSION['iduser'];
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand" href="index.php">Plaza Oleos</a>
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-
+        <ul class="navbar-nav ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <li class="nav-item dropdown">
+            </li>
+            <li class="nav-item">
+                <span class="nav-link">
+                    <div class="navbar-brand"></div>
+                    Selamat datang, <?= $role; ?>
+                </span>
+            </li>
+        </ul>
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'supervisor') { ?>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'supervisor') { ?>
                             <a class="nav-link" href="permintaan.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
                                 Permintaan Barang
                             </a>
                         <?php } ?>
 
-                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
                             <a class="nav-link" href="index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
                                 Stock Barang
                             </a>
                         <?php } ?>
 
-                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
                             <a class="nav-link" href="barang_masuk.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
                                 Barang Masuk
                             </a>
                         <?php } ?>
 
-                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'gudang') { ?>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
                             <a class="nav-link" href="barang_keluar.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
                                 Barang Keluar
                             </a>
                         <?php } ?>
 
-                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user') { ?>
                             <a class="nav-link" href="admin.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                                 Kelola Admin
                             </a>
                         <?php } ?>
 
-                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev') { ?>
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user') { ?>
                             <a class="nav-link" href="log.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
                                 Log Aktivitas
@@ -99,12 +109,14 @@ $iduser = $_SESSION['iduser'];
 
 
                     <div class="card mb-4">
-                        <div class="card-header">
-                            <!-- Button to Open the Modal -->
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                Tambah Barang
-                            </button>
-                        </div>
+                        <?php if ($role === 'gudang' || $role === 'dev') :  ?>
+                            <div class="card-header">
+                                <!-- Button to Open the Modal -->
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                                    Tambah Barang
+                                </button>
+                            </div>
+                        <?php endif; ?>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -118,7 +130,9 @@ $iduser = $_SESSION['iduser'];
                                             <th>Penerima</th>
                                             <th>Keterangan</th>
                                             <th>Bukti Keluar</th>
-                                            <th>Aksi</th>
+                                            <?php if ($role === 'gudang' || $role === 'dev') :  ?>
+                                                <th>Aksi</th>
+                                            <?php endif; ?>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -169,14 +183,22 @@ $iduser = $_SESSION['iduser'];
                                                         <img src="data:image/jpeg;base64,<?= $gambar_base64; ?>" alt="Bukti Keluar" style="max-width: 100px; max-height: 100px;">
                                                     </a>
                                                 </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idk; ?>">
-                                                        Edit
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idk; ?>">
-                                                        Delete
-                                                    </button>
-                                                </td>
+                                                <?php if ($role == 'dev') : ?>
+                                                    <td>
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idk; ?>">
+                                                            Edit
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idk; ?>">
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                <?php elseif ($role === 'gudang') : ?>
+                                                    <td>
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idk; ?>">
+                                                            Edit
+                                                        </button>
+                                                    </td>
+                                                <?php endif; ?>
                                             </tr>
 
 
@@ -198,9 +220,11 @@ $iduser = $_SESSION['iduser'];
                                                                 <label for="penerima">Penerima</label>
                                                                 <input type="text" name="penerima" value="<?= $penerima; ?>" class="form-control" required>
                                                                 <br>
-                                                                <label for="qty">Jumlah</label>
-                                                                <input type="text" name="qty" value="<?= $qty; ?>" class="form-control" required>
-                                                                <br>
+                                                                <?php if ($role === 'dev') : ?>
+                                                                    <label for="qty">Jumlah</label>
+                                                                    <input type="text" name="qty" value="<?= $qty; ?>" class="form-control" required>
+                                                                    <br>
+                                                                <?php endif; ?>
                                                                 <label for="keterangan">Keterangan:</label>
                                                                 <textarea name="keterangan" class="form-control" required><?= $keterangan; ?></textarea>
                                                                 <br>
@@ -279,7 +303,7 @@ $iduser = $_SESSION['iduser'];
                             </button>
                         </div>
                         <div class="modal-body">
-                            Apakah Anda yakin ingin keluar?
+                            Apakah anda yakin ingin keluar <?= $role; ?>?
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>

@@ -24,20 +24,6 @@ if (isset($_POST['idm']) && isset($_POST['status'])) {
                 echo "Gagal memperbarui stok";
                 exit;
             }
-        } elseif ($status == 2) {
-            $query_qty = "SELECT qty, idbarang FROM masuk WHERE idmasuk = $idm";
-            $result_qty = mysqli_query($conn, $query_qty);
-            $row_qty = mysqli_fetch_assoc($result_qty);
-            $qty_tolak = $row_qty['qty'];
-            $idbarang = $row_qty['idbarang'];
-
-            $update_stock_query = "UPDATE stock SET stock = stock - $qty_tolak WHERE idbarang = $idbarang";
-            $result_update_stock = mysqli_query($conn, $update_stock_query);
-
-            if (!$result_update_stock) {
-                echo "Gagal mengurangi stok";
-                exit;
-            }
         }
 
         header("Location: barang_masuk.php");

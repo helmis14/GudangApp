@@ -157,13 +157,24 @@ input {
   }
 }
 
+
 .error-message {
+  font-size: 11px;
   background-color: #f8d7da;
   color: #721c24;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 10px;
   border: 1px solid #f5c6cb;
+}
+.caps-message {
+  font-size: 11px;
+  background-color: #c6cff5;
+  color: #1f3b88;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #c6cff5;
 }
 
 /* Small devices (phones, 600px and down) */
@@ -189,11 +200,17 @@ input, button {
     width: 100%; 
 }
 
+.password-toggle {
+  display: block;
+  margin-top: 5px; 
+  text-align: right; 
+}
+
 }
 
 /* Medium devices (tablets, 600px and up) */
 @media only screen and (min-width: 601px) {
-  /* Your CSS here */
+ 
 }
 
 /* Large devices (desktops, 992px and up) */

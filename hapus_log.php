@@ -10,11 +10,11 @@ if ($conn->connect_error) {
 
 $query = "DELETE FROM log";
 if ($conn->query($query) === TRUE) {
-    // Catat aktivitas log
-    $iduser_logged = $_SESSION['iduser'];
-    $email_logged = $_SESSION['email'];
-    $activity = "$email_logged menghapus semua data log";
-    catatLog($conn, $activity, $iduser_logged);
+    // // Catat aktivitas log
+    // $iduser_logged = $_SESSION['iduser'];
+    // $email_logged = $_SESSION['email'];
+    // $activity = "$email_logged menghapus semua data log";
+    // catatLog($conn, $activity, $iduser_logged);
 
     echo "Data log berhasil dihapus.";
 } else {
