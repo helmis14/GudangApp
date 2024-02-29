@@ -26,27 +26,34 @@ if (isset($_POST['idpermintaan']) && isset($_POST['status'])) {
                 $namabarang = $row_barang['namabarang'];
                 $qty = $row_barang['qtypermintaan'];
                 $keterangan = $row_barang['keterangan'];
-                $unit = $row_barang['unit']; // Perbaikan di sini
+                $unit = $row_barang['unit'];
                 $tanggal = $row_barang['tanggal'];
                 $status = 0;
 
                 // Periksa apakah nama barang sudah ada di stok
-                $query_check_stock = "SELECT * FROM stock WHERE namabarang = ?";
+                $query_check_stock = "SELECT idbarang FROM stock WHERE namabarang = ?";
                 $stmt_check_stock = $conn->prepare($query_check_stock);
                 $stmt_check_stock->bind_param("s", $namabarang);
                 $stmt_check_stock->execute();
                 $result_check_stock = $stmt_check_stock->get_result();
 
-                if ($result_check_stock->num_rows === 0) {
+                if ($result_check_stock->num_rows > 0) {
+                    // Jika nama barang sudah ada, ambil idbarang dari stok
+                    $row_stock = $result_check_stock->fetch_assoc();
+                    $idbarang = $row_stock['idbarang'];
+                } else {
                     // Jika nama barang belum ada, tambahkan ke dalam stok dengan qty 0
                     $stock = 0;
-                    $query_insert_stock = "INSERT INTO stock (idbarang, namabarang, unit, stock) VALUES (?, ?, ?, ?)";
+                    $query_insert_stock = "INSERT INTO stock (namabarang, unit, stock) VALUES (?, ?, ?)";
                     $stmt_insert_stock = $conn->prepare($query_insert_stock);
-                    $stmt_insert_stock->bind_param("isss", $idbarang, $namabarang, $unit, $stock);
+                    $stmt_insert_stock->bind_param("sss", $namabarang, $unit, $stock);
                     $stmt_insert_stock->execute();
+
+                    // Ambil idbarang yang baru saja ditambahkan
+                    $idbarang = $stmt_insert_stock->insert_id;
                 }
 
-                // Masukkan barang ke dalam tabel masuk dengan qty 0
+                // Masukkan barang ke dalam tabel masuk dengan idbarang yang sesuai
                 $query_insert_masuk = "INSERT INTO masuk (idbarang, tanggal, keterangan, qty, status) VALUES (?, ?, ?, ?, ?)";
                 $stmt_insert_masuk = $conn->prepare($query_insert_masuk);
                 $stmt_insert_masuk->bind_param("isssi", $idbarang, $tanggal, $keterangan, $qty, $status);

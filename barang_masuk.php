@@ -208,30 +208,30 @@ $role = $_SESSION['role'];
                                                 <td><?= ($status == 0) ? 'Dalam Pengiriman' : ($status == 1 ? 'Diterima' : 'Tidak Diterima'); ?></td>
                                                 <td>
                                                     <?php if ($_SESSION['role'] === 'dev') { ?>
-                                                <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
-                                                        Edit
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
-                                                        Delete
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idm; ?>">
-                                                        Status
-                                                    </button>
+
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
+                                                            Edit
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
+                                                            Delete
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idm; ?>">
+                                                            Status
+                                                        </button>
+
+                                                    <?php } elseif ($_SESSION['role'] === 'gudang' && $status == 0) { ?>
+
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
+                                                            Edit
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idm; ?>">
+                                                            Status
+                                                        </button>
+
+                                                    <?php } else { ?>
+                                                        Ditanggapi
+                                                    <?php } ?>
                                                 </td>
-                                            <?php } elseif ($_SESSION['role'] === 'gudang'  && $status === 0) { ?>
-                                                <td>
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
-                                                        Edit
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idm; ?>">
-                                                        Status
-                                                    </button>
-                                                </td>
-                                            <?php } else { ?>
-                                                Ditanggapi
-                                            <?php } ?>
-                                            </td>
                                             </tr>
 
                                             <!-- Modal untuk mengubah status barang-->
