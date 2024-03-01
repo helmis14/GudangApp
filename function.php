@@ -244,57 +244,66 @@ if (isset($_POST['hapusbarangmasuk'])) {
     }
 }
 
-// Menambah barang keluar
+// Menambah barang keluar// Menambah barang keluar
 if (isset($_POST['addbarangkeluar'])) {
-    $barangnya = $_POST['barangnya'];
-    $penerima = $_POST['penerima'];
-    $qty = $_POST['qty'];
-    $keterangan = $_POST['keterangan'];
+    $gambar_base64 = $_FILES['gambar_base64']['tmp_name'];
+    if (!empty($gambar_base64)) {
+        $gambar_base64 = convertToBase64($gambar_base64);
+        $addPermintaan = mysqli_query($conn, "INSERT INTO permintaan_barang (tanggal, gambar_base64) VALUES (NOW(), '$gambar_base64')");
 
-    // Proses konversi gambar ke base64
-    $gambar_base64 = $_FILES['gambar_base64'];
-    $tmp_name = $gambar_base64['tmp_name'];
+        if ($addPermintaan) {
+            $idPermintaan = mysqli_insert_id($conn);
 
-    // Pastikan berkas gambar sudah diunggah
-    if (!empty($tmp_name)) {
-        // Konversi gambar ke base64
-        $gambar_base64 = convertToBase64($tmp_name);
+            // Ambil data dari formulir barang
+            $barangnya = $_POST['barangnya'];
+            $penerima = $_POST['penerima'];
+            $qty = $_POST['qty'];
+            $keterangan = $_POST['keterangan'];
 
-        // Sisipkan data ke database
-        $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$barangnya'");
-        $ambildatanya = mysqli_fetch_array($cekstocksekarang);
+            // Proses untuk setiap barang
+            for ($i = 0; $i < count($barangnya); $i++) {
+                $currentNamabarang = mysqli_real_escape_string($conn, $barangnya[$i]);
+                $currentQty = mysqli_real_escape_string($conn, $qty[$i]);
+                $currentKet = mysqli_real_escape_string($conn, $keterangan[$i]);
+                $currentPenerima = mysqli_real_escape_string($conn, $penerima[$i]);
 
-        $stocksekarang = $ambildatanya['stock'];
-        $tambahkanstocksekarangdenganquantity = $stocksekarang - $qty;
+                // Simpan detail barang dengan ID permintaan yang baru dibuat
+                $addBarang = mysqli_query($conn, "INSERT INTO keluar (idkeluar, idbarang, qty, keterangan, penerima) VALUES ('$idPermintaan', '$currentNamabarang','$currentQty','$currentKet', '$currentPenerima')");
 
-        // Parameterisasi query untuk keamanan
-        $addtokeluar = mysqli_prepare($conn, "INSERT INTO keluar (idbarang, penerima, qty, gambar_base64, keterangan) VALUES (?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($addtokeluar, "isiss", $barangnya, $penerima, $qty, $gambar_base64, $keterangan);
-        mysqli_stmt_execute($addtokeluar);
+                if (!$addBarang) {
+                    echo 'Gagal menambahkan barang';
+                    header('location: permintaan.php');
+                    exit;
+                }
 
-        $updatestockmasuk = mysqli_query($conn, "UPDATE stock SET stock='$tambahkanstocksekarangdenganquantity' WHERE idbarang='$barangnya'");
-
-        if ($addtokeluar && $updatestockmasuk) {
-            // Ambil data nama barang untuk mencatat aktivitas
-            $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$barangnya'");
-            $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
-            $nama_barang = $data_nama_barang['namabarang'];
+                // Update stok barang
+                $updateStock = mysqli_query($conn, "UPDATE stock SET stock = stock - $currentQty WHERE idbarang = '$currentNamabarang'");
+                if (!$updateStock) {
+                    echo 'Gagal memperbarui stok barang';
+                    header('location: permintaan.php');
+                    exit;
+                }
+            }
 
             // Catat log dengan informasi yang diinginkan
             $iduser_logged = $_SESSION['iduser'];
             $email_logged = $_SESSION['email'];
-            $activity = "$email_logged melakukan pengiriman barang keluar: $nama_barang ($qty) penerima $penerima dengan keterangan: $keterangan";
+            $activity = "$email_logged melakukan pengiriman barang keluar dengan ID permintaan: $idPermintaan";
             catatLog($conn, $activity, $iduser_logged);
+
+            // Redirect setelah semua barang ditambahkan
             header('location:barang_keluar.php');
         } else {
-            echo 'Gagal';
-            header('location:barang_keluar.php');
+            echo 'Gagal menambahkan permintaan';
+            exit;
         }
     } else {
         echo 'Berkas gambar tidak diunggah.';
         exit;
     }
 }
+
+
 
 // Mengubah data barang keluar
 if (isset($_POST['updatebarangkeluar'])) {

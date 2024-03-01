@@ -120,8 +120,30 @@ $role = $_SESSION['role'];
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <?php
+                                    $query = "SELECT 
+                                        keluar.idkeluar, 
+                                        permintaan_barang.tanggal, 
+                                        permintaan_barang.gambar_base64,
+                                        GROUP_CONCAT(CONCAT(stock.namabarang, '')) as nama_barang, 
+                                        GROUP_CONCAT(stock.unit) as unit, 
+                                        GROUP_CONCAT(keluar.qty) as qty, 
+                                        GROUP_CONCAT(keluar.penerima) as penerima, 
+                                        GROUP_CONCAT(keluar.keterangan) as keterangan 
+                                    FROM 
+                                        permintaan_barang 
+                                    INNER JOIN 
+                                        keluar ON permintaan_barang.idkeluar = keluar.idkeluar
+                                    INNER JOIN 
+                                        stock ON keluar.idbarang = stock.idbarang
+                                    GROUP BY 
+                                        keluar.idkeluar 
+                                    ORDER BY 
+                                        keluar.idkeluar DESC";
+
+                                    $result = mysqli_query($conn, $query);
+                                    ?>
                                     <thead>
-                                        <tr>
                                         <tr>
                                             <th>Tanggal</th>
                                             <th>Nama Barang</th>
@@ -137,52 +159,61 @@ $role = $_SESSION['role'];
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $ambilsemuadatastock = mysqli_query($conn, "select * from keluar k, stock s where s.idbarang = k.idbarang");
-                                        while ($data = mysqli_fetch_array($ambilsemuadatastock)) {
-                                            $idk = $data['idkeluar'];
-                                            $idb = $data['idbarang'];
-                                            $tanggal = $data['tanggal'];
-                                            $namabarang = $data['namabarang'];
-                                            $qty = $data['qty'];
-                                            $penerima = $data['penerima'];
-                                            $unit = $data['unit'];
-                                            $keterangan = $data['keterangan'];
-                                            $gambar_base64 = $data['gambar_base64'];
-
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            $idkeluar = $row['idkeluar'];
+                                            $tanggal = $row['tanggal'];
+                                            $gambar_base64 = $row['gambar_base64'];
+                                            // Data-data barang
+                                            $nama_barang = explode(",", $row['nama_barang']);
+                                            $unit = explode(",", $row['unit']);
+                                            $qty = explode(",", $row['qty']);
+                                            $penerima = explode(",", $row['penerima']);
+                                            $keterangan = explode(",", $row['keterangan']);
+                                            // Lakukan tampilan data di sini sesuai kebutuhan Anda
                                         ?>
-
                                             <tr>
                                                 <td><?= $tanggal; ?></td>
-                                                <td><?= $namabarang; ?></td>
-                                                <td><?= $unit; ?></td>
-                                                <td><?= $qty; ?></td>
-                                                <td><?= $penerima; ?></td>
-                                                <td><?= $keterangan; ?></td>
-                                                <!-- Modal untuk menampilkan gambar penuh -->
-                                                <div class="modal fade" id="gambarModal<?= $idk; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog modal-lg" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="gambarModalLabel">Bukti Keluar</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <img src="data:image/jpeg;base64,<?= $gambar_base64; ?>" class="img-fluid">
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <a href="download_gambar_keluar.php?id=<?= $idk; ?>&type=keluar" class="btn btn-primary" download>Download</a>
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <td>
-                                                    <a href="#" class="gambar-mini-trigger" data-toggle="modal" data-target="#gambarModal<?= $idk; ?>" data-id="<?= $idk; ?>">
-                                                        <img src="data:image/jpeg;base64,<?= $gambar_base64; ?>" alt="Bukti Keluar" style="max-width: 100px; max-height: 100px;">
+                                                    <?php
+                                                    foreach ($nama_barang as $barang) {
+                                                        echo $barang . "<br>";
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    foreach ($unit as $item) {
+                                                        echo $item . "<br>";
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    foreach ($qty as $item) {
+                                                        echo $item . "<br>";
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    foreach ($penerima as $item) {
+                                                        echo $item . "<br>";
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    foreach ($keterangan as $item) {
+                                                        echo $item . "<br>";
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="gambar-modal-trigger" data-idkeluar="<?= $idkeluar; ?>">
+                                                        <img src="data:image/jpeg;base64,<?= $row['gambar_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
                                                     </a>
                                                 </td>
+
                                                 <?php if ($role == 'dev') : ?>
                                                     <td>
                                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idk; ?>">
@@ -200,8 +231,26 @@ $role = $_SESSION['role'];
                                                     </td>
                                                 <?php endif; ?>
                                             </tr>
-
-
+                                            <!-- Modal untuk menampilkan gambar penuh -->
+                                            <div class="modal fade" id="gambarModal<?= $idk; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="gambarModalLabel">Bukti Keluar</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <img src="data:image/jpeg;base64,<?= $gambar_base64; ?>" class="img-fluid">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a href="download_gambar_keluar.php?id=<?= $idk; ?>&type=keluar" class="btn btn-primary" download>Download</a>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <!-- Edit Modal -->
                                             <div class="modal fade" id="edit<?= $idk; ?>">
@@ -236,84 +285,83 @@ $role = $_SESSION['role'];
                                                                 <button type="submit" class="btn btn-primary" name="updatebarangkeluar">Submit</button>
                                                             </div>
                                                         </form>
-
                                                     </div>
                                                 </div>
                                             </div>
+                            </div>
 
-                                            <!-- Delete Modal -->
-                                            <div class="modal fade" id="delete<?= $idk; ?>">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
+                            <!-- Delete Modal -->
+                            <div class="modal fade" id="delete<?= $idk; ?>">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
 
-                                                        <!-- Modal Header -->
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Barang</h4>
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        </div>
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Hapus Barang</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
 
-                                                        <!-- Modal body -->
-                                                        <form method="post">
-                                                            <div class="modal-body">
-                                                                Apakah Anda Yakin Ingin Menghapus <?= $namabarang; ?>?
-                                                                <input type="hidden" name="idb" value="<?= $idb; ?>">
-                                                                <input type="hidden" name="qty" value="<?= $qty; ?>">
-                                                                <input type="hidden" name="idk" value="<?= $idk; ?>">
-                                                                <br>
-                                                                <br>
-                                                                <button type="submit" class="btn btn-danger" name="hapusbarangkeluar">Hapus</button>
-                                                            </div>
-                                                        </form>
-
-                                                    </div>
-                                                </div>
+                                        <!-- Modal body -->
+                                        <form method="post">
+                                            <div class="modal-body">
+                                                Apakah Anda Yakin Ingin Menghapus <?= $namabarang; ?>?
+                                                <input type="hidden" name="idb" value="<?= $idb; ?>">
+                                                <input type="hidden" name="qty" value="<?= $qty; ?>">
+                                                <input type="hidden" name="idk" value="<?= $idk; ?>">
+                                                <br>
+                                                <br>
+                                                <button type="submit" class="btn btn-danger" name="hapusbarangkeluar">Hapus</button>
                                             </div>
+                                        </form>
 
-                                        <?php
+                                    </div>
+                                </div>
+                            </div>
+                        <?php
                                         };
 
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                        ?>
+                        </tbody>
+                        </table>
                         </div>
                     </div>
                 </div>
-            </main>
-            <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            <!-- Modal Logout-->
-            <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Logout</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Apakah anda yakin ingin keluar <?= $role; ?>?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                            <a class="btn btn-primary" href="logout.php">Logout</a>
-                        </div>
+        </div>
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center justify-content-between small">
+                    <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
+                    <div>
+                        <a href="#">Privacy Policy</a>
+                        &middot;
+                        <a href="#">Terms &amp; Conditions</a>
                     </div>
                 </div>
             </div>
-
+        </footer>
+        <!-- Modal Logout-->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Logout</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah anda yakin ingin keluar <?= $role; ?>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <a class="btn btn-primary" href="logout.php">Logout</a>
+                    </div>
+                </div>
+            </div>
         </div>
+
+    </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -326,16 +374,73 @@ $role = $_SESSION['role'];
     <script src="assets/demo/datatables-demo.js"></script>
     <script>
         $(document).ready(function() {
+            var counter = 2; // Mulai dari nomor 2
+            // Hapus tombol hapus barang saat formulir utama dimuat
+            $("#hapusBarangBtn").hide();
+
+            // Tambahkan barang baru
+            $("#addBarangBtn").click(function() {
+                var newBarang = `
+            <div id="barang${counter}">
+            <label for="barangnya${counter}">Nama Barang:</label>
+                <select name="barangnya[]" class="form-control">
+                    <?php
+                    $ambilsemuadatanya = mysqli_query($conn, "select * from stock");
+                    while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
+                        $namabarangnya = $fetcharray['namabarang'];
+                        $idbarangnya = $fetcharray['idbarang'];
+
+                    ?>
+
+                        <option value="<?= $idbarangnya; ?>"><?= $namabarangnya; ?></option>
+
+                    <?php
+                    }
+                    ?>
+                </select>
+                <br>
+                <label for="qty${counter}">Jumlah:</label>
+                <input type="number" name="qty[]" placeholder="qty" class="form-control" required>
+                <br>
+                <label for="penerima${counter}">Penerima:</label>
+                <input type="text" name="penerima[]" placeholder="Penerima" class="form-control" required>
+                <br>
+                <label for="keterangan${counter}">Keterangan:</label>
+                <textarea name="keterangan[]" class="form-control" placeholder="Keterangan" rows="3" required></textarea>
+                <br>
+                <hr>
+            </div>
+        `;
+                $("#barangContainer").append(newBarang);
+                $("#hapusBarangBtn").show();
+                counter++;
+            });
+
+            // Hapus barang baru
+            $("#hapusBarangBtn").click(function() {
+                if (counter > 2) {
+                    counter--;
+                    $("#barangContainer #barang" + counter).remove();
+                }
+                // Sembunyikan tombol hapus barang jika tidak ada barang lagi
+                if (counter === 1) {
+                    $("#hapusBarangBtn").hide();
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
             $('.gambar-mini-trigger').click(function() {
                 var id = $(this).data('id');
                 $('#gambarModal' + id).modal('show');
             });
         });
     </script>
-
 </body>
 
-<!-- The Modal -->
+<!-- The Modal Tambah-->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -349,8 +454,11 @@ $role = $_SESSION['role'];
             <!-- Modal body -->
             <form method="post" enctype="multipart/form-data">
                 <div class="modal-body">
-                    <label for="barangnya">Nama Barang:</label>
-                    <select name="barangnya" class="form-control">
+                    <label for="gambar_base64">Bukti Keluar:</label>
+                    <input type="file" name="gambar_base64" class="form-control-file" required>
+                    <br>
+                    <label for="barangnya[]">Nama Barang:</label>
+                    <select name="barangnya[]" class="form-control">
                         <?php
                         $ambilsemuadatanya = mysqli_query($conn, "select * from stock");
                         while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
@@ -366,18 +474,25 @@ $role = $_SESSION['role'];
                         ?>
                     </select>
                     <br>
-                    <label for="qty">Jumlah:</label>
-                    <input type="number" name="qty" placeholder="qty" class="form-control" required>
+                    <label for="qty[]">Jumlah:</label>
+                    <input type="number" name="qty[]" placeholder="qty" class="form-control" required>
                     <br>
-                    <label for="penerima">Penerima:</label>
-                    <input type="text" name="penerima" placeholder="Penerima" class="form-control" required>
+                    <label for="penerima[]">Penerima:</label>
+                    <input type="text" name="penerima[]" placeholder="Penerima" class="form-control" required>
                     <br>
-                    <label for="keterangan">Keterangan:</label>
-                    <textarea name="keterangan" class="form-control" placeholder="Keterangan" rows="3" required></textarea>
+                    <label for="keterangan[]">Keterangan:</label>
+                    <textarea name="keterangan[]" class="form-control" placeholder="Keterangan" rows="3" required></textarea>
+                    <hr>
                     <br>
-                    <label for="gambar_base64">Bukti Keluar:</label>
-                    <input type="file" name="gambar_base64" class="form-control-file" required>
-                    <br>
+                    <!-- Tempat untuk menambahkan barang-barang baru -->
+                    <div id="barangContainer">
+                        <!-- Ini adalah tempat untuk menambahkan detail barang -->
+                    </div>
+                    <!-- Tombol untuk menambahkan barang baru -->
+                    <button type="button" class="btn btn-success" id="addBarangBtn">Tambah Barang</button>
+                    <!-- Tombol untuk menghapus barang baru -->
+                    <button type="button" class="btn btn-danger" id="hapusBarangBtn">Hapus Barang</button>
+                    <!-- Tombol untuk mengirim -->
                     <button type="submit" class="btn btn-primary" name="addbarangkeluar">Submit</button>
                 </div>
             </form>
