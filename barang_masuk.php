@@ -170,9 +170,7 @@ $role = $_SESSION['role'];
                                             <th>Keterangan</th>
                                             <th>Bukti</th>
                                             <th>Status</th>
-                                            <?php if ($role === 'gudang' || $role === 'dev') :  ?>
-                                                <th>Aksi</th>
-                                            <?php endif; ?>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -206,9 +204,9 @@ $role = $_SESSION['role'];
                                                     </a>
                                                 </td>
                                                 <td><?= ($status == 0) ? 'Dalam Pengiriman' : ($status == 1 ? 'Diterima' : 'Tidak Diterima'); ?></td>
-                                                <td>
-                                                    <?php if ($_SESSION['role'] === 'dev') { ?>
 
+                                                <?php if ($_SESSION['role'] === 'dev') { ?>
+                                                    <td>
                                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
                                                             Edit
                                                         </button>
@@ -218,19 +216,22 @@ $role = $_SESSION['role'];
                                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idm; ?>">
                                                             Status
                                                         </button>
-
-                                                    <?php } elseif ($_SESSION['role'] === 'gudang' && $status == 0) { ?>
-
+                                                    </td>
+                                                <?php } elseif ($_SESSION['role'] === 'gudang' && $status == 0) { ?>
+                                                    <td>
                                                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idm; ?>">
                                                             Edit
                                                         </button>
                                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idm; ?>">
                                                             Status
                                                         </button>
+                                                    </td>
+                                                <?php } elseif ($status == 1 || $status == 2) { ?>
+                                                    <td>Ditanggapi</td>
+                                                <?php } else { ?>
+                                                    <td>Belum Ditanggapi</td>
+                                                <?php } ?>
 
-                                                    <?php } else { ?>
-                                                        Ditanggapi
-                                                    <?php } ?>
                                                 </td>
                                             </tr>
 

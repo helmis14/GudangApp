@@ -153,9 +153,7 @@ $role = $_SESSION['role'];
                                             <th>Keterangan</th>
                                             <th>Bukti</th>
                                             <th>Status</th>
-                                            <?php if ($role !== 'user') : ?>
-                                                <th>Aksi</th>
-                                            <?php endif; ?>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -258,9 +256,12 @@ $role = $_SESSION['role'];
                                                             Ubah Status
                                                         </button>
 
-                                                    <?php } else { ?>
+                                                    <?php } elseif ($status_permintaan == 1) { ?>
                                                         Ditanggapi
+                                                    <?php } else { ?>
+                                                        Belum Ditanggapi
                                                     <?php } ?>
+
                                                 </td>
                                             </tr>
 
