@@ -101,7 +101,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
 
     if ($uploadOk == 1) {
         if (move_uploaded_file($_FILES["excel_file"]["tmp_name"], $target_file)) {
-            // Import data from Excel to MySQL
+
             importDataFromExcel($target_file, $conn);
             echo "File uploaded and data imported successfully.";
         } else {
@@ -109,7 +109,6 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
         }
     }
 
-    // Close the connection outside the form submission condition
     $conn->close();
 }
 ?>
@@ -371,9 +370,9 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
             <div class="d-flex align-items-center justify-content-between small">
                 <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
                 <div>
-                    <a href="#">Privacy Policy</a>
+                    <a href="privacy_policy.php">Privacy Policy</a>
                     &middot;
-                    <a href="#">Terms &amp; Conditions</a>
+                    <a href="terms_conditions.php">Terms &amp; Conditions</a>
                 </div>
             </div>
         </div>

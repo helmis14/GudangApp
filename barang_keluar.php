@@ -423,9 +423,9 @@ $role = $_SESSION['role'];
                 <div class="d-flex align-items-center justify-content-between small">
                     <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
                     <div>
-                        <a href="#">Privacy Policy</a>
+                        <a href="privacy_policy.php">Privacy Policy</a>
                         &middot;
-                        <a href="#">Terms &amp; Conditions</a>
+                        <a href="terms_conditions.php">Terms &amp; Conditions</a>
                     </div>
                 </div>
             </div>
@@ -512,7 +512,7 @@ $role = $_SESSION['role'];
                     counter--;
                     $("#barangContainer #barang" + counter).remove();
                 }
-                // Sembunyikan tombol hapus barang jika tidak ada barang lagi
+
                 if (counter === 1) {
                     $("#hapusBarangBtn").hide();
                 }
@@ -602,6 +602,5 @@ $role = $_SESSION['role'];
         </div>
     </div>
 </div>
-
 
 </html>
