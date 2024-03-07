@@ -7,13 +7,10 @@ $conn = mysqli_connect("localhost", "root", "", "stokbarangs");
 
 function convertToBase64($file)
 {
-    // Memastikan bahwa argumen adalah string yang valid
     if (is_string($file)) {
-        // Membaca konten dari file dan mengonversinya ke base64
         $base64 = base64_encode(file_get_contents($file));
         return $base64;
     } else {
-        // Menangani kasus di mana argumen bukan string
         return false;
     }
 }
@@ -48,12 +45,11 @@ if (isset($_POST['updatebarang'])) {
 
     $update = mysqli_query($conn, "UPDATE stock SET namabarang='$namabarang', unit='$unit', lokasi='$lok' WHERE idbarang ='$idb'");
     if ($update) {
-        // Ambil informasi barang sebelum diubah
         $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
         $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
         $nama_barang = $data_nama_barang['namabarang'];
 
-        // Catat log dengan informasi yang diinginkan
+
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
         $activity = "$email_logged melakukan pembaruan informasi stock barang: $nama_barang (ID: $idb) menjadi $namabarang, $unit, $lok";
@@ -71,14 +67,12 @@ if (isset($_POST['updatebarang'])) {
 if (isset($_POST['hapusbarang'])) {
     $idb = $_POST['idb'];
 
-    // Ambil informasi barang sebelum dihapus
     $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
     $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
     $nama_barang = $data_nama_barang['namabarang'];
 
     $hapus = mysqli_query($conn, "DELETE FROM stock WHERE idbarang='$idb'");
     if ($hapus) {
-        // Catat log dengan informasi yang diinginkan
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
         $activity = "$email_logged menghapus barang dari stok: $nama_barang (ID: $idb)";
@@ -103,12 +97,10 @@ if (isset($_POST['barangmasuk'])) {
     $deskripsi = $_POST['deskripsi'];
     $status = $_POST['status'];
 
-    // Proses konversi gambar ke base64
     $bukti_masuk_base64 = $_FILES['bukti_masuk_base64'];
     $tmp_name = $bukti_masuk_base64['tmp_name'];
 
     if (!empty($tmp_name)) {
-        // Konversi gambar ke base64
         $bukti_masuk_base64 = convertToBase64($tmp_name);
 
         $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$barangnya'");
@@ -120,7 +112,6 @@ if (isset($_POST['barangmasuk'])) {
         $addtomasuk = mysqli_query($conn, "INSERT INTO masuk (idbarang, penerima, qty, keterangan, deskripsi, distributor, status, bukti_masuk_base64) VALUES ('$barangnya','$penerima','$qty', '$keterangan', '$deskripsi', '$distributor', '$status', '$bukti_masuk_base64')");
         $updatestockmasuk = mysqli_query($conn, "UPDATE stock SET stock='$tambahkanstocksekarangdenganquantity' WHERE idbarang='$barangnya'");
         if ($addtomasuk && $updatestockmasuk) {
-            // Ambil data nama barang untuk mencatat aktivitas
             $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$barangnya'");
             $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
             $nama_barang = $data_nama_barang['namabarang'];
@@ -151,7 +142,6 @@ if (isset($_POST['updatebarangmasuk'])) {
     $distributor = $_POST['distributor'];
     $keterangan = $_POST['keterangan'];
 
-    // Ambil informasi barang sebelum diubah
     $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
     $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
     $nama_barang = $data_nama_barang['namabarang'];
@@ -192,7 +182,6 @@ if (isset($_POST['updatebarangmasuk'])) {
     $updatenya = mysqli_query($conn, "UPDATE masuk SET qty='$qty', keterangan='$deskripsi', penerima='$penerima', distributor='$distributor' WHERE idmasuk='$idm'");
 
     if ($kurangistocknya && $updatenya) {
-        // Catat log dengan informasi yang diinginkan
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
         $activity = "$email_logged mengubah data barang masuk: $nama_barang (ID: $idm) menjadi $qty kepada $penerima dengan keterangan: $keterangan";
@@ -300,74 +289,295 @@ if (isset($_POST['addbarangkeluar'])) {
     }
 }
 
+//ubah keluar baru
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
 
+        if ($action === 'delete_barang') {
+            if (isset($_POST['idkeluar'])) {
+                $idkeluar = $_POST['idkeluar'];
 
-// Mengubah data barang keluar
-if (isset($_POST['updatebarangkeluar'])) {
-    $idb = $_POST['idb'];
-    $idk = $_POST['idk'];
-    $penerima = $_POST['penerima'];
-    $qty = $_POST['qty'];
-    $keterangan = $_POST['keterangan'];
+                if (is_array($idkeluar)) {
+                    foreach ($idkeluar as $keluar) {
+                        if (delete_barang_keluar($keluar)) {
+                            echo 'success';
+                        } else {
+                            echo 'error';
+                        }
+                    }
+                } else { // Jika idkeluar hanya satu nilai
+                    if (delete_barang_keluar($idkeluar)) {
+                        echo 'success';
+                    } else {
+                        echo 'error';
+                    }
+                }
+            } else {
+                echo 'error'; // Tidak ada idkeluar yang disertakan
+            }
+        } elseif ($action === 'update_barang') {
+            if (isset($_POST['idkeluar'])) {
+                $idkeluar = $_POST['idkeluar'];
+                $$idbarang = $_POST['$idbarang'];
+                $penerima = $_POST['penerima'];
+                $qty = $_POST['qty'];
+                $keterangan = $_POST['keterangan'];
 
-    $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
-    $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
-    $nama_barang = $data_nama_barang['namabarang'];
-
-
-    if (isset($_FILES['update_gambar']) && $_FILES['update_gambar']['error'] == 0) {
-        $tmp_path = $_FILES['update_gambar']['tmp_name'];
-        $update_gambar_base64 = convertToBase64($tmp_path);
-
-
-        $queryUpdateGambar = "UPDATE keluar SET gambar_base64 = ? WHERE idpermintaan = ?";
-        $stmtUpdateGambar = mysqli_prepare($conn, $queryUpdateGambar);
-        mysqli_stmt_bind_param($stmtUpdateGambar, "si", $update_gambar_base64, $idk);
-
-        if (mysqli_stmt_execute($stmtUpdateGambar)) {
-            mysqli_stmt_close($stmtUpdateGambar);
-        } else {
-            echo 'Error updating image: ' . mysqli_error($conn);
-            exit;
-        }
-    }
-
-    $lihatstock = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$idb'");
-    $stocknya = mysqli_fetch_array($lihatstock);
-    $stocksekarang = $stocknya['stock'];
-
-    $qtysekarang = mysqli_query($conn, "SELECT * FROM keluar WHERE idpermintaan='$idk'");
-    $qtynya = mysqli_fetch_array($qtysekarang);
-    $qtysekarang = $qtynya['qty'];
-
-    if ($qty > $qtysekarang) {
-        $selisih = $qty - $qtysekarang;
-        $kurangin = $stocksekarang - $selisih;
-        $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-        $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idpermintaan='$idk'");
-        if ($kurangistocknya && $updatenya) {
-            $iduser_logged = $_SESSION['iduser'];
-            $email_logged = $_SESSION['email'];
-            $activity = "$email_logged mengubah data barang keluar: $nama_barang (ID: $idk) menjadi $qty penerima $penerima dengan keterangan: $keterangan";
-            catatLog($conn, $activity, $iduser_logged);
-            header('location:barang_keluar.php');
-        } else {
-            echo 'Gagal: ' . mysqli_error($conn);
-            header('location:barang_keluar.php');
-        }
-    } else {
-        $selisih = $qtysekarang - $qty;
-        $kurangin = $stocksekarang + $selisih;
-        $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-        $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idpermintaan='$idk'");
-        if ($kurangistocknya && $updatenya) {
-            header('location:barang_keluar.php');
-        } else {
-            echo 'Gagal: ' . mysqli_error($conn);
-            header('location:barang_keluar.php');
+                if (update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan)) {
+                    echo 'success';
+                } else {
+                    echo 'error';
+                }
+            } else {
+                echo 'error'; // Handle jika data yang diperlukan tidak tersedia
+            }
         }
     }
 }
+
+
+
+// Fungsi penghapusan barang keluar edit
+function delete_barang_keluar($idkeluar)
+{
+    global $conn;
+
+    $query_select = "SELECT idbarang, qty FROM keluar WHERE idkeluar = $idkeluar";
+    $result_select = mysqli_query($conn, $query_select);
+    $row = mysqli_fetch_assoc($result_select);
+    $idbarang = $row['idbarang'];
+    $qty = $row['qty'];
+
+    $query_delete = "DELETE FROM keluar WHERE idkeluar = $idkeluar";
+
+    if (mysqli_query($conn, $query_delete)) {
+        $query_update = "UPDATE stock SET stock = stock + $qty WHERE idbarang = $idbarang";
+        if (mysqli_query($conn, $query_update)) {
+            $iduser_logged = $_SESSION['iduser'];
+            $email_logged = $_SESSION['email'];
+            $activity = "$email_logged menghapus data barang permintaan dengan idkeluar ($idkeluar) dan mengembalikan stok barang ke tabel barang";
+            catatLog($conn, $activity, $iduser_logged);
+            return true;
+        } else {
+            echo '<script>console.log("Gagal mengupdate stok barang: ' . mysqli_error($conn) . '");</script>';
+            return false;
+        }
+    } else {
+        echo '<script>console.log("Gagal menghapus barang: ' . mysqli_error($conn) . '");</script>';
+        return false;
+    }
+}
+
+
+// Fungsi pembaruan barang keluar edit
+function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan)
+{
+    global $conn;
+
+    // Mulai transaksi
+    mysqli_begin_transaction($conn);
+
+    // Update barang keluar
+    $query_update_keluar = "UPDATE keluar SET penerima = ?, qty = ?, keterangan = ? WHERE idkeluar = ?";
+    $stmt_update_keluar = mysqli_prepare($conn, $query_update_keluar);
+    mysqli_stmt_bind_param($stmt_update_keluar, "sisi", $penerima, $qty, $keterangan, $idkeluar);
+    $update_keluar_success = mysqli_stmt_execute($stmt_update_keluar);
+
+    // Update stok barang
+    $query_update_stok = "UPDATE stock SET stock = stock - ? WHERE idbarang = ?";
+    $stmt_update_stok = mysqli_prepare($conn, $query_update_stok);
+    mysqli_stmt_bind_param($stmt_update_stok, "ii", $qty, $idbarang);
+    $update_stok_success = mysqli_stmt_execute($stmt_update_stok);
+
+   
+    if ($update_keluar_success && $update_stok_success) {
+        mysqli_commit($conn);
+        mysqli_stmt_close($stmt_update_keluar);
+        mysqli_stmt_close($stmt_update_stok);
+        return true;
+    } else {
+        mysqli_rollback($conn);
+        echo '<script>console.log("Gagal memperbarui barang: ' . mysqli_error($conn) . '");</script>';
+        mysqli_stmt_close($stmt_update_keluar);
+        mysqli_stmt_close($stmt_update_stok);
+        return false;
+    }
+}
+
+
+
+
+// Mengubah data permintaan barang keluar
+if (isset($_POST['updatebarangkeluar'])) {
+    $idpermintaan = $_POST['id'];
+    $penerima = $_POST['penerima'];
+    $qty = $_POST['qty'];
+    $ket = $_POST['ket'];
+
+    mysqli_begin_transaction($conn);
+
+    $idbarang = $_POST['idbarang'];
+    $idkeluar = $_POST['idkeluar'];
+
+    if (isset($idkeluar) && is_array($idkeluar)) {
+
+        
+        for ($i = 0; $i < count($idkeluar); $i++) {
+
+            $id_barang = $idkeluar[$i];
+            $penerima_barang = $penerima[$i];
+            $qty_barang = $qty[$i];
+            $keterangan_barang = $ket[$i];
+
+            $queryUpdateBarangPermintaan = "UPDATE keluar SET penerima = ?, qty = ?, keterangan = ? WHERE idpermintaan = ? AND idkeluar = ?";
+            $stmtUpdateBarangPermintaan = mysqli_prepare($conn, $queryUpdateBarangPermintaan);
+            mysqli_stmt_bind_param($stmtUpdateBarangPermintaan, "sisii", $penerima_barang, $qty_barang, $keterangan_barang, $idpermintaan, $id_barang);
+
+            if (!mysqli_stmt_execute($stmtUpdateBarangPermintaan)) {
+                echo 'Error updating barang_permintaan: ' . mysqli_error($conn);
+                mysqli_rollback($conn);
+                exit;
+            }
+
+            mysqli_stmt_close($stmtUpdateBarangPermintaan);
+        }
+    } else {
+        echo "ID barang tidak valid.";
+    }
+
+    if (isset($_FILES['gambar_base64']) && $_FILES['gambar_base64']['error'] == 0) {
+        $tmp_path = $_FILES['gambar_base64']['tmp_name'];
+        $update_permintaan_base64 = convertToBase64($tmp_path);
+
+        $queryUpdatePermintaan = "UPDATE permintaan_barang SET gambar_base64 = ? WHERE idpermintaan = ?";
+        $stmtUpdatePermintaan = mysqli_prepare($conn, $queryUpdatePermintaan);
+        mysqli_stmt_bind_param($stmtUpdatePermintaan, "si", $update_permintaan_base64, $idpermintaan);
+
+        if (!mysqli_stmt_execute($stmtUpdatePermintaan)) {
+            echo 'Error updating image: ' . mysqli_error($conn);
+            mysqli_rollback($conn);
+            exit;
+        }
+
+        mysqli_stmt_close($stmtUpdatePermintaan);
+    }
+
+
+    mysqli_commit($conn);
+    $iduser_logged = $_SESSION['iduser'];
+    $email_logged = $_SESSION['email'];
+    $activity = "$email_logged mengubah bukti data permintaan dengan idpermintaan ($idpermintaan)";
+    catatLog($conn, $activity, $iduser_logged);
+    header('location: barang_keluar.php');
+    exit;
+}
+
+
+// // Mengubah data barang keluar lama
+// if (isset($_POST['updatebarangkeluar'])) {
+//     $idb = $_POST['idb'];
+//     $idk = $_POST['idk'];
+//     $penerima = $_POST['penerima'];
+//     $qty = $_POST['qty'];
+//     $keterangan = $_POST['keterangan'];
+
+//     $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
+//     $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
+//     $nama_barang = $data_nama_barang['namabarang'];
+
+
+//     if (isset($_FILES['update_gambar']) && $_FILES['update_gambar']['error'] == 0) {
+//         $tmp_path = $_FILES['update_gambar']['tmp_name'];
+//         $update_gambar_base64 = convertToBase64($tmp_path);
+
+
+//         $queryUpdateGambar = "UPDATE keluar SET gambar_base64 = ? WHERE idpermintaan = ?";
+//         $stmtUpdateGambar = mysqli_prepare($conn, $queryUpdateGambar);
+//         mysqli_stmt_bind_param($stmtUpdateGambar, "si", $update_gambar_base64, $idk);
+
+//         if (mysqli_stmt_execute($stmtUpdateGambar)) {
+//             mysqli_stmt_close($stmtUpdateGambar);
+//         } else {
+//             echo 'Error updating image: ' . mysqli_error($conn);
+//             exit;
+//         }
+//     }
+
+//     $lihatstock = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$idb'");
+//     $stocknya = mysqli_fetch_array($lihatstock);
+//     $stocksekarang = $stocknya['stock'];
+
+//     $qtysekarang = mysqli_query($conn, "SELECT * FROM keluar WHERE idpermintaan='$idk'");
+//     $qtynya = mysqli_fetch_array($qtysekarang);
+//     $qtysekarang = $qtynya['qty'];
+
+//     if ($qty > $qtysekarang) {
+//         $selisih = $qty - $qtysekarang;
+//         $kurangin = $stocksekarang - $selisih;
+//         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
+//         $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idpermintaan='$idk'");
+//         if ($kurangistocknya && $updatenya) {
+//             $iduser_logged = $_SESSION['iduser'];
+//             $email_logged = $_SESSION['email'];
+//             $activity = "$email_logged mengubah data barang keluar: $nama_barang (ID: $idk) menjadi $qty penerima $penerima dengan keterangan: $keterangan";
+//             catatLog($conn, $activity, $iduser_logged);
+//             header('location:barang_keluar.php');
+//         } else {
+//             echo 'Gagal: ' . mysqli_error($conn);
+//             header('location:barang_keluar.php');
+//         }
+//     } else {
+//         $selisih = $qtysekarang - $qty;
+//         $kurangin = $stocksekarang + $selisih;
+//         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
+//         $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idpermintaan='$idk'");
+//         if ($kurangistocknya && $updatenya) {
+//             header('location:barang_keluar.php');
+//         } else {
+//             echo 'Gagal: ' . mysqli_error($conn);
+//             header('location:barang_keluar.php');
+//         }
+//     }
+// }
+
+
+
+
+function tambahBarangBaruKeluar($idpermintaan, $idbarang, $penerima, $qty, $keterangan)
+{
+    global $conn;
+
+    $sql = "INSERT INTO keluar (idpermintaan, idbarang, penerima, qty, keterangan) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt === false) {
+        die("Error saat membuat prepared statement: " . $conn->error);
+    }
+
+    $stmt->bind_param("iisis", $idpermintaan, $idbarang, $penerima, $qty, $keterangan);
+
+    if ($stmt->execute() === true) {
+        echo "Barang baru berhasil ditambahkan!";
+        $iduser_logged = $_SESSION['iduser'];
+        $email_logged = $_SESSION['email'];
+        $activity = "$email_logged menambah data barang permintaan dengan idpermintaan ($idpermintaan) dan idbarang ($idbarang)";
+        catatLog($conn, $activity, $iduser_logged);
+
+        $updateStock = mysqli_query($conn, "UPDATE stock SET stock = stock - $qty WHERE idbarang = '$idbarang'");
+        if (!$updateStock) {
+            echo 'Gagal memperbarui stok barang';
+            header('location: permintaan.php');
+            exit;
+        }
+    } else {
+        echo "Gagal menambahkan barang baru: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+
 
 //hapus barang keluar
 if (isset($_POST['hapusbarangkeluar']) && isset($_POST['idpermintaan'])) {

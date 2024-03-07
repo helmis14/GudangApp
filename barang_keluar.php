@@ -255,16 +255,16 @@ $role = $_SESSION['role'];
                                             <div class="modal fade" id="edit<?= $idpermintaan; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <form method="post" enctype="multipart/form-data" action="process_form.php">
+                                                        <form method="post" enctype="multipart/form-data" action="process_form_barangkeluar.php">
                                                             <div class="modal-header">
                                                                 <h4 class="modal-title">Ubah Barang Keluar</h4>
                                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <label for="update_permintaan">Bukti Keluar:</label>
-                                                                <input type="file" name="update_permintaan" class="form-control-file" accept="image/*">
+                                                                <label for="gambar_base64">Bukti Keluar:</label>
+                                                                <input type="file" name="gambar_base64" class="form-control-file" accept="image/*">
                                                                 <br>
-                                                                <button type="submit" class="btn btn-warning" name="updatepermintaan">Ubah Bukti</button>
+                                                                <button type="submit" class="btn btn-warning" name="updatebarangkeluar">Ubah Bukti</button>
                                                                 <br>
                                                                 <br>
                                                                 <?php
@@ -273,6 +273,7 @@ $role = $_SESSION['role'];
                                                                 $nomor_barang = 1;
                                                                 while ($row_barang = mysqli_fetch_assoc($result_barang)) {
                                                                     $idbarang = $row_barang['idbarang'];
+                                                                    $idkeluar = $row_barang['idkeluar'];
                                                                     $query_stock = "SELECT * FROM stock WHERE idbarang = $idbarang";
                                                                     $result_stock = mysqli_query($conn, $query_stock);
                                                                     $row_stock = mysqli_fetch_assoc($result_stock);
@@ -284,26 +285,27 @@ $role = $_SESSION['role'];
                                                                 ?>
 
 
-                                                                    <div class="barang" id="barang<?= $idbarang; ?>">
-                                                                        <input type="hidden" name="idbarang[]" value="<?= $idbarang; ?>" class="form-control" id="idbarang<?= $idbarang; ?>">
+                                                                    <div class="barang" id="barang<?= $idkeluar; ?>">
+                                                                        <input type="hidden" name="idkeluar[]" value="<?= $idkeluar; ?>">
+                                                                        <input type="hidden" name="idbarang[]" value="<?= $idbarang; ?>" class="form-control" id="idbarang<?= $idkeluar; ?>">
                                                                         <br>
-                                                                        <label for="namabarang<?= $idbarang; ?>">Nama Barang <?= $nomor_barang; ?>:</label>
-                                                                        <input type="text" name="namabarang[]" value="<?= $namabarang; ?>" class="form-control" id="namabarang<?= $idbarang; ?> " disabled>
+                                                                        <label for="namabarang<?= $idkeluar; ?>">Nama Barang <?= $nomor_barang; ?>:<?= $idkeluar; ?></label>
+                                                                        <input type="text" name="namabarang[]" value="<?= $namabarang; ?>" class="form-control" id="namabarang<?= $idkeluar; ?> " disabled>
                                                                         <br>
-                                                                        <label for="unit<?= $idbarang; ?>">Unit:</label>
-                                                                        <input type="text" name="unit[]" value="<?= $unit; ?>" class="form-control" id="unit<?= $idbarang; ?>" disabled>
+                                                                        <label for="unit<?= $idkeluar; ?>">Unit:</label>
+                                                                        <input type="text" name="unit[]" value="<?= $unit; ?>" class="form-control" id="unit<?= $idkeluar; ?>" disabled>
                                                                         <br>
-                                                                        <label for="qty<?= $idbarang; ?>">Jumlah:</label>
-                                                                        <input type="number" name="qty[]" value="<?= $qty; ?>" class="form-control" id="qtypermintaan<?= $idbarang; ?>">
+                                                                        <label for="qty<?= $idkeluar; ?>">Jumlah:</label>
+                                                                        <input type="number" name="qty[]" value="<?= $qty; ?>" class="form-control" id="qtypermintaan<?= $idkeluar; ?>">
                                                                         <br>
-                                                                        <label for="penerima<?= $idbarang; ?>">Penerima:</label>
-                                                                        <input type="text" name="penerima[]" value="<?= $penerima; ?>" class="form-control" id="ket<?= $idbarang; ?>">
+                                                                        <label for="penerima<?= $idkeluar; ?>">Penerima:</label>
+                                                                        <input type="text" name="penerima[]" value="<?= $penerima; ?>" class="form-control" id="ket<?= $idkeluar; ?>">
                                                                         <br>
-                                                                        <label for="ket<?= $idbarang; ?>">Keterangan:</label>
-                                                                        <input type="text" name="ket[]" value="<?= $keterangan; ?>" class="form-control" id="ket<?= $idbarang; ?>">
+                                                                        <label for="ket<?= $idkeluar; ?>">Keterangan:</label>
+                                                                        <input type="text" name="ket[]" value="<?= $keterangan; ?>" class="form-control" id="ket<?= $idkeluar; ?>">
                                                                         <br>
-                                                                        <button type="submit" class="btn btn-danger" name="deletebarang" value="<?= $idbarang; ?>">Hapus</button>
-                                                                        <button type="submit" class="btn btn-warning" name="updatebarangpermin" value="<?= $idbarang; ?>">Ubah</button>
+                                                                        <button type="submit" class="btn btn-danger" name="deletebarangkeluar" value="<?= $idkeluar; ?>">Hapus</button>
+                                                                        <button type="submit" class="btn btn-warning" name="updatebarangkeluar" value="<?= $idkeluar; ?>">Ubah</button>
                                                                         <hr>
                                                                     </div>
                                                                 <?php
@@ -326,7 +328,7 @@ $role = $_SESSION['role'];
                                             </div>
 
                             </div>
-                            <!-- Modal tambah barang permintaan edit -->
+                            <!-- Modal tambah barang keluar edit -->
                             <div class="modal fade" id="myModaledit<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
@@ -341,35 +343,36 @@ $role = $_SESSION['role'];
                                                 <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
                                                 <div class="form-group">
                                                     <!-- Formulir utama -->
-                                                    <label for="namabarang">Nama Barang:</label>
-                                                    <input type="text" name="namabarang" placeholder="Nama Barang" class="form-control" required>
-                                                    <br>
-                                                    <label for="unit">Unit:</label>
-                                                    <select name="unit" class="form-control">
-                                                        <option value="Pcs">PCS</option>
-                                                        <option value="Pack">Pack</option>
-                                                        <option value="Kg">KG</option>
-                                                        <option value="Ball">BALL</option>
+                                                    <label for="barangnya">Nama Barang:</label>
+                                                    <select name="barangnya" class="form-control">
+                                                        <?php
+                                                        $ambilsemuadatanya = mysqli_query($conn, "select * from stock");
+                                                        while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
+                                                            $namabarang = $fetcharray['namabarang'];
+                                                            $idbarang = $fetcharray['idbarang'];
+
+                                                        ?>
+
+                                                            <option value="<?= $idbarang; ?>"><?= $namabarang; ?></option>
+
+                                                        <?php
+                                                        }
+                                                        ?>
                                                     </select>
                                                     <br>
-                                                    <label for="qtypermintaan">Jumlah:</label>
-                                                    <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
+                                                    <label for="qty">Jumlah:</label>
+                                                    <input type="number" name="qty" placeholder="qty" class="form-control" required>
+                                                    <br>
+                                                    <label for="penerima">Penerima:</label>
+                                                    <input type="text" name="penerima" placeholder="Penerima" class="form-control" required>
                                                     <br>
                                                     <label for="keterangan">Keterangan:</label>
-                                                    <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
-                                                    <br>
-
-                                                    <label for="status">Status:</label>
-                                                    <select name="status" class="form-control">
-                                                        <option value="0">Pending</option>
-                                                        <option value="1" disabled>Diterima</option>
-                                                        <option value="2" disabled>Ditolak</option>
-                                                    </select>
+                                                    <textarea name="keterangan" class="form-control" placeholder="Keterangan" rows="3" required></textarea>
                                                     <hr>
                                                     <br>
                                                     <div>
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary" name="barangbaru">Submit</button>
+                                                    <button type="submit" class="btn btn-primary" name="barangbarukeluar">Submit</button>
                                                 </div>
                                             </form>
                                         </div>

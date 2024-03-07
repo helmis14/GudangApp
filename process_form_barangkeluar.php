@@ -5,39 +5,53 @@ require 'cek.php';
 
 $message = "";
 
+$idkeluar_to_delete = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['deletebarangkeluar'])) {
-        $idbarang_to_delete = $_POST['deletebarangkeluar'];
-        $is_deleted = delete_barang($idbarang_to_delete);
+        $idkeluar_to_delete = $_POST['deletebarangkeluar'];
 
+
+        if (isset($_POST['idkeluar']) && is_array($_POST['idkeluar'])) {
+            $idkeluar_array = $_POST['idkeluar'];
+
+            foreach ($idkeluar_array as $idkeluar) {
+                $is_deleted = delete_barang_keluar($idkeluar);
+
+                if ($is_deleted) {
+                    $message = "Gagal menghapus barang";
+                    break;
+                }
+            }
+        }
         if ($is_deleted) {
             $message = "Barang berhasil dihapus";
         } else {
-            $message = "Gagal menghapus barang";
+            $message = "Tidak ada idkeluar yang diterima";
         }
     } elseif (isset($_POST['updatebarangkeluar'])) {
-        $idbarang_to_update = $_POST['updatebarangkeluar'];
-        $index = array_search($idbarang_to_update, $_POST['idbarang']);
+        // Loop untuk setiap barang yang akan diubah
+        foreach ($_POST['idkeluar'] as $index => $idkeluar) {
+            $idbarang = $_POST['idbarang'][$index];
+            $penerima = $_POST['penerima'][$index];
+            $qty = $_POST['qty'][$index];
+            $keterangan = $_POST['keterangan'][$index];
 
-        $namabarang = $_POST['namabarang'][$index];
-        $unit = $_POST['unit'][$index];
-        $qty = $_POST['qtypermintaan'][$index];
-        $keterangan = $_POST['ket'][$index];
-        $is_updated = update_barangpermin($idbarang_to_update, $namabarang, $unit, $qty, $keterangan);
-
-        if ($is_updated) {
-            $message = "Barang berhasil diperbarui";
-        } else {
-            $message = "Gagal memperbarui barang";
+            // Panggil fungsi untuk memperbarui barang keluar
+            if (update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan)) {
+                $message = "Barang berhasil diperbarui";
+            } else {
+                $message = "Gagal memperbarui barang";
+                // Handle error jika diperlukan
+            }
         }
-    } elseif (isset($_POST['barangbaru'])) {
+    } elseif (isset($_POST['barangbarukeluar'])) {
         $idpermintaan = $_POST['idpermintaan'];
-        $namabarang = $_POST['namabarang'];
-        $unit = $_POST['unit'];
-        $qtypermintaan = $_POST['qtypermintaan'];
+        $idbarang = $_POST['barangnya'];
+        $penerima = $_POST['penerima'];
+        $qty = $_POST['qty'];
         $keterangan = $_POST['keterangan'];
 
-        tambahBarangBaru($idpermintaan, $namabarang, $unit, $qtypermintaan, $keterangan);
+        tambahBarangBaruKeluar($idpermintaan, $idbarang, $penerima, $qty, $keterangan);
     } else {
         $message = "Tidak ada tindakan yang sesuai";
     }
