@@ -319,7 +319,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($action === 'update_barang') {
             if (isset($_POST['idkeluar'])) {
                 $idkeluar = $_POST['idkeluar'];
-                $$idbarang = $_POST['$idbarang'];
+                $idbarang = $_POST['$idbarang'];
                 $penerima = $_POST['penerima'];
                 $qty = $_POST['qty'];
                 $keterangan = $_POST['keterangan'];
@@ -369,28 +369,37 @@ function delete_barang_keluar($idkeluar)
     }
 }
 
-
 // Fungsi pembaruan barang keluar edit
 function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan)
 {
     global $conn;
 
-    // Mulai transaksi
+
     mysqli_begin_transaction($conn);
 
-    // Update barang keluar
+
+    $query_select_old_qty = "SELECT qty FROM keluar WHERE idkeluar = ?";
+    $stmt_select_old_qty = mysqli_prepare($conn, $query_select_old_qty);
+    mysqli_stmt_bind_param($stmt_select_old_qty, "i", $idkeluar);
+    mysqli_stmt_execute($stmt_select_old_qty);
+    mysqli_stmt_bind_result($stmt_select_old_qty, $old_qty);
+    mysqli_stmt_fetch($stmt_select_old_qty);
+    mysqli_stmt_close($stmt_select_old_qty);
+
+
+    $qty_difference = $qty - $old_qty;
+
+
     $query_update_keluar = "UPDATE keluar SET penerima = ?, qty = ?, keterangan = ? WHERE idkeluar = ?";
     $stmt_update_keluar = mysqli_prepare($conn, $query_update_keluar);
     mysqli_stmt_bind_param($stmt_update_keluar, "sisi", $penerima, $qty, $keterangan, $idkeluar);
     $update_keluar_success = mysqli_stmt_execute($stmt_update_keluar);
 
-    // Update stok barang
-    $query_update_stok = "UPDATE stock SET stock = stock - ? WHERE idbarang = ?";
+    $query_update_stok = "UPDATE stock SET stock = stock + ? WHERE idbarang = ?";
     $stmt_update_stok = mysqli_prepare($conn, $query_update_stok);
-    mysqli_stmt_bind_param($stmt_update_stok, "ii", $qty, $idbarang);
+    mysqli_stmt_bind_param($stmt_update_stok, "ii", $qty_difference, $idbarang);
     $update_stok_success = mysqli_stmt_execute($stmt_update_stok);
 
-   
     if ($update_keluar_success && $update_stok_success) {
         mysqli_commit($conn);
         mysqli_stmt_close($stmt_update_keluar);
@@ -406,46 +415,40 @@ function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan
 }
 
 
-
-
-// Mengubah data permintaan barang keluar
+//ubah keluar barang keluar
 if (isset($_POST['updatebarangkeluar'])) {
+    // Proses update barang keluar
     $idpermintaan = $_POST['id'];
     $penerima = $_POST['penerima'];
     $qty = $_POST['qty'];
     $ket = $_POST['ket'];
-
-    mysqli_begin_transaction($conn);
-
     $idbarang = $_POST['idbarang'];
     $idkeluar = $_POST['idkeluar'];
 
+    // Transaksi dimulai
+    mysqli_begin_transaction($conn);
+
     if (isset($idkeluar) && is_array($idkeluar)) {
-
-        
+        // Loop melalui setiap barang keluar yang diupdate
         for ($i = 0; $i < count($idkeluar); $i++) {
-
-            $id_barang = $idkeluar[$i];
+            $id_keluar = $idkeluar[$i];
+            $id_barang = $idbarang[$i];
             $penerima_barang = $penerima[$i];
             $qty_barang = $qty[$i];
             $keterangan_barang = $ket[$i];
 
-            $queryUpdateBarangPermintaan = "UPDATE keluar SET penerima = ?, qty = ?, keterangan = ? WHERE idpermintaan = ? AND idkeluar = ?";
-            $stmtUpdateBarangPermintaan = mysqli_prepare($conn, $queryUpdateBarangPermintaan);
-            mysqli_stmt_bind_param($stmtUpdateBarangPermintaan, "sisii", $penerima_barang, $qty_barang, $keterangan_barang, $idpermintaan, $id_barang);
-
-            if (!mysqli_stmt_execute($stmtUpdateBarangPermintaan)) {
-                echo 'Error updating barang_permintaan: ' . mysqli_error($conn);
+            // Panggil fungsi untuk memperbarui barang keluar
+            if (!update_barang_keluar($id_keluar, $id_barang, $penerima_barang, $qty_barang, $keterangan_barang)) {
+                echo 'Error updating barang_keluar';
                 mysqli_rollback($conn);
                 exit;
             }
-
-            mysqli_stmt_close($stmtUpdateBarangPermintaan);
         }
     } else {
         echo "ID barang tidak valid.";
     }
 
+    // Update gambar jika ada
     if (isset($_FILES['gambar_base64']) && $_FILES['gambar_base64']['error'] == 0) {
         $tmp_path = $_FILES['gambar_base64']['tmp_name'];
         $update_permintaan_base64 = convertToBase64($tmp_path);
@@ -463,83 +466,19 @@ if (isset($_POST['updatebarangkeluar'])) {
         mysqli_stmt_close($stmtUpdatePermintaan);
     }
 
-
+    // Commit transaksi
     mysqli_commit($conn);
+
+    // Catat log aktivitas
     $iduser_logged = $_SESSION['iduser'];
     $email_logged = $_SESSION['email'];
     $activity = "$email_logged mengubah bukti data permintaan dengan idpermintaan ($idpermintaan)";
     catatLog($conn, $activity, $iduser_logged);
+
+    // Redirect ke halaman barang keluar
     header('location: barang_keluar.php');
     exit;
 }
-
-
-// // Mengubah data barang keluar lama
-// if (isset($_POST['updatebarangkeluar'])) {
-//     $idb = $_POST['idb'];
-//     $idk = $_POST['idk'];
-//     $penerima = $_POST['penerima'];
-//     $qty = $_POST['qty'];
-//     $keterangan = $_POST['keterangan'];
-
-//     $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
-//     $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
-//     $nama_barang = $data_nama_barang['namabarang'];
-
-
-//     if (isset($_FILES['update_gambar']) && $_FILES['update_gambar']['error'] == 0) {
-//         $tmp_path = $_FILES['update_gambar']['tmp_name'];
-//         $update_gambar_base64 = convertToBase64($tmp_path);
-
-
-//         $queryUpdateGambar = "UPDATE keluar SET gambar_base64 = ? WHERE idpermintaan = ?";
-//         $stmtUpdateGambar = mysqli_prepare($conn, $queryUpdateGambar);
-//         mysqli_stmt_bind_param($stmtUpdateGambar, "si", $update_gambar_base64, $idk);
-
-//         if (mysqli_stmt_execute($stmtUpdateGambar)) {
-//             mysqli_stmt_close($stmtUpdateGambar);
-//         } else {
-//             echo 'Error updating image: ' . mysqli_error($conn);
-//             exit;
-//         }
-//     }
-
-//     $lihatstock = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$idb'");
-//     $stocknya = mysqli_fetch_array($lihatstock);
-//     $stocksekarang = $stocknya['stock'];
-
-//     $qtysekarang = mysqli_query($conn, "SELECT * FROM keluar WHERE idpermintaan='$idk'");
-//     $qtynya = mysqli_fetch_array($qtysekarang);
-//     $qtysekarang = $qtynya['qty'];
-
-//     if ($qty > $qtysekarang) {
-//         $selisih = $qty - $qtysekarang;
-//         $kurangin = $stocksekarang - $selisih;
-//         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-//         $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idpermintaan='$idk'");
-//         if ($kurangistocknya && $updatenya) {
-//             $iduser_logged = $_SESSION['iduser'];
-//             $email_logged = $_SESSION['email'];
-//             $activity = "$email_logged mengubah data barang keluar: $nama_barang (ID: $idk) menjadi $qty penerima $penerima dengan keterangan: $keterangan";
-//             catatLog($conn, $activity, $iduser_logged);
-//             header('location:barang_keluar.php');
-//         } else {
-//             echo 'Gagal: ' . mysqli_error($conn);
-//             header('location:barang_keluar.php');
-//         }
-//     } else {
-//         $selisih = $qtysekarang - $qty;
-//         $kurangin = $stocksekarang + $selisih;
-//         $kurangistocknya = mysqli_query($conn, "UPDATE stock SET stock='$kurangin' WHERE idbarang='$idb'");
-//         $updatenya = mysqli_query($conn, "UPDATE keluar SET qty='$qty', penerima='$penerima', keterangan='$keterangan' WHERE idpermintaan='$idk'");
-//         if ($kurangistocknya && $updatenya) {
-//             header('location:barang_keluar.php');
-//         } else {
-//             echo 'Gagal: ' . mysqli_error($conn);
-//             header('location:barang_keluar.php');
-//         }
-//     }
-// }
 
 
 
