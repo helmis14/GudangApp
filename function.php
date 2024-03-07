@@ -306,7 +306,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo 'error';
                         }
                     }
-                } else { // Jika idkeluar hanya satu nilai
+                } else { 
                     if (delete_barang_keluar($idkeluar)) {
                         echo 'success';
                     } else {
@@ -314,7 +314,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                 }
             } else {
-                echo 'error'; // Tidak ada idkeluar yang disertakan
+                echo 'error'; 
             }
         } elseif ($action === 'update_barang') {
             if (isset($_POST['idkeluar'])) {
@@ -330,7 +330,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo 'error';
                 }
             } else {
-                echo 'error'; // Handle jika data yang diperlukan tidak tersedia
+                echo 'error'; 
             }
         }
     }

@@ -159,11 +159,13 @@ $role = $_SESSION['role'];
                                     </thead>
                                     <tbody>
                                         <?php
+                                        $total_rows = mysqli_num_rows($result);
+                                        $no = $total_rows;
                                         while ($row = mysqli_fetch_assoc($result)) {
                                             $idpermintaan = $row['idpermintaan'];
                                             $tanggal = $row['tanggal'];
                                             $gambar_base64 = $row['gambar_base64'];
-                                            // Data-data barang
+
                                             $nama_barang = explode(",", $row['nama_barang']);
                                             $unit = explode(",", $row['unit']);
                                             $qty = explode(",", $row['qty']);
@@ -174,8 +176,8 @@ $role = $_SESSION['role'];
                                                 <td><?= $tanggal; ?></td>
                                                 <td>
                                                     <?php
-                                                    foreach ($nama_barang as $barang) {
-                                                        echo $barang . "<br>";
+                                                    foreach ($nama_barang as $key => $barang) {
+                                                        echo ($key + 1) . ". " . $barang . "<br>";
                                                     }
                                                     ?>
                                                 </td>
@@ -289,7 +291,7 @@ $role = $_SESSION['role'];
                                                                         <input type="hidden" name="idkeluar[]" value="<?= $idkeluar; ?>">
                                                                         <input type="hidden" name="idbarang[]" value="<?= $idbarang; ?>" class="form-control" id="idbarang<?= $idkeluar; ?>">
                                                                         <br>
-                                                                        <label for="namabarang<?= $idkeluar; ?>">Nama Barang <?= $nomor_barang; ?>:<?= $idkeluar; ?></label>
+                                                                        <label for="namabarang<?= $idkeluar; ?>">Nama Barang <?= $nomor_barang; ?>:</label>
                                                                         <input type="text" name="namabarang[]" value="<?= $namabarang; ?>" class="form-control" id="namabarang<?= $idkeluar; ?> " disabled>
                                                                         <br>
                                                                         <label for="unit<?= $idkeluar; ?>">Unit:</label>
