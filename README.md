@@ -17,7 +17,7 @@ Mysql Database
 ## PREVIEW
 
 <p>Login Page</p>
-<img src="login.jpg"/>
+<img src="login.jpeg"/>
 
 
 ## Install
