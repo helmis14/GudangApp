@@ -1,8 +1,10 @@
 <h1 align="center">Sistem Pengelolaan Gudang</h1>
 
 ## TEAM
-<p> Windu Dwima Putra</p>
-<p> Helmi Sulaeman</p>
+```sh
+Windu Dwima Putra
+Helmi Sulaeman
+```
 
 ## TECH
 ```sh
@@ -11,8 +13,8 @@ BOOSTRAP 4
 JQuery
 Mysql Database
 ```
-```sh
 
+## PREVIEW
 
 <p>Login Page</p>
 <img src="login.jpg"/>
