@@ -1,9 +1,21 @@
 <?php
+require 'function.php';
+require 'cek.php';
+require __DIR__ . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 
 if (isset($_GET['id'])) {
     $idmasuk = $_GET['id'];
 
-    $conn = mysqli_connect("localhost", "root", "", "stokbarangs");
+
+    $database_host = $_ENV['DATABASE_HOST'];
+    $database_user = $_ENV['DATABASE_USER'];
+    $database_pass = $_ENV['DATABASE_PASS'];
+    $database_name = $_ENV['DATABASE_NAME'];
+    $conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
 
     $query = "SELECT bukti_masuk_base64 FROM masuk WHERE idmasuk = ?";
     $stmt = mysqli_prepare($conn, $query);

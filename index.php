@@ -2,6 +2,11 @@
 require 'function.php';
 require 'cek.php';
 require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 
 if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
@@ -225,7 +230,14 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                         <div class="card-body">
 
                             <?php
-                            $conn = mysqli_connect("localhost", "root", "", "stokbarangs");
+
+                            $database_host = $_ENV['DATABASE_HOST'];
+                            $database_user = $_ENV['DATABASE_USER'];
+                            $database_pass = $_ENV['DATABASE_PASS'];
+                            $database_name = $_ENV['DATABASE_NAME'];
+                            $conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
+                            $conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
+
                             $ambildatastock = mysqli_query($conn, "select * from stock where stock < 1");
                             while ($fetch = mysqli_fetch_array($ambildatastock)) {
                                 $barang = $fetch['namabarang'];

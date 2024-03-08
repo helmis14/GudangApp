@@ -3,20 +3,17 @@ require 'function.php';
 require 'cek.php';
 
 
-// Periksa apakah pengguna sudah login
 if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
     exit();
 }
 
-// Periksa peran pengguna
 if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'user') {
     header('Location: access_denied.php');
     exit();
 }
 
 
-// Ambil user ID dari sesi
 $iduser = $_SESSION['iduser'];
 $role = $_SESSION['role'];
 // Query untuk mendapatkan log beserta nama pengguna

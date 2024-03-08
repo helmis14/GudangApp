@@ -1,8 +1,16 @@
 <?php
 session_start();
+require __DIR__ . '/vendor/autoload.php';
 
-// Koneksi ke database
-$conn = mysqli_connect("localhost", "root", "", "stokbarangs");
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$database_host = $_ENV['DATABASE_HOST'];
+$database_user = $_ENV['DATABASE_USER'];
+$database_pass = $_ENV['DATABASE_PASS'];
+$database_name = $_ENV['DATABASE_NAME'];
+$conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
+
 
 
 function convertToBase64($file)
@@ -306,7 +314,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo 'error';
                         }
                     }
-                } else { 
+                } else {
                     if (delete_barang_keluar($idkeluar)) {
                         echo 'success';
                     } else {
@@ -314,7 +322,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                 }
             } else {
-                echo 'error'; 
+                echo 'error';
             }
         } elseif ($action === 'update_barang') {
             if (isset($_POST['idkeluar'])) {
@@ -330,7 +338,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo 'error';
                 }
             } else {
-                echo 'error'; 
+                echo 'error';
             }
         }
     }

@@ -1,6 +1,10 @@
 <?php
 require 'function.php';
 require 'cek.php';
+require __DIR__ . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
@@ -118,7 +122,11 @@ $role = $_SESSION['role'];
 
                         <div class="card-body">
                             <?php
-                            $conn = mysqli_connect("localhost", "root", "", "stokbarangs");
+                            $database_host = $_ENV['DATABASE_HOST'];
+                            $database_user = $_ENV['DATABASE_USER'];
+                            $database_pass = $_ENV['DATABASE_PASS'];
+                            $database_name = $_ENV['DATABASE_NAME'];
+                            $conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
                             if ($_SESSION['role'] == 'superadmin' || $_SESSION['role'] == 'dev') {
                                 $ambildatastock = mysqli_query($conn, "SELECT * FROM permintaan WHERE status = 0");
                                 $count_pending = mysqli_num_rows($ambildatastock);

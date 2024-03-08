@@ -1,18 +1,24 @@
 <?php
-// Koneksi ke database
-$conn = mysqli_connect("localhost", "root", "", "stokbarangs");
+require 'function.php';
+require 'cek.php';
+require __DIR__ . '/vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-// Periksa koneksi
+$database_host = $_ENV['DATABASE_HOST'];
+$database_user = $_ENV['DATABASE_USER'];
+$database_pass = $_ENV['DATABASE_PASS'];
+$database_name = $_ENV['DATABASE_NAME'];
+$conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
+
 if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
 
-// Periksa apakah ID data yang akan dihapus telah diterima dari AJAX
 if (isset($_POST['idbarang'])) {
     $idToDelete = $_POST['idbarang'];
 
-    // Query untuk menghapus data barang berdasarkan ID
     $query = "DELETE FROM barang_permintaan WHERE idbarang = $idToDelete";
 
 
@@ -25,5 +31,5 @@ if (isset($_POST['idbarang'])) {
     echo "ID data tidak diterima";
 }
 
-// Tutup koneksi ke database
+
 mysqli_close($conn);
