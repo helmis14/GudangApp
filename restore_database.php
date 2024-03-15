@@ -1,8 +1,10 @@
 <?php
+require_once './helper/connection.php';
+
 // Pastikan file yang diunggah adalah file backup SQL
 if ($_FILES['fileToRestore']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['fileToRestore']['tmp_name'])) {
     // Koneksi ke database
-    $conn = new mysqli("localhost", "root", "", "stokbarangs");
+
 
     // Periksa koneksi
     if ($conn->connect_error) {

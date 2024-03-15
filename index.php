@@ -1,12 +1,7 @@
 <?php
-require 'function.php';
-require 'cek.php';
+require './helper/function.php';
+require './helper/cek.php';
 require 'vendor/autoload.php';
-require __DIR__ . '/vendor/autoload.php';
-
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
 
 if (!isset($_SESSION['iduser'])) {
     header('Location: login.php');
@@ -157,7 +152,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'supervisor') { ?>
-                            <a class="nav-link" href="permintaan.php">
+                            <a class="nav-link" href="./view/permintaan/permintaan.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
                                 Permintaan Barang
                             </a>
@@ -171,28 +166,35 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                         <?php } ?>
 
                         <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
-                            <a class="nav-link" href="barang_masuk.php">
+                            <a class="nav-link" href="./view/masuk/barang_masuk.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
                                 Barang Masuk
                             </a>
                         <?php } ?>
 
                         <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
-                            <a class="nav-link" href="barang_keluar.php">
+                            <a class="nav-link" href="./view/retur/retur.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
+                                Retur Barang
+                            </a>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
+                            <a class="nav-link" href="./view/keluar/barang_keluar.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-box-open"></i></div>
                                 Barang Keluar
                             </a>
                         <?php } ?>
 
                         <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user') { ?>
-                            <a class="nav-link" href="admin.php">
+                            <a class="nav-link" href="./view/admin/admin.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                                 Kelola Admin
                             </a>
                         <?php } ?>
 
                         <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user') { ?>
-                            <a class="nav-link" href="log.php">
+                            <a class="nav-link" href="./view/log/log.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-walking"></i></div>
                                 Log Aktivitas
                             </a>
@@ -230,14 +232,6 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                         <div class="card-body">
 
                             <?php
-
-                            $database_host = $_ENV['DATABASE_HOST'];
-                            $database_user = $_ENV['DATABASE_USER'];
-                            $database_pass = $_ENV['DATABASE_PASS'];
-                            $database_name = $_ENV['DATABASE_NAME'];
-                            $conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
-                            $conn = mysqli_connect($database_host, $database_user, $database_pass, $database_name);
-
                             $ambildatastock = mysqli_query($conn, "select * from stock where stock < 1");
                             while ($fetch = mysqli_fetch_array($ambildatastock)) {
                                 $barang = $fetch['namabarang'];
@@ -382,9 +376,9 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
             <div class="d-flex align-items-center justify-content-between small">
                 <div class="text-muted">Copyright &copy; PT. Rohedagroup 2024</div>
                 <div>
-                    <a href="privacy_policy.php">Privacy Policy</a>
+                    <a href="./view/about/privacy_policy.php">Privacy Policy</a>
                     &middot;
-                    <a href="terms_conditions.php">Terms &amp; Conditions</a>
+                    <a href="./view/about/terms_conditions.php">Terms &amp; Conditions</a>
                 </div>
             </div>
         </div>
@@ -421,7 +415,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                     <br>
                     <label for="unit">Unit:</label>
                     <select name="unit" class="form-control">
-                        <option value="Pcs">PCS</option>
+                        <option value="PCS">PCS</option>
                         <option value="Pack">Pack</option>
                         <option value="Kg">KG</option>
                         <option value="Ball">BALL</option>

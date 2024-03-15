@@ -17,7 +17,7 @@ Mysql Database
 ## PREVIEW
 
 <p>Login Page</p>
-<img src="login.jpeg"/>
+<img src="./assets/img/login.jpeg"/>
 
 
 ## Install
@@ -26,7 +26,7 @@ Mysql Database
 npm install
 composer install
 ```
-```sh
+
 
 ## Usage
 

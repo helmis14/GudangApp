@@ -1,5 +1,5 @@
 <?php
-require 'function.php';
+require './helper/function.php';
 
 
 if (isset($_SESSION['iduser']) && isset($_SESSION['email'])) {

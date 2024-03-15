@@ -1,5 +1,5 @@
 <?php
-require 'function.php';
+require './helper/function.php';
 
 // cek login, terdaftar atau tidak
 if (isset($_POST['login'])) {
@@ -94,7 +94,7 @@ if (isset($_SESSION['log'])) {
                 </span>
             </div>
             <button type="submit" name="login">Log in</button>
-            <a href="https://rohedagroup.com/" class="discrete" target="_blank">V.1</a>
+            <a href="./view/about/version.php" class="discrete" target="_blank">V.1</a>
         </form>
     </div>
 </body>
