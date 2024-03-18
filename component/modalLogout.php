@@ -12,7 +12,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <a class="btn btn-primary" href="../../logout.php">Logout</a>
+                <a class="btn btn-primary" href="../../view/auth/logout.php">Logout</a>
             </div>
         </div>
     </div>

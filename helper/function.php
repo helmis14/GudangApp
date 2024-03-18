@@ -30,10 +30,10 @@ if (isset($_POST['addnewbarang'])) {
         $email_logged = $_SESSION['email'];
         $activity = "$email_logged menambah data barang stok: $namabarang ($stock $unit) lokasi $lok";
         catatLog($conn, $activity, $iduser_logged);
-        header('location:index.php');
+        header('location:../../view/stock/stock.php');
     } else {
         echo 'Gagal';
-        header('location:index.php');
+        header('location:../../view/stock/stock.php');
     }
 }
 
@@ -56,10 +56,10 @@ if (isset($_POST['updatebarang'])) {
         $activity = "$email_logged melakukan pembaruan informasi stock barang: $nama_barang (ID: $idb) menjadi $namabarang, $unit, $lok";
         catatLog($conn, $activity, $iduser_logged);
 
-        header('location:index.php');
+        header('location:../../view/stock/stock.php');
     } else {
         echo 'Gagal';
-        header('location:index.php');
+        header('location:../../view/stock/stock.php');
     }
 }
 
@@ -79,10 +79,10 @@ if (isset($_POST['hapusbarang'])) {
         $activity = "$email_logged menghapus barang dari stok: $nama_barang (ID: $idb)";
         catatLog($conn, $activity, $iduser_logged);
 
-        header('location:index.php');
+        header('location:../../view/stock/stock.php');
     } else {
         echo 'Gagal';
-        header('location:index.php');
+        header('location:../../view/stock/stock.php');
     }
 }
 

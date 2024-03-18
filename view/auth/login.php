@@ -1,5 +1,5 @@
 <?php
-require './helper/function.php';
+require '../../helper/function.php';
 
 // cek login, terdaftar atau tidak
 if (isset($_POST['login'])) {
@@ -27,13 +27,13 @@ if (isset($_POST['login'])) {
         $activity = "Login berhasil: $email";
 
         if ($role === 'superadmin' || $role === 'gudang' || $role === 'dev' || $role === 'user') {
-            header('Location: index.php');
+            header('Location: ../../view/stock/stock.php');
             exit();
         } else if ($role === 'supervisor') {
-            header('Location: permintaan.php');
+            header('Location: ../../view/permintaan/permintaan.php');
             exit();
         } else {
-            header('Location: access_denied.php');
+            header('Location: ../../access_denied.php');
             exit();
         }
     } else {
@@ -44,7 +44,7 @@ if (isset($_POST['login'])) {
 }
 
 if (isset($_SESSION['log'])) {
-    header('Location: index.php');
+    header('Location: ../../view/stock/stock.php');
     exit();
 }
 ?>
@@ -59,7 +59,7 @@ if (isset($_SESSION['log'])) {
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Gudang - Login</title>
-    <link href="css/login.css" rel="stylesheet" />
+    <link href="../../css/login.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
 </head>
 
@@ -94,7 +94,7 @@ if (isset($_SESSION['log'])) {
                 </span>
             </div>
             <button type="submit" name="login">Log in</button>
-            <a href="./view/about/version.php" class="discrete" target="_blank">V.1</a>
+            <a href="../../view/about/version.php" class="discrete" target="_blank">V.1</a>
         </form>
     </div>
 </body>
