@@ -707,7 +707,7 @@ if (isset($_POST['addnewpermintaan'])) {
 
                 $mail->Subject = 'Permintaan Masuk (Gudang) - Plaza Oleos';
                 $mail->Body = "Dear Pak John,\r\n"
-                    . "Harap tanggapi permintaan pada tanggal " . date('D-m-y') . " dengan detail berikut:\r\n";
+                    . "Harap tanggapi permintaan pada tanggal " . date('d-m-y') . " dengan detail berikut:\r\n";
 
 
                 $namabarang = $_POST['namabarang'];
