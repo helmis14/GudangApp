@@ -29,7 +29,7 @@
 7. logout
 
 
-
+<link data-n-head="ssr" rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 #test koneksi ke database
 //if($conn){
     //echo 'berhasil';

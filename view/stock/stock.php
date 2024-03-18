@@ -130,6 +130,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Stock Barang</title>
+    <link data-n-head="ssr" rel="icon" type="image/png" sizes="16x16" href="../../assets/img/icon.png">
     <link href="../../css/styles.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
