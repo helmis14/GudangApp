@@ -71,7 +71,7 @@
                 <div class="team-card">
                     <img src="../../assets/img/team.jpg" alt="Team Member 2" class="img-fluid">
                     <h3>Christian Andrea</h3>
-                    <p>Project Manager</p>
+                    <p>Tester</p>
                 </div>
             </div>
             <div class="col-lg-4">
