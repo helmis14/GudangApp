@@ -250,36 +250,58 @@ if (isset($_POST['addbarangkeluar'])) {
             $qty = $_POST['qty'];
             $keterangan = $_POST['keterangan'];
 
-
+            // Pengecekan stok barang sebelum proses pengiriman barang keluar
+            $stok_sufficient = true;
             for ($i = 0; $i < count($barangnya); $i++) {
                 $currentNamabarang = mysqli_real_escape_string($conn, $barangnya[$i]);
                 $currentQty = mysqli_real_escape_string($conn, $qty[$i]);
-                $currentKet = mysqli_real_escape_string($conn, $keterangan[$i]);
-                $currentPenerima = mysqli_real_escape_string($conn, $penerima[$i]);
 
+                // Query untuk mendapatkan stok barang
+                $query_stock = mysqli_query($conn, "SELECT stock FROM stock WHERE idbarang='$currentNamabarang'");
+                $data_stock = mysqli_fetch_assoc($query_stock);
+                $stock = $data_stock['stock'];
 
-                $addBarang = mysqli_query($conn, "INSERT INTO keluar (idpermintaan, idbarang, qty, keterangan, penerima) VALUES ('$idPermintaan', '$currentNamabarang','$currentQty','$currentKet', '$currentPenerima')");
-
-                if (!$addBarang) {
-                    echo 'Gagal menambahkan barang';
-                    header('location: permintaan.php');
-                    exit;
-                }
-
-                $updateStock = mysqli_query($conn, "UPDATE stock SET stock = stock - $currentQty WHERE idbarang = '$currentNamabarang'");
-                if (!$updateStock) {
-                    echo 'Gagal memperbarui stok barang';
-                    header('location: permintaan.php');
-                    exit;
+                // Periksa apakah stok mencukupi
+                if ($stock < $currentQty) {
+                    $stok_sufficient = false;
+                    break;
                 }
             }
 
-            $iduser_logged = $_SESSION['iduser'];
-            $email_logged = $_SESSION['email'];
-            $activity = "$email_logged melakukan pengiriman barang keluar dengan ID permintaan: $idPermintaan";
-            catatLog($conn, $activity, $iduser_logged);
+            // Jika stok mencukupi, lanjutkan dengan proses pengiriman barang keluar
+            if ($stok_sufficient) {
+                for ($i = 0; $i < count($barangnya); $i++) {
+                    $currentNamabarang = mysqli_real_escape_string($conn, $barangnya[$i]);
+                    $currentQty = mysqli_real_escape_string($conn, $qty[$i]);
+                    $currentKet = mysqli_real_escape_string($conn, $keterangan[$i]);
+                    $currentPenerima = mysqli_real_escape_string($conn, $penerima[$i]);
 
-            header('location:barang_keluar.php');
+                    $addBarang = mysqli_query($conn, "INSERT INTO keluar (idpermintaan, idbarang, qty, keterangan, penerima) VALUES ('$idPermintaan', '$currentNamabarang','$currentQty','$currentKet', '$currentPenerima')");
+
+                    if (!$addBarang) {
+                        echo 'Gagal menambahkan barang';
+                        header('location: permintaan.php');
+                        exit;
+                    }
+
+                    $updateStock = mysqli_query($conn, "UPDATE stock SET stock = stock - $currentQty WHERE idbarang = '$currentNamabarang'");
+                    if (!$updateStock) {
+                        echo 'Gagal memperbarui stok barang';
+                        header('location: permintaan.php');
+                        exit;
+                    }
+                }
+
+                $iduser_logged = $_SESSION['iduser'];
+                $email_logged = $_SESSION['email'];
+                $activity = "$email_logged melakukan pengiriman barang keluar dengan ID permintaan: $idPermintaan";
+                catatLog($conn, $activity, $iduser_logged);
+
+                header('location:barang_keluar.php');
+            } else {
+                echo "<script>alert('Stok barang tidak mencukupi untuk melakukan pengiriman barang keluar.'); window.location.href = 'barang_keluar.php';</script>";
+                exit;
+            }
         } else {
             echo 'Gagal menambahkan permintaan';
             exit;
@@ -289,6 +311,7 @@ if (isset($_POST['addbarangkeluar'])) {
         exit;
     }
 }
+
 
 //ubah keluar baru
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -1031,7 +1054,7 @@ if (isset($_POST['export_retur'])) {
 }
 
 
-// MENAMBAH RETUR BARANG
+// MENAMBAH RETUR BARANG<?php
 if (isset($_POST['addbarangretur'])) {
     $barangnya = $_POST['barangnya'];
     $permintaan = $_POST['permintaan'];
@@ -1047,41 +1070,50 @@ if (isset($_POST['addbarangretur'])) {
         // Konversi gambar ke base64
         $gambar_base64 = convertToBase64($tmp_name);
 
-        // Sisipkan data ke database
+        // Cek stok barang
         $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stock WHERE idbarang='$barangnya'");
         $ambildatanya = mysqli_fetch_array($cekstocksekarang);
-
         $stocksekarang = $ambildatanya['stock'];
-        $tambahkanstocksekarangdenganquantity = $stocksekarang - $qty;
 
-        // Parameterisasi query untuk keamanan
-        $addtokeluar = mysqli_prepare($conn, "INSERT INTO retur (idbarang, idretur, qtyretur, gambar_base64, keterangan) VALUES (?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($addtokeluar, "isiss", $barangnya, $permintaan, $qty, $gambar_base64, $keterangan);
-        mysqli_stmt_execute($addtokeluar);
+        if ($stocksekarang >= $qty) {
+            // Jika stok cukup, lanjutkan dengan proses retur barang
+            $tambahkanstocksekarangdenganquantity = $stocksekarang - $qty;
 
-        $updatestockmasuk = mysqli_query($conn, "UPDATE stock SET stock='$tambahkanstocksekarangdenganquantity' WHERE idbarang='$barangnya'");
+            // Parameterisasi query untuk keamanan
+            $addtokeluar = mysqli_prepare($conn, "INSERT INTO retur (idbarang, idretur, qtyretur, gambar_base64, keterangan) VALUES (?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($addtokeluar, "isiss", $barangnya, $permintaan, $qty, $gambar_base64, $keterangan);
+            mysqli_stmt_execute($addtokeluar);
 
-        if ($addtokeluar && $updatestockmasuk) {
-            // Ambil data nama barang untuk mencatat aktivitas
-            $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$barangnya'");
-            $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
-            $nama_barang = $data_nama_barang['namabarang'];
+            $updatestockmasuk = mysqli_query($conn, "UPDATE stock SET stock='$tambahkanstocksekarangdenganquantity' WHERE idbarang='$barangnya'");
 
-            // Catat log dengan informasi yang diinginkan
-            $iduser_logged = $_SESSION['iduser'];
-            $email_logged = $_SESSION['email'];
-            $activity = "$email_logged melakukan retur barang: $nama_barang ($qty) distributor $distributor dengan keterangan: $keterangan";
-            catatLog($conn, $activity, $iduser_logged);
-            header('location:retur.php');
+            if ($addtokeluar && $updatestockmasuk) {
+                // Ambil data nama barang untuk mencatat aktivitas
+                $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$barangnya'");
+                $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
+                $nama_barang = $data_nama_barang['namabarang'];
+
+                // Catat log dengan informasi yang diinginkan
+                $iduser_logged = $_SESSION['iduser'];
+                $email_logged = $_SESSION['email'];
+                $activity = "$email_logged melakukan retur barang: $nama_barang ($qty) distributor $distributor dengan keterangan: $keterangan";
+                catatLog($conn, $activity, $iduser_logged);
+                header('location:retur.php');
+            } else {
+                echo 'Gagal';
+                header('location:retur.php');
+            }
         } else {
-            echo 'Gagal';
-            header('location:retur.php');
+            echo "<script>alert('Stok barang tidak mencukupi untuk melakukan retur.'); window.location.href = 'retur.php';</script>";
+            exit;
         }
     } else {
         echo 'Berkas gambar tidak diunggah.';
         exit;
     }
 }
+
+
+
 
 
 //hapus barang retur

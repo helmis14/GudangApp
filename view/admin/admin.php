@@ -54,7 +54,9 @@ $role = $_SESSION['role'];
                                 <th>Role</th>
                                 <th>Email</th>
                                 <th>Password</th>
-                                <th>Aksi</th>
+                                <?php if ($_SESSION['role'] === 'dev') { ?>
+                                    <th>Aksi</th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,14 +83,17 @@ $role = $_SESSION['role'];
                                         }
                                         ?>
                                     </td>
-                                    <td>
-                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $iduser; ?>">
-                                            Edit
-                                        </button>
-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $iduser; ?>">
-                                            Delete
-                                        </button>
-                                    </td>
+                                    <?php if ($_SESSION['role'] === 'dev') { ?>
+
+                                        <td>
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $iduser; ?>">
+                                                Edit
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $iduser; ?>">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    <?php } ?>
                                 </tr>
                                 <!-- Edit Modal -->
                                 <div class="modal fade" id="edit<?= $iduser; ?>">
