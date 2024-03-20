@@ -21,10 +21,10 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 // Function to establish database connection
 function connectToDatabase()
 {
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "stokbarangs";
+    $servername = "u6939598@localhost";
+    $username = "whpl4zaole0s";
+    $password = "IT@RG2024!Plaza0leos";
+    $dbname = "u6939598_stokbarangs";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -178,7 +178,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                 ?>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>No</th>

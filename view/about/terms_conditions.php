@@ -75,21 +75,21 @@ $role = $_SESSION['role'];
         <div class="row">
             <div class="col-lg-4">
                 <div class="team-card">
-                    <img src="../../assets/img/team.jpg" alt="Team Member 1" class="img-fluid">
+                    <img src="../../assets/img/pakwindu.png" alt="Team Member 1" class="img-fluid">
                     <h3>Windu Dwima Putra</h3>
                     <p>Fullstack Developer</p>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="team-card">
-                    <img src="../../assets/img/team.jpg" alt="Team Member 2" class="img-fluid">
+                    <img src="../../assets/img/pakandre.png" alt="Team Member 2" height="430" width="270">
                     <h3>Christian Andrea</h3>
                     <p>Tester</p>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="team-card">
-                    <img src="../../assets/img/team.jpg" alt="Team Member 3" class="img-fluid">
+                    <img src="../../assets/img/helmi.png" alt="Team Member 3" class="img-fluid">
                     <h3>Helmi Sulaeman</h3>
                     <p>Fullstack Developer</p>
                 </div>
@@ -102,7 +102,6 @@ $role = $_SESSION['role'];
             <div class="about-card">
                 <p>Divisi IT Roheda Group adalah sebuah tim divisi yang bergerak di bidang teknologi informasi. Kami didirikan dengan visi untuk memberikan solusi teknologi terbaik bagi perusahaan kami. Kami memiliki tim yang terdiri dari profesional ahli dalam berbagai bidang teknologi, siap membantu perusahaan mencapai tujuan bisnis dengan solusi yang inovatif dan efektif. Kami sangat menjunjung tinggi nilai kekeluargaan dan kerja keras. Bersama-sama, kami berkomitmen untuk memberikan layanan terbaik kepada perusahaan kami.</p>
             </div>
-
         </div>
     </div>
     <?php

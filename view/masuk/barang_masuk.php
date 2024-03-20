@@ -98,7 +98,7 @@ $role = $_SESSION['role'];
 
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
@@ -403,7 +403,7 @@ $role = $_SESSION['role'];
                     <br>
                     <label for="bukti_masuk_base64">Bukti Masuk:</label>
                     <input type="file" name="bukti_masuk_base64" class="form-control-file" required>
-                    <br>
+                    <p style="font-size: small; padding-top: 7px">Ukuran bukti maksimal 5 mb </p>
                     <button type="submit" class="btn btn-primary" name="barangmasuk">Submit</button>
                 </div>
             </form>

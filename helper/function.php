@@ -24,7 +24,11 @@ if (isset($_POST['addnewbarang'])) {
     $stock = $_POST['stock'];
     $lok = $_POST['lokasi'];
 
-    $addtotable = mysqli_query($conn, "INSERT INTO stock (namabarang, unit, stock, lokasi) VALUES ('$namabarang', '$unit', '$stock', '$lok')");
+    $stmt = $conn->prepare("INSERT INTO stock (namabarang, unit, stock, lokasi) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssis", $namabarang, $unit, $stock, $lok);
+    $addtotable = $stmt->execute();
+    
+   
     if ($addtotable) {
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
@@ -37,6 +41,7 @@ if (isset($_POST['addnewbarang'])) {
     }
 }
 
+
 // Update info barang stock
 if (isset($_POST['updatebarang'])) {
     $idb = $_POST['idb'];
@@ -44,12 +49,14 @@ if (isset($_POST['updatebarang'])) {
     $unit = $_POST['unit'];
     $lok = $_POST['lokasi'];
 
-    $update = mysqli_query($conn, "UPDATE stock SET namabarang='$namabarang', unit='$unit', lokasi='$lok' WHERE idbarang ='$idb'");
+    $stmt = $conn->prepare("UPDATE stock SET namabarang=?, unit=?, lokasi=? WHERE idbarang=?");
+    $stmt->bind_param("sssi", $namabarang, $unit, $lok, $idb);
+    $update = $stmt->execute();
+    
     if ($update) {
         $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
         $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
         $nama_barang = $data_nama_barang['namabarang'];
-
 
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
@@ -64,15 +71,22 @@ if (isset($_POST['updatebarang'])) {
 }
 
 
+
 // Menghapus barang dari stock
 if (isset($_POST['hapusbarang'])) {
     $idb = $_POST['idb'];
 
-    $query_nama_barang = mysqli_query($conn, "SELECT namabarang FROM stock WHERE idbarang='$idb'");
-    $data_nama_barang = mysqli_fetch_assoc($query_nama_barang);
+    $stmt = $conn->prepare("SELECT namabarang FROM stock WHERE idbarang=?");
+    $stmt->bind_param("i", $idb);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data_nama_barang = $result->fetch_assoc();
     $nama_barang = $data_nama_barang['namabarang'];
+    $stmt = $conn->prepare("DELETE FROM stock WHERE idbarang=?");
 
-    $hapus = mysqli_query($conn, "DELETE FROM stock WHERE idbarang='$idb'");
+    $stmt->bind_param("i", $idb);
+    $hapus = $stmt->execute();
+    
     if ($hapus) {
         $iduser_logged = $_SESSION['iduser'];
         $email_logged = $_SESSION['email'];
@@ -85,6 +99,7 @@ if (isset($_POST['hapusbarang'])) {
         header('location:../../view/stock/stock.php');
     }
 }
+
 
 
 
@@ -718,14 +733,14 @@ if (isset($_POST['addnewpermintaan'])) {
                 $mail->isSMTP();
                 $mail->Host = 'mail.rohedagroup.com';
                 $mail->SMTPAuth = true;
-                $mail->Username = 'itroheda@rohedagroup.com';
-                $mail->Password = 'ggwphelmi';
+                $mail->Username = 'infowh@plazaoleos.com';
+                $mail->Password = 'wh@PO2024';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
                 $mail->Port = 465;
 
 
-                $mail->setFrom('itroheda@rohedagroup.com', 'IT Roheda');
-                $mail->addAddress('helmi@rohedagroup.com', 'Helmi Sulaeman');
+                $mail->setFrom('infowh@plazaoleos.com', 'Info Warehouse');
+                $mail->addAddress('warehouse@plazaoleos.com', 'Warehouse');
 
 
                 $mail->Subject = 'Permintaan Masuk (Gudang) - Plaza Oleos';
@@ -756,7 +771,7 @@ if (isset($_POST['addnewpermintaan'])) {
 
                 $mail->Body .= "\r\n"
                     . "Terimakasih\r\n"
-                    . " Best Regards,\r\n"
+                    . "Best Regards,\r\n"
                     . "IT Roheda Team\r\n";
 
 

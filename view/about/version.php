@@ -22,6 +22,11 @@
             padding: 40px 0;
         }
 
+        .team-section {
+
+            padding: 40px 0;
+        }
+
         .team-section h1 {
             text-align: center;
             margin-bottom: 50px;
@@ -62,21 +67,21 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="team-card">
-                    <img src="../../assets/img/team.jpg" alt="Team Member 1" class="img-fluid">
+                    <img src="../../assets/img/pakwindu.png" alt="Team Member 1" class="img-fluid">
                     <h3>Windu Dwima Putra</h3>
                     <p>Fullstack Developer</p>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="team-card">
-                    <img src="../../assets/img/team.jpg" alt="Team Member 2" class="img-fluid">
+                    <img src="../../assets/img/pakandre.png" alt="Team Member 2" height="430" width="270">
                     <h3>Christian Andrea</h3>
                     <p>Tester</p>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="team-card">
-                    <img src="../../assets/img/team.jpg" alt="Team Member 3" class="img-fluid">
+                    <img src="../../assets/img/helmi.png" alt="Team Member 3" class="img-fluid">
                     <h3>Helmi Sulaeman</h3>
                     <p>Fullstack Developer</p>
                 </div>

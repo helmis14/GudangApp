@@ -109,7 +109,7 @@ $role = $_SESSION['role'];
                 <!-- Displaying the results -->
                 <?php if (mysqli_num_rows($filtered_result) > 0) { ?>
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table text-center table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th>No </th>
@@ -520,7 +520,8 @@ $role = $_SESSION['role'];
                     <!-- Formulir utama -->
                     <label for="bukti_base64">Bukti Permintaan:</label>
                     <input type="file" name="bukti_base64" class="form-control-file" required>
-                    <br>
+                    <p style="font-size: small; padding-top: 7px">Ukuran bukti maksimal 5 mb </p>
+                    
                     <label for="namabarang[]">Nama Barang:</label>
                     <input type="text" name="namabarang[]" placeholder="Nama Barang" class="form-control" required>
                     <br>

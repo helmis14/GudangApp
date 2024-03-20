@@ -36,7 +36,7 @@ $role = $_SESSION['role'];
     <div class="container-fluid">
         <h1 class="mt-4">Privacy Policy</h1>
         <div class="card mb-4">
-            <div class="card-header">
+            <div class="card-header text-center">
                 Kebijakan Privasi
             </div>
             <div class="card-body">

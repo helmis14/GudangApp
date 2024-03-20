@@ -57,7 +57,7 @@ $role = $_SESSION['role'];
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                             <tr>
@@ -337,7 +337,7 @@ $role = $_SESSION['role'];
                     <br>
                     <label for="gambar_base64">Bukti retur:</label>
                     <input type="file" name="gambar_base64" class="form-control-file" required>
-                    <br>
+                    <p style="font-size: small; padding-top: 7px">Ukuran bukti maksimal 5 mb </p>
                     <button type="submit" class="btn btn-primary" name="addbarangretur">Submit</button>
                 </div>
             </form>
