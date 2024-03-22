@@ -7927,6 +7927,65 @@ button.bg-dark:focus {
   margin-left: auto !important;
 }
 
+@media (max-width: 320px) {
+  .m-sm-0 {
+    margin: 0 !important;
+  }
+
+  .mt-sm-0,
+  .my-sm-0 {
+    margin-top: 0 !important;
+  }
+
+  
+  .p-sm-0 {
+    padding: 0 !important;
+  }
+
+  .navbar-brand{
+    font-size: 15px;
+  }
+  .nav-link{
+    font-size: 10px;
+    margin-right: 100px;
+  }
+
+  ul li{
+    width: 3px;
+    height: 3px;
+    margin-right: 50px;
+    margin-bottom: 90px;
+  }
+  h1 {
+    font-size: 20px;
+  }
+  button {
+    height: 35px;
+    width: 72px;
+  }
+  .btn {
+    font-size: 9px;
+  }
+  .alert {
+    font-size: 9px;
+  }
+  .card-body {
+    font-size: 9px;
+  }
+  .container-fluid {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 428px) {
+  .navbar-collapse {
+    display: none !important;
+  }
+}
+
+
+
+
 @media (min-width: 576px) {
   .m-sm-0 {
     margin: 0 !important;
