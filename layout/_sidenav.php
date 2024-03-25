@@ -12,7 +12,7 @@
                                 </a>
                             <?php } ?>
 
-                            <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
+                            <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang' || $_SESSION['role'] === 'supervisor') { ?>
                                 <a class="nav-link" href="../stock/stock.php">
                                     <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
                                     Stock Barang

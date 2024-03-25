@@ -8,7 +8,7 @@ if (!isset($_SESSION['iduser'])) {
     exit();
 }
 
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisor') {
     header('Location: ../../access_denied.php');
     exit();
 }
@@ -144,7 +144,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
     <div class="container-fluid">
         <h1 class="mt-4">Stock Barang</h1>
         <div class="card mb-4">
-            <?php if ($role === 'gudang' || $role === 'dev') :  ?>
+            <?php if ($role === 'dev') :  ?>
                 <div class="card-header">
                     <!-- Button to Open the Modal "Tambah Barang"-->
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
@@ -156,6 +156,18 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                     </button>
                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import">
                         Import
+                    </button>
+                </div>
+            <?php endif; ?>
+            <?php if ($role === 'gudang') :  ?>
+                <div class="card-header">
+                    <!-- Button to Open the Modal "Tambah Barang"-->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                        Tambah Barang
+                    </button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
+                        Export
+                    </button>
                     </button>
                 </div>
             <?php endif; ?>

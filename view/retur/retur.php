@@ -41,9 +41,9 @@ $role = $_SESSION['role'];
     <div class="container-fluid">
         <h1 class="mt-4">Retur Barang </h1>
         <div class="card mb-4">
-            <div class="card-header">
-                <!-- Button to Open the Modal -->
-                <?php if ($role === 'gudang' || $role === 'dev') :  ?>
+            <!-- Button to Open the Modal -->
+            <?php if ($role === 'gudang' || $role === 'dev') :  ?>
+                <div class="card-header">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                         Tambah Barang
                     </button>
@@ -53,8 +53,8 @@ $role = $_SESSION['role'];
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#retur">
                         Export to Excel
                     </button>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php endif; ?>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">

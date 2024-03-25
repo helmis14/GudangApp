@@ -8015,6 +8015,7 @@ button.bg-dark:focus {
   }
   .btn {
     font-size: 9px;
+    margin-left: 2px;
   }
   .alert {
     font-size: 9px;
