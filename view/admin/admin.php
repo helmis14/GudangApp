@@ -39,12 +39,13 @@ $role = $_SESSION['role'];
     <div class="container-fluid">
         <h1 class="mt-4">Kelola Admin</h1>
         <div class="card mb-4">
-            <div class="card-header">
-                <!-- Button to Open the Modal "Tambah Barang"-->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                    Tambah Admin
-                </button>
-            </div>
+            <?php if ($role === 'dev') :  ?>
+                <div class="card-header">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                        Tambah Admin
+                    </button>
+                </div>
+            <?php endif; ?>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
