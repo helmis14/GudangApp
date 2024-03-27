@@ -5,14 +5,14 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-                            <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'supervisor') { ?>
+                            <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'supervisor'|| $_SESSION['role'] === 'supervisoradmin'|| $_SESSION['role'] === 'supervisorgudang') { ?>
                                 <a class="nav-link" href="../permintaan/permintaan.php">
                                     <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
                                     Permintaan Barang
                                 </a>
                             <?php } ?>
 
-                            <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang' || $_SESSION['role'] === 'supervisor') { ?>
+                            <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang' || $_SESSION['role'] === 'supervisor'|| $_SESSION['role'] === 'supervisorgudang'|| $_SESSION['role'] === 'supervisoradmin') { ?>
                                 <a class="nav-link" href="../stock/stock.php">
                                     <div class="sb-nav-link-icon"><i class="fas fa-boxes"></i></div>
                                     Stock Barang
@@ -26,12 +26,12 @@
                                 </a>
                             <?php } ?>
 
-                            <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
-                                <a class="nav-link" href="../retur/retur.php">
-                                    <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>
-                                    Retur Barang
-                                </a>
-                            <?php } ?>
+                            <!--<?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>-->
+                            <!--    <a class="nav-link" href="../retur/retur.php">-->
+                            <!--        <div class="sb-nav-link-icon"><i class="fas fa-cart-arrow-down"></i></div>-->
+                            <!--        Retur Barang-->
+                            <!--    </a>-->
+                            <!--<?php } ?>-->
 
                             <?php if ($_SESSION['role'] === 'superadmin' || $_SESSION['role'] === 'dev' || $_SESSION['role'] === 'user' || $_SESSION['role'] === 'gudang') { ?>
                                 <a class="nav-link" href="../keluar/barang_keluar.php">
