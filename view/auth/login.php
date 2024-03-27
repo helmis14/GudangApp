@@ -26,7 +26,7 @@ if (isset($_POST['login'])) {
 
         $activity = "Login berhasil: $email";
 
-        if ($role === 'superadmin' || $role === 'gudang' || $role === 'dev' || $role === 'user') {
+        if ($role === 'superadmin' || $role === 'gudang' || $role === 'dev' || $role === 'user'|| $role === 'supervisoradmin'|| $role === 'supervisorgudang') {
             header('Location: ../../view/stock/stock.php');
             exit();
         } else if ($role === 'supervisor') {
@@ -62,10 +62,18 @@ if (isset($_SESSION['log'])) {
     <title>Gudang - Login</title>
     <link href="../../css/login.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
 
 <body>
-    <div class="session">
+    
+    <div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+    </div>
+    
+    <div class="session animate__animated animate__backInDown">
         <div class="left">
             <svg enable-background="new 0 0 300 302.5" version="1.1" viewBox="0 0 300 302.5" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
                 <style type="text/css">
@@ -77,8 +85,8 @@ if (isset($_SESSION['log'])) {
             </svg>
         </div>
         <form method="post" class="log-in" autocomplete="off">
-            <h4>Gudang <span>PLAZA OLEOS</span></h4>
-            <p>Selamat Datang! Login untuk melihat aktivitas gudang</p>
+            <h4>Warehouse <span>Plaza Oleos</span></h4>
+            <p>Welcome, Please Log in</p>
             <?php if (isset($error)) { ?>
                 <div class="error-message"><?php echo $error; ?></div>
                 <div id="capsLockAlert" class="caps-message" style="display: none;">Caps Lock aktif!</div>
