@@ -7,12 +7,16 @@ if (!isset($_SESSION['iduser'])) {
     exit();
 }
 
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'supervisor' && $_SESSION['role'] !== 'user') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'supervisor' && $_SESSION['role'] !== 'user'&& $_SESSION['role'] !== 'supervisoradmin'&& $_SESSION['role'] !== 'supervisorgudang') {
     header('Location: ../../access_denied.php');
     exit();
 }
 $iduser = $_SESSION['iduser'];
 $role = $_SESSION['role'];
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 ?>
 <!DOCTYPE html>
@@ -42,7 +46,7 @@ $role = $_SESSION['role'];
         <h1 class="mt-4">Permintaan Barang</h1>
         <div class="card mb-4">
             <!-- Button to Open the Modal "Tambah Barang"-->
-            <?php if ($role === 'supervisor' || $role === 'dev') :  ?>
+            <?php if ($role === 'supervisor' || $role === 'dev'|| $role === 'supervisorgudang') :  ?>
                 <div class="card-header">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                         Tambah Permintaan
@@ -204,7 +208,7 @@ $role = $_SESSION['role'];
                                                     Delete
                                                 </button>
 
-                                            <?php } elseif ($_SESSION['role'] === 'superadmin'  && $status_permintaan == 0) { ?>
+                                            <?php } elseif ($_SESSION['role'] === 'superadmin' || ($_SESSION['role'] === 'supervisoradmin'  && $status_permintaan == 0)) { ?>
 
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
                                                     Ubah Status
