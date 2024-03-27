@@ -216,6 +216,9 @@ $role = $_SESSION['role'];
                                         </td>
                                     <?php elseif ($role === 'gudang') : ?>
                                         <td>
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+                                                Edit
+                                            </button>
                                             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idpermintaan; ?>">
                                                 Delete
                                             </button>
