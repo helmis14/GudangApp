@@ -20,12 +20,13 @@ function convertToBase64($file)
 // Menambah barang baru stock
 if (isset($_POST['addnewbarang'])) {
     $namabarang = $_POST['namabarang'];
+    $kategori = $_POST['kategori'];
     $unit = $_POST['unit'];
     $stock = $_POST['stock'];
     $lok = $_POST['lokasi'];
 
-    $stmt = $conn->prepare("INSERT INTO stock (namabarang, unit, stock, lokasi) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssis", $namabarang, $unit, $stock, $lok);
+    $stmt = $conn->prepare("INSERT INTO stock (namabarang, kategori, unit, stock, lokasi) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssis", $namabarang, $kategori, $unit, $stock, $lok);
     $addtotable = $stmt->execute();
     
    
@@ -46,11 +47,12 @@ if (isset($_POST['addnewbarang'])) {
 if (isset($_POST['updatebarang'])) {
     $idb = $_POST['idb'];
     $namabarang = $_POST['namabarang'];
+    $kategori = $_POST['kategori'];
     $unit = $_POST['unit'];
     $lok = $_POST['lokasi'];
 
-    $stmt = $conn->prepare("UPDATE stock SET namabarang=?, unit=?, lokasi=? WHERE idbarang=?");
-    $stmt->bind_param("sssi", $namabarang, $unit, $lok, $idb);
+    $stmt = $conn->prepare("UPDATE stock SET namabarang=?, kategori=?, unit=?, lokasi=? WHERE idbarang=?");
+    $stmt->bind_param("ssssi", $namabarang, $kategori, $unit, $lok, $idb);
     $update = $stmt->execute();
     
     if ($update) {
@@ -413,9 +415,7 @@ function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan
 {
     global $conn;
 
-
     mysqli_begin_transaction($conn);
-
 
     $query_select_old_qty = "SELECT qty FROM keluar WHERE idkeluar = ?";
     $stmt_select_old_qty = mysqli_prepare($conn, $query_select_old_qty);
@@ -425,18 +425,22 @@ function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan
     mysqli_stmt_fetch($stmt_select_old_qty);
     mysqli_stmt_close($stmt_select_old_qty);
 
-
     $qty_difference = $qty - $old_qty;
-
 
     $query_update_keluar = "UPDATE keluar SET penerima = ?, qty = ?, keterangan = ? WHERE idkeluar = ?";
     $stmt_update_keluar = mysqli_prepare($conn, $query_update_keluar);
     mysqli_stmt_bind_param($stmt_update_keluar, "sisi", $penerima, $qty, $keterangan, $idkeluar);
     $update_keluar_success = mysqli_stmt_execute($stmt_update_keluar);
 
-    $query_update_stok = "UPDATE stock SET stock = stock + ? WHERE idbarang = ?";
+    // Update stok berdasarkan perbedaan jumlah
+    $query_update_stok = "UPDATE stock SET stock = stock - ? WHERE idbarang = ?";
+    if ($qty_difference > 0) {
+        $query_update_stok = "UPDATE stock SET stock = stock - ? WHERE idbarang = ?";
+    } elseif ($qty_difference < 0) {
+        $query_update_stok = "UPDATE stock SET stock = stock + ? WHERE idbarang = ?";
+    }
     $stmt_update_stok = mysqli_prepare($conn, $query_update_stok);
-    mysqli_stmt_bind_param($stmt_update_stok, "ii", $qty_difference, $idbarang);
+    mysqli_stmt_bind_param($stmt_update_stok, "ii", abs($qty_difference), $idbarang);
     $update_stok_success = mysqli_stmt_execute($stmt_update_stok);
 
     if ($update_keluar_success && $update_stok_success) {
@@ -452,6 +456,7 @@ function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan
         return false;
     }
 }
+
 
 
 //ubah barang keluar
