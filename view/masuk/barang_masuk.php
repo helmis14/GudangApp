@@ -259,11 +259,8 @@ $role = $_SESSION['role'];
                                                     <label for="penerima">Penerima</label>
                                                     <input type="text" name="penerima" value="<?= $penerima; ?>" class="form-control">
                                                     <br>
-                                                    <?php if ($role === 'dev') : ?>
-                                                        <label for="qty">Jumlah:</label>
-                                                        <input type="text" name="qty" value="<?= $qty; ?>" class="form-control">
-                                                        <br>
-                                                    <?php endif; ?>
+                                                    <label for="qty">Jumlah:</label>
+                                                    <input type="number" name="qty" value="<?= $qty; ?>" class="form-control">
                                                     <label for="keterangan">keterangan:</label>
                                                     <input type="text" name="keterangan" value="<?= $keterangan; ?>" class="form-control">
                                                     <br>
