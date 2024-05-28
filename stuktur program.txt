@@ -1,0 +1,36 @@
+#tahapan pembuatan program
+1. setup template dan database (DONE)
+2. login dan logout tanpa enkripsi + setup halaman (DONE)
+3. insert data (data barang, barang masuk, barang keluar)
+4. menampilkan data ke table
+5. update + delete
+
+#struktur database
+- table login (iduser, email, password)
+- table stock (idbarang, namabarang, deskripsi, stock)
+- table masuk (idmasuk, idbarang, tanggal, keterangan)
+- table keluar (idkeluar, idbarang, tanggal, penerima)
+
+
+
+#tambahan fitur 
+- penambahan kolom unit di modul stock barang, barang masuk, barang keluar
+- upload foto produk di modul stock barang
+- upload tanda terima di barang masuk dan barang keluar
+- penambahan histori user yang melakukan edit dan delete di modul stock barang, barang masuk, dan barang keluar 
+
+#module :
+1. login
+2. home (data stok barang)
+3. barang keluar
+4. barang masuk
+5. histori transaksi
+6. security (user role)
+7. logout
+
+
+<link data-n-head="ssr" rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+#test koneksi ke database
+//if($conn){
+    //echo 'berhasil';
+//}

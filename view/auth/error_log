@@ -1,4 +1,0 @@
-[24-Apr-2024 03:37:35 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/u6939598/public_html/wh.plazaoleos.com/view/auth/login.php on line 21
-[24-Apr-2024 03:53:46 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/u6939598/public_html/wh.plazaoleos.com/view/auth/login.php on line 21
-[29-Apr-2024 03:56:59 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/u6939598/public_html/wh.plazaoleos.com/view/auth/login.php on line 21
-[29-Apr-2024 04:28:05 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in /home/u6939598/public_html/wh.plazaoleos.com/view/auth/login.php on line 21

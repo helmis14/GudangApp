@@ -7,7 +7,7 @@ if (!isset($_SESSION['iduser'])) {
     exit();
 }
 
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'supervisor' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisoradmin' && $_SESSION['role'] !== 'gudang') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'supervisor' && $_SESSION['role'] !== 'user'&& $_SESSION['role'] !== 'supervisoradmin'&& $_SESSION['role'] !== 'supervisorgudang') {
     header('Location: ../../access_denied.php');
     exit();
 }
@@ -46,7 +46,7 @@ ini_set('display_errors', 1);
         <h1 class="mt-4">Permintaan Barang</h1>
         <div class="card mb-4">
             <!-- Button to Open the Modal "Tambah Barang"-->
-            <?php if ($role === 'supervisor' || $role === 'dev' || $role === 'gudang') :  ?>
+            <?php if ($role === 'supervisor' || $role === 'dev'|| $role === 'supervisorgudang') :  ?>
                 <div class="card-header">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                         Tambah Permintaan
@@ -137,8 +137,7 @@ ini_set('display_errors', 1);
                                     $status_permintaan = $row['status'];
                                 ?>
                                     <tr>
-                                        <td><?= ($total_rows - $no + 1); ?></td>
-                                        <!--<td><?= $no--; ?></td>-->
+                                        <td><?= $no--; ?></td>
                                         <td><?= $tanggal; ?></td>
                                         <td>
                                             <?php
@@ -200,18 +199,23 @@ ini_set('display_errors', 1);
                                         </td>
                                         <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Disetujui' : 'Tidak Disetujui'); ?></td>
                                         <td>
-                                            <?php if ($_SESSION['role'] === 'supervisor' && $status_permintaan == 0) { ?>
+                                            <?php if ($_SESSION['role'] === 'supervisor'  && $status_permintaan == 0) { ?>
+
                                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
                                                     Edit
                                                 </button>
                                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
                                                     Delete
                                                 </button>
-                                            <?php } elseif ($_SESSION['role'] === 'superadmin' && $status_permintaan == 0) { ?>
+
+                                            <?php } elseif ($_SESSION['role'] === 'superadmin' || ($_SESSION['role'] === 'supervisoradmin'  && $status_permintaan == 0)) { ?>
+
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
                                                     Ubah Status
                                                 </button>
+
                                             <?php } elseif ($_SESSION['role'] === 'dev') { ?>
+
                                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
                                                     Edit
                                                 </button>
@@ -222,14 +226,15 @@ ini_set('display_errors', 1);
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
                                                     Ubah Status
                                                 </button>
-                                            <?php } elseif ($status_permintaan == 1 || $status_permintaan == 2) { ?>
+
+                                            <?php } elseif ($status_permintaan == 1) { ?>
                                                 Ditanggapi
                                             <?php } else { ?>
                                                 Belum Ditanggapi
                                             <?php } ?>
+
                                         </td>
                                     </tr>
-
 
                                     <!-- Modal untuk mengubah status permintaan -->
                                     <div class="modal fade" id="statusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
@@ -346,24 +351,9 @@ ini_set('display_errors', 1);
                                                             <label for="unit">Unit:</label>
                                                             <select name="unit" class="form-control">
                                                                 <option value="PCS">PCS</option>
-                                                                <option value="PACK">PACK</option>
-                                                                <option value="KG">KG</option>
-                                                                <option value="BALL">BALL</option>
-                                                                <option value="BTG">BTG</option>
-                                                                <option value="ROLL">ROLL</option>
-                                                                <option value="METER">METER</option>
-                                                                <option value="BOTOL">BOTOL</option>
-                                                                <option value="LITER">LITER</option>
-                                                                <option value="PAIL">PAIL</option>
-                                                                <option value="GALON">GALON</option>
-                                                                <option value="CAN">CAN</option>
-                                                                <option value="UNIT">UNIT</option>
-                                                                <option value="TAB">TAB</option>
-                                                                <option value="SET">SET</option>
-                                                                <option value="DUS">DUS</option>
-                                                                <option value="SAK">SAK</option>
-                                                                <option value="SLABE">SLABE</option>
-                                                                <option value="ALUR">ALUR</option>
+                                                                <option value="Pack">Pack</option>
+                                                                <option value="Kg">KG</option>
+                                                                <option value="Ball">BALL</option>
                                                             </select>
                                                             <br>
                                                             <label for="qtypermintaan">Jumlah:</label>
@@ -461,24 +451,9 @@ ini_set('display_errors', 1);
                     <label for="unit${counter}">Unit:</label>
                     <select name="unit[]" class="form-control">
                         <option value="PCS">PCS</option>
-                        <option value="PACK">PACK</option>
-                        <option value="KG">KG</option>
-                        <option value="BALL">BALL</option>
-                        <option value="BTG">BTG</option>
-                        <option value="ROLL">ROLL</option>
-                        <option value="METER">METER</option>
-                        <option value="BOTOL">BOTOL</option>
-                        <option value="LITER">LITER</option>
-                        <option value="PAIL">PAIL</option>
-                        <option value="GALON">GALON</option>
-                        <option value="CAN">CAN</option>
-                        <option value="UNIT">UNIT</option>
-                        <option value="TAB">TAB</option>
-                        <option value="SET">SET</option>
-                        <option value="DUS">DUS</option>
-                        <option value="SAK">SAK</option>
-                        <option value="SLABE">SLABE</option>
-                        <option value="ALUR">ALUR</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Kg">KG</option>
+                        <option value="Ball">BALL</option>
                     </select>
                     <br>
                     <label for="qtypermintaan${counter}">Jumlah:</label>
@@ -550,31 +525,16 @@ ini_set('display_errors', 1);
                     <label for="bukti_base64">Bukti Permintaan:</label>
                     <input type="file" name="bukti_base64" class="form-control-file" required>
                     <p style="font-size: small; padding-top: 7px">Ukuran bukti maksimal 5 mb </p>
-
+                    
                     <label for="namabarang[]">Nama Barang:</label>
                     <input type="text" name="namabarang[]" placeholder="Nama Barang" class="form-control" required>
                     <br>
                     <label for="unit[]">Unit:</label>
                     <select name="unit[]" class="form-control">
                         <option value="PCS">PCS</option>
-                        <option value="PACK">PACK</option>
-                        <option value="KG">KG</option>
-                        <option value="BALL">BALL</option>
-                        <option value="BTG">BTG</option>
-                        <option value="ROLL">ROLL</option>
-                        <option value="METER">METER</option>
-                        <option value="BOTOL">BOTOL</option>
-                        <option value="LITER">LITER</option>
-                        <option value="PAIL">PAIL</option>
-                        <option value="GALON">GALON</option>
-                        <option value="CAN">CAN</option>
-                        <option value="UNIT">UNIT</option>
-                        <option value="TAB">TAB</option>
-                        <option value="SET">SET</option>
-                        <option value="DUS">DUS</option>
-                        <option value="SAK">SAK</option>
-                        <option value="SLABE">SLABE</option>
-                        <option value="ALUR">ALUR</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Kg">KG</option>
+                        <option value="Ball">BALL</option>
                     </select>
                     <br>
                     <label for="qtypermintaan[]">Jumlah:</label>
@@ -632,24 +592,9 @@ ini_set('display_errors', 1);
                     <label for="unit">Unit:</label>
                     <select name="unit" class="form-control">
                         <option value="PCS">PCS</option>
-                        <option value="PACK">PACK</option>
-                        <option value="KG">KG</option>
-                        <option value="BALL">BALL</option>
-                        <option value="BTG">BTG</option>
-                        <option value="ROLL">ROLL</option>
-                        <option value="METER">METER</option>
-                        <option value="BOTOL">BOTOL</option>
-                        <option value="LITER">LITER</option>
-                        <option value="PAIL">PAIL</option>
-                        <option value="GALON">GALON</option>
-                        <option value="CAN">CAN</option>
-                        <option value="UNIT">UNIT</option>
-                        <option value="TAB">TAB</option>
-                        <option value="SET">SET</option>
-                        <option value="DUS">DUS</option>
-                        <option value="SAK">SAK</option>
-                        <option value="SLABE">SLABE</option>
-                        <option value="ALUR">ALUR</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Kg">KG</option>
+                        <option value="Ball">BALL</option>
                     </select>
                     <br>
                     <label for="qtypermintaan">Jumlah:</label>

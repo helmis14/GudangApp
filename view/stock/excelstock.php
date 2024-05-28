@@ -20,25 +20,24 @@ $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
 $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
 $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
 $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
-$spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
 
 //title merge cells
 $spreadsheet->getActiveSheet()->setCellValue('A1', "Report Stock Barang Plaza Oleos");
-$spreadsheet->getActiveSheet()->mergeCells("A1:F1");
+$spreadsheet->getActiveSheet()->mergeCells("A1:E1");
 
 // yyyy-mm-dd
-$spreadsheet->getActiveSheet()->setCellValue('E3', "Tanggal :");
+$spreadsheet->getActiveSheet()->setCellValue('D3', "Tanggal :");
 
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Date as DateWizard;
 
-$spreadsheet->getActiveSheet()->setCellValue('F3', '=NOW()');
+$spreadsheet->getActiveSheet()->setCellValue('E3', '=NOW()');
 $dateFormat = new DateWizard(
 	DateWizard::SEPARATOR_DASH,
 	DateWizard::YEAR_FULL,
 	DateWizard::MONTH_NUMBER_LONG,
 	DateWizard::DAY_NUMBER_LONG
 );
-$spreadsheet->getActiveSheet()->getStyle('F3')
+$spreadsheet->getActiveSheet()->getStyle('E3')
 	->getNumberFormat()
 	->setFormatCode($dateFormat);
 
@@ -49,7 +48,6 @@ $sheet->setCellValue('B5', 'Nama Barang');
 $sheet->setCellValue('C5', 'Unit');
 $sheet->setCellValue('D5', 'Stock');
 $sheet->setCellValue('E5', 'Lokasi/Rak');
-$sheet->setCellValue('F5', 'Kategori');
 
 //display from DB
 $query = mysqli_query($conn, "select * from stock");
@@ -60,7 +58,6 @@ while ($row = mysqli_fetch_array($query)) {
 	$sheet->setCellValue('C' . $i, $row['unit']);
 	$sheet->setCellValue('D' . $i, $row['stock']);
 	$sheet->setCellValue('E' . $i, $row['lokasi']);
-	$sheet->setCellValue('F' . $i, $row['kategori']);
 	$i++;
 }
 
@@ -80,7 +77,7 @@ $styleTitle = [
 ];
 
 
-$sheet->getStyle('A1:F1')->applyFromArray($styleTitle);
+$sheet->getStyle('A1:E1')->applyFromArray($styleTitle);
 
 //style Tanggal
 $styleTanggal = [
@@ -116,7 +113,7 @@ $styleValueTanggal = [
 ];
 
 
-$sheet->getStyle('F3')->applyFromArray($styleValueTanggal);
+$sheet->getStyle('E3')->applyFromArray($styleValueTanggal);
 
 
 //style heading text bold, size, warna, posisi
@@ -138,7 +135,7 @@ $styleHead = [
 	],
 ];
 
-$sheet->getStyle('A5:F5')->applyFromArray($styleHead);
+$sheet->getStyle('A5:E5')->applyFromArray($styleHead);
 
 //style data dalam row
 $styleIsi = [
@@ -153,7 +150,7 @@ $styleIsi = [
 ];
 
 $i = $i - 1;
-$sheet->getStyle('A6:F' . $i)->applyFromArray($styleIsi);
+$sheet->getStyle('A6:E' . $i)->applyFromArray($styleIsi);
 
 
 $writer = new Xlsx($spreadsheet);

@@ -34,5 +34,3 @@ if (isset($_POST['idm']) && isset($_POST['status'])) {
 } else {
     echo "Data tidak lengkap";
 }
-
-

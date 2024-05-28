@@ -61,12 +61,13 @@ function importDataFromExcel($excelFilePath, $conn)
         }
 
         // Prepare and execute the MySQL insert query using prepared statements
-        $stmt = $conn->prepare("INSERT INTO stock (idbarang, namabarang, kategori, unit, stock, lokasi) VALUES (?, ?, ?, ?, ?, ?)");
-        
+        $stmt = $conn->prepare("INSERT INTO stock (idbarang, namabarang, unit, stock, lokasi)
+                        VALUES (?, ?, ?, ?, ?)");
+
         // Check if 'unit' is empty, provide a default value if needed
-        $unitValue = !empty($rowData['Unit']) ? $rowData['Unit'] : 'Default unit';
-        
-        $stmt->bind_param("isssss", $rowData['No'], $rowData['Nama Barang'], $rowData['Kategori'], $unitValue, $rowData['Stock'], $rowData['Lokasi/rak']);
+        $unitValue = !empty($rowData['unit']) ? $rowData['unit'] : 'Default unit';
+
+        $stmt->bind_param("sssss", $rowData['No'], $rowData['Nama Barang'], $unitValue, $rowData['Stock'], $rowData['Lokasi/rak']);
 
         if (!$stmt->execute()) {
             echo "Error: " . $stmt->error;
@@ -357,24 +358,9 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                     <label for="unit">Unit:</label>
                     <select name="unit" class="form-control">
                         <option value="PCS">PCS</option>
-                        <option value="PACK">PACK</option>
-                        <option value="KG">KG</option>
-                        <option value="BALL">BALL</option>
-                        <option value="BATANG">BATANG</option>
-                        <option value="ROLL">ROLL</option>
-                        <option value="METER">METER</option>
-                        <option value="BOTOL">BOTOL</option>
-                        <option value="LITER">LITER</option>
-                        <option value="PAIL">PAIL</option>
-                        <option value="GALON">GALON</option>
-                        <option value="CAN">CAN</option>
-                        <option value="UNIT">UNIT</option>
-                        <option value="TAB">TAB</option>
-                        <option value="SET">SET</option>
-                        <option value="DUS">DUS</option>
-                        <option value="SAK">SAK</option>
-                        <option value="SLABE">SLABE</option>
-                        <option value="ALUR">ALUR</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Kg">KG</option>
+                        <option value="Ball">BALL</option>
                     </select>
 
                     <br>
