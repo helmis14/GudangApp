@@ -8,13 +8,18 @@ if (!isset($_SESSION['iduser'])) {
     exit();
 }
 
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisorgudang' && $_SESSION['role'] !== 'supervisor' && $_SESSION['role'] !== 'supervisoradmin') {
     header('Location: ../../access_denied.php');
     exit();
+}
+if (isset($_SESSION['error_message'])) {
+    echo "<div class='alert alert-danger'>" . $_SESSION['error_message'] . "</div>";
+    unset($_SESSION['error_message']);
 }
 
 $iduser = $_SESSION['iduser'];
 $role = $_SESSION['role'];
+$email_logged = $_SESSION['email'];
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +46,7 @@ $role = $_SESSION['role'];
     <div class="container-fluid">
         <h1 class="mt-4">Barang Keluar </h1>
         <div class="card mb-4">
-            <?php if ($role === 'gudang' || $role === 'dev') :  ?>
+            <?php if ($role === 'gudang' || $role === 'dev' || $role === 'supervisorgudang' || $role === 'supervisor') :  ?>
                 <div class="card-header">
                     <!-- Button to Open the Modal -->
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
@@ -62,6 +67,7 @@ $role = $_SESSION['role'];
                         $query = "SELECT 
                                         keluar.idpermintaan, 
                                         permintaan_keluar.tanggal, 
+                                        permintaan_keluar.status,
                                         permintaan_keluar.gambar_base64,
                                         GROUP_CONCAT(CONCAT(stock.namabarang, '')) as nama_barang, 
                                         GROUP_CONCAT(stock.unit) as unit, 
@@ -90,7 +96,9 @@ $role = $_SESSION['role'];
                                 <th>Penerima</th>
                                 <th>Keterangan</th>
                                 <th>Bukti Keluar</th>
-                                <?php if ($role === 'gudang' || $role === 'dev') :  ?>
+                                <th>Bukti WO</th>
+                                <th>Status</th>
+                                <?php if ($role === 'gudang' || $role === 'dev' || $role === 'supervisorgudang' || $role === 'supervisor' || $role === 'superadmin' || $role === 'supervisoradmin') :  ?>
                                     <th>Aksi</th>
                                 <?php endif; ?>
                             </tr>
@@ -105,7 +113,7 @@ $role = $_SESSION['role'];
 
                                 if (!empty($mulai) && !empty($selesai)) {
                                     // Gunakan parameterized query untuk mencegah serangan SQL Injection
-                                    $query = "SELECT keluar.idpermintaan, permintaan_keluar.tanggal, permintaan_keluar.gambar_base64,
+                                    $query = "SELECT keluar.idpermintaan, permintaan_keluar.tanggal, permintaan_keluar.status, permintaan_keluar.status2, permintaan_keluar.status3, permintaan_keluar.gambar_base64, permintaan_keluar.bukti_wo,
                                                             GROUP_CONCAT(CONCAT(stock.namabarang, '')) as nama_barang, 
                                                             GROUP_CONCAT(stock.unit) as unit, 
                                                             GROUP_CONCAT(keluar.qty) as qty, 
@@ -122,7 +130,7 @@ $role = $_SESSION['role'];
                                     mysqli_stmt_execute($stmt);
                                     $result = mysqli_stmt_get_result($stmt);
                                 } else {
-                                    $result = mysqli_query($conn, "SELECT keluar.idpermintaan, permintaan_keluar.tanggal, permintaan_keluar.gambar_base64,
+                                    $result = mysqli_query($conn, "SELECT keluar.idpermintaan, permintaan_keluar.tanggal, permintaan_keluar.status,  permintaan_keluar.status2, permintaan_keluar.status3, permintaan_keluar.gambar_base64, permintaan_keluar.bukti_wo,
                                                             GROUP_CONCAT(CONCAT(stock.namabarang, '')) as nama_barang, 
                                                             GROUP_CONCAT(stock.unit) as unit, 
                                                             GROUP_CONCAT(keluar.qty) as qty, 
@@ -135,7 +143,7 @@ $role = $_SESSION['role'];
                                                         ORDER BY keluar.idpermintaan DESC");
                                 }
                             } else {
-                                $result = mysqli_query($conn, "SELECT keluar.idpermintaan, permintaan_keluar.tanggal, permintaan_keluar.gambar_base64,
+                                $result = mysqli_query($conn, "SELECT keluar.idpermintaan, permintaan_keluar.tanggal, permintaan_keluar.status, permintaan_keluar.status2, permintaan_keluar.status3, permintaan_keluar.gambar_base64, permintaan_keluar.bukti_wo,
                                                             GROUP_CONCAT(CONCAT(stock.namabarang, '')) as nama_barang, 
                                                             GROUP_CONCAT(stock.unit) as unit, 
                                                             GROUP_CONCAT(keluar.qty) as qty, 
@@ -155,6 +163,10 @@ $role = $_SESSION['role'];
                                 $idpermintaan = $row['idpermintaan'];
                                 $tanggal = $row['tanggal'];
                                 $gambar_base64 = $row['gambar_base64'];
+                                $bukti_wo = $row['bukti_wo'];
+                                $status = $row['status'];
+                                $status2 = $row['status2'];
+                                $status3 = $row['status3'];
 
                                 $nama_barang = explode(",", $row['nama_barang']);
                                 $unit = explode(",", $row['unit']);
@@ -192,6 +204,7 @@ $role = $_SESSION['role'];
                                         }
                                         ?>
                                     </td>
+
                                     <td>
                                         <?php
                                         foreach ($keterangan as $item) {
@@ -199,29 +212,90 @@ $role = $_SESSION['role'];
                                         }
                                         ?>
                                     </td>
+
                                     <td>
                                         <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
                                             <img src="data:image/jpeg;base64,<?= $row['gambar_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
                                         </a>
                                     </td>
+                                    <td>
+                                        <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
+                                            <img src="data:image/jpeg;base64,<?= $row['bukti_wo']; ?>" alt="Bukti WO" style="max-width: 100px; max-height: 100px;">
+                                        </a>
+                                    </td>
 
-                                    <?php if ($role == 'dev') : ?>
-                                        <td>
+                                    <td>
+                                        <?php
+                                        $allApproved = ($status == 1 && $status2 == 1 && $status3 == 1);
+                                        $allRejected = ($status == 2 && $status2 == 2 && $status3 == 2);
+                                        ?>
+                                        <?php if ($allApproved) : ?>
+                                            Disetujui
+                                        <?php elseif ($allRejected) : ?>
+                                            Ditolak
+                                        <?php else : ?>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#viewStatusModal<?= $idpermintaan; ?>">
+                                                Lihat Status
+                                            </button>
+                                        <?php endif; ?>
+                                    </td>
+
+
+
+                                    <td>
+                                        <?php if ($role === 'superadmin' && ($email_logged === 'bm@plazaoleos.com' || $email_logged === 'ce@plazaoleos.com')) : ?>
+                                            <?php if ($status == 0 && $email_logged === 'bm@plazaoleos.com') : ?>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                    Ubah Status
+                                                </button>
+                                            <?php elseif ($status3 == 0 && $email_logged === 'ce@plazaoleos.com') : ?>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                    Ubah Status
+                                                </button>
+                                            <?php else : ?>
+                                                Ditanggapi
+                                            <?php endif; ?>
+                                        <?php elseif ($role === 'gudang') : ?>
+                                            <?php if ($status == 1 && $status3 == 1 && $status2 == 1) : ?>
+                                                Ditanggapi
+                                            <?php elseif ($status == 1 && $status3 == 1) : ?>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                    Ubah Status
+                                                </button>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+                                                    Edit
+                                                </button>
+                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idpermintaan; ?>">
+                                                    Delete
+                                                </button>
+                                            <?php else : ?>
+                                                <p>Belum Ditanggapi</p>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+                                                    Edit
+                                                </button>
+                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idpermintaan; ?>">
+                                                    Delete
+                                                </button>
+                                            <?php endif; ?>
+                                        <?php elseif ($role === 'dev') : ?>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                Ubah Status
+                                            </button>
                                             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
                                                 Edit
                                             </button>
                                             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idpermintaan; ?>">
                                                 Delete
                                             </button>
-                                        </td>
-                                    <?php elseif ($role === 'gudang') : ?>
-                                        <td>
-                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idpermintaan; ?>">
-                                                Delete
-                                            </button>
-                                        </td>
-                                    <?php endif; ?>
+                                        <?php else : ?>
+                                            Belum Ditanggapi
+                                        <?php endif; ?>
+                                    </td>
+
+
+
                                 </tr>
+
                                 <!-- Modal untuk menampilkan gambar penuh -->
                                 <div class="modal fade" id="gambarModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
@@ -243,6 +317,83 @@ $role = $_SESSION['role'];
                                     </div>
                                 </div>
 
+                                <!-- Modal untuk mengubah status permintaan -->
+                                <div class="modal fade" id="statusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="statusModalLabel">Ubah Status Permintaan</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="update_status.php" method="POST">
+                                                    <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
+                                                    <?php if ($role === 'superadmin' && $email_logged === 'bm@plazaoleos.com') : ?>
+                                                        <div class="form-group">
+                                                            <label for="status">Status Superadmin 1:</label>
+                                                            <select class="form-control" id="status" name="status">
+                                                                <option value="1">Disetujui</option>
+                                                                <option value="2">Tidak Disetujui</option>
+                                                            </select>
+                                                        </div>
+                                                    <?php elseif ($role === 'superadmin' && $email_logged === 'ce@plazaoleos.com') : ?>
+                                                        <div class="form-group">
+                                                            <label for="status3">Status Superadmin 2:</label>
+                                                            <select class="form-control" id="status3" name="status3">
+                                                                <option value="1">Disetujui</option>
+                                                                <option value="2">Tidak Disetujui</option>
+                                                            </select>
+                                                        </div>
+                                                    <?php elseif ($role === 'gudang') : ?>
+                                                        <div class="form-group">
+                                                            <label for="status2">Status Gudang:</label>
+                                                            <select class="form-control" id="status2" name="status2">
+                                                                <option value="1">Disetujui</option>
+                                                                <option value="2">Tidak Disetujui</option>
+                                                            </select>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Modal untuk melihat status permintaan -->
+                                <div class="modal fade" id="viewStatusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="viewStatusModalLabel">Status Permintaan</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>bm@plazaoleos.com <?= ($status == 0) ? 'belum menanggapi' : ($status == 1 ? 'menyetujui' : 'tidak menyetujui'); ?> barang keluar</p>
+                                                </p>
+                                                <hr>
+                                                <p>ce@plazaoleos.com <?= ($status3 == 0) ? 'belum menanggapi' : ($status3 == 1 ? 'menyetujui' : 'tidak menyetujui'); ?> barang keluar</p>
+                                                </p>
+                                                <hr>
+                                                <p>gudang <?= ($status2 == 0) ? 'belum menanggapi' : ($status2 == 1 ? 'menyetujui' : 'tidak menyetujui'); ?> barang keluar</p>
+                                                </p>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
                                 <!-- Edit Modal -->
                                 <div class="modal fade" id="edit<?= $idpermintaan; ?>">
                                     <div class="modal-dialog">
@@ -255,6 +406,9 @@ $role = $_SESSION['role'];
                                                 <div class="modal-body">
                                                     <label for="gambar_base64">Bukti Keluar:</label>
                                                     <input type="file" name="gambar_base64" class="form-control-file" accept="image/*">
+                                                    <br>
+                                                    <label for="bukti_wo">Bukti WO:</label>
+                                                    <input type="file" name="bukti_wo" class="form-control-file" accept="image/*">
                                                     <br>
                                                     <button type="submit" class="btn btn-warning" name="updatebarangkeluar">Ubah Bukti</button>
                                                     <br>
@@ -275,8 +429,6 @@ $role = $_SESSION['role'];
                                                         $keterangan = $row_barang['keterangan'];
                                                         $penerima = $row_barang['penerima'];
                                                     ?>
-
-
                                                         <div class="barang" id="barang<?= $idkeluar; ?>">
                                                             <input type="hidden" name="idkeluar[]" value="<?= $idkeluar; ?>">
                                                             <input type="hidden" name="idbarang[]" value="<?= $idbarang; ?>" class="form-control" id="idbarang<?= $idkeluar; ?>">
@@ -313,10 +465,10 @@ $role = $_SESSION['role'];
                                                     <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
                                                 </div>
                                             </form>
-
                                         </div>
                                     </div>
                                 </div>
+
 
                 </div>
                 <!-- Modal tambah barang keluar edit -->

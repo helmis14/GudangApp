@@ -6,7 +6,7 @@ if (!isset($_SESSION['iduser'])) {
     header('Location: ../../login.php');
     exit();
 }
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisoradmin') {
     header('Location: ../../access_denied.php');
     exit();
 }
@@ -242,7 +242,46 @@ $role = $_SESSION['role'];
                                 </div>
 
 
-                                <!-- Edit Modal -->
+                                <!-- Edit Modal lama-->
+                                <!--<div class="modal fade" id="edit<?= $idm; ?>">-->
+                                <!--    <div class="modal-dialog">-->
+                                <!--        <div class="modal-content">-->
+
+                                <!-- Modal Header -->
+                                <!--            <div class="modal-header">-->
+                                <!--                <h4 class="modal-title">Edit Barang</h4>-->
+                                <!--                <button type="button" class="close" data-dismiss="modal">&times;</button>-->
+                                <!--            </div>-->
+
+                                <!-- Modal body -->
+                                <!--            <form method="post" enctype="multipart/form-data">-->
+                                <!--                <div class="modal-body">-->
+                                <!--                    <label for="penerima">Penerima</label>-->
+                                <!--                    <input type="text" name="penerima" value="<?= $penerima; ?>" class="form-control">-->
+                                <!--                    <br>-->
+                                <!--                    <label for="qty">Jumlah:</label>-->
+                                <!--                    <input type="number" name="qty" value="<?= $qty; ?>" class="form-control">-->
+                                <!--                    <label for="keterangan">keterangan:</label>-->
+                                <!--                    <input type="text" name="keterangan" value="<?= $keterangan; ?>" class="form-control">-->
+                                <!--                    <br>-->
+                                <!--                    <label for="distributor">Distributor:</label>-->
+                                <!--                    <input type="text" name="distributor" value="<?= $distributor; ?>" class="form-control">-->
+                                <!--                    <br>-->
+                                <!--                    <label for="update_bukti_masuk">Bukti Masuk:</label>-->
+                                <!--                    <input type="file" name="update_bukti_masuk" class="form-control-file" accept="image/*">-->
+                                <!--                    <br>-->
+                                <!--                    <input type="hidden" name="idb" value="<?= $idb; ?>">-->
+                                <!--                    <input type="hidden" name="idm" value="<?= $idm; ?>">-->
+                                <!--                    <button type="submit" class="btn btn-primary" name="updatebarangmasuk">Submit</button>-->
+                                <!--                </div>-->
+                                <!--            </form>-->
+
+                                <!--        </div>-->
+
+                                <!--    </div>-->
+                                <!--</div>-->
+
+                                <!-- Edit Modal Baru -->
                                 <div class="modal fade" id="edit<?= $idm; ?>">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -259,16 +298,20 @@ $role = $_SESSION['role'];
                                                     <label for="penerima">Penerima</label>
                                                     <input type="text" name="penerima" value="<?= $penerima; ?>" class="form-control">
                                                     <br>
-                                                    <?php if ($role === 'dev') : ?>
-                                                        <label for="qty">Jumlah:</label>
-                                                        <input type="text" name="qty" value="<?= $qty; ?>" class="form-control">
-                                                        <br>
-                                                    <?php endif; ?>
+                                                    <label for="qty">Jumlah:</label>
+                                                    <input type="number" name="qty" value="<?= $qty; ?>" class="form-control">
                                                     <label for="keterangan">keterangan:</label>
                                                     <input type="text" name="keterangan" value="<?= $keterangan; ?>" class="form-control">
                                                     <br>
                                                     <label for="distributor">Distributor:</label>
                                                     <input type="text" name="distributor" value="<?= $distributor; ?>" class="form-control">
+                                                    <br>
+                                                    <!--<label for="status">Status:</label>-->
+                                                    <!--<select class="form-control" id="status" name="status">-->
+                                                    <!--    <option value="0" <?= ($status == 0) ? 'selected' : ''; ?>>Dalam Pengiriman</option>-->
+                                                    <!--    <option value="1" <?= ($status == 1) ? 'selected' : ''; ?>>Diterima</option>-->
+                                                    <!--    <option value="2" <?= ($status == 2) ? 'selected' : ''; ?>>Tidak Diterima</option>-->
+                                                    <!--</select>-->
                                                     <br>
                                                     <label for="update_bukti_masuk">Bukti Masuk:</label>
                                                     <input type="file" name="update_bukti_masuk" class="form-control-file" accept="image/*">
@@ -278,11 +321,10 @@ $role = $_SESSION['role'];
                                                     <button type="submit" class="btn btn-primary" name="updatebarangmasuk">Submit</button>
                                                 </div>
                                             </form>
-
                                         </div>
-
                                     </div>
                                 </div>
+
                 </div>
 
                 <!-- Delete Modal -->

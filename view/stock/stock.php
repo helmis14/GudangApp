@@ -8,10 +8,13 @@ if (!isset($_SESSION['iduser'])) {
     exit();
 }
 
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisor') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESSION['role'] !== 'gudang' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisor'&& $_SESSION['role'] !== 'supervisoradmin'&& $_SESSION['role'] !== 'supervisorgudang') {
     header('Location: ../../access_denied.php');
     exit();
 }
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 $iduser = $_SESSION['iduser'];
 $role = $_SESSION['role'];
@@ -21,10 +24,11 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 // Function to establish database connection
 function connectToDatabase()
 {
-    $servername = "u6939598@localhost";
-    $username = "whpl4zaole0s";
+
+    $servername = "localhost";
+    $username = "u6939598_whpl4zaole0s";
     $password = "IT@RG2024!Plaza0leos";
-    $dbname = "u6939598_stokbarangs";
+    $dbname = "u6939598_whplazaoleos";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -57,13 +61,12 @@ function importDataFromExcel($excelFilePath, $conn)
         }
 
         // Prepare and execute the MySQL insert query using prepared statements
-        $stmt = $conn->prepare("INSERT INTO stock (idbarang, namabarang, unit, stock, lokasi)
-                        VALUES (?, ?, ?, ?, ?)");
-
+        $stmt = $conn->prepare("INSERT INTO stock (idbarang, namabarang, kategori, unit, stock, lokasi) VALUES (?, ?, ?, ?, ?, ?)");
+        
         // Check if 'unit' is empty, provide a default value if needed
-        $unitValue = !empty($rowData['unit']) ? $rowData['unit'] : 'Default unit';
-
-        $stmt->bind_param("sssss", $rowData['No'], $rowData['Nama Barang'], $unitValue, $rowData['Stock'], $rowData['Lokasi/rak']);
+        $unitValue = !empty($rowData['Unit']) ? $rowData['Unit'] : 'Default unit';
+        
+        $stmt->bind_param("isssss", $rowData['No'], $rowData['Nama Barang'], $rowData['Kategori'], $unitValue, $rowData['Stock'], $rowData['Lokasi/rak']);
 
         if (!$stmt->execute()) {
             echo "Error: " . $stmt->error;
@@ -175,7 +178,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
             <div class="card-body">
 
                 <?php
-                $ambildatastock = mysqli_query($conn, "select * from stock where stock < 1");
+                $ambildatastock = mysqli_query($conn, "select * from stock where stock < 10");
                 while ($fetch = mysqli_fetch_array($ambildatastock)) {
                     $barang = $fetch['namabarang'];
 
@@ -183,7 +186,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                 ?>
                     <div class="alert alert-danger alert-dismissible fade show">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>Perhatian!</strong> Stock <?= $barang; ?> Telah Habis.
+                        <strong>Perhatian!</strong> Stock <?= $barang; ?> Akan Habis.
                     </div>
                 <?php
                 }
@@ -195,6 +198,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                             <tr>
                                 <th>No</th>
                                 <th>Nama Barang</th>
+                                <th>Kategori</th>
                                 <th>Unit</th>
                                 <th>Stock</th>
                                 <th>Lokasi/Rak</th>
@@ -210,6 +214,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                             $i = 1;
                             while ($data = mysqli_fetch_array($ambilsemuadatastock)) {
                                 $namabarang = $data['namabarang'];
+                                $kategori = $data['kategori'];
                                 $unit = $data['unit'];
                                 $stock = $data['stock'];
                                 $lok = $data['lokasi'];
@@ -219,6 +224,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                                 <tr>
                                     <td><?= $i++; ?></td>
                                     <td><?= $namabarang; ?></td>
+                                    <td><?= $kategori; ?></td>
                                     <td><?= $unit; ?></td>
                                     <td><?= $stock; ?></td>
                                     <td><?= $lok; ?></td>
@@ -255,6 +261,9 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                                                 <div class="modal-body">
                                                     <label for="namabarang">Nama Barang</label>
                                                     <input type="text" name="namabarang" value="<?= $namabarang; ?>" class="form-control" required>
+                                                    <br>
+                                                    <label for="kategori">Kategori:</label>
+                                                    <input type="text" name="kategori" value="<?= $kategori; ?>" class="form-control" required>
                                                     <br>
                                                     <label for="unit">Unit:</label>
                                                     <input type="text" name="unit" value="<?= $unit; ?>" class="form-control" required>
@@ -348,14 +357,32 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                     <label for="unit">Unit:</label>
                     <select name="unit" class="form-control">
                         <option value="PCS">PCS</option>
-                        <option value="Pack">Pack</option>
-                        <option value="Kg">KG</option>
-                        <option value="Ball">BALL</option>
+                        <option value="PACK">PACK</option>
+                        <option value="KG">KG</option>
+                        <option value="BALL">BALL</option>
+                        <option value="BATANG">BATANG</option>
+                        <option value="ROLL">ROLL</option>
+                        <option value="METER">METER</option>
+                        <option value="BOTOL">BOTOL</option>
+                        <option value="LITER">LITER</option>
+                        <option value="PAIL">PAIL</option>
+                        <option value="GALON">GALON</option>
+                        <option value="CAN">CAN</option>
+                        <option value="UNIT">UNIT</option>
+                        <option value="TAB">TAB</option>
+                        <option value="SET">SET</option>
+                        <option value="DUS">DUS</option>
+                        <option value="SAK">SAK</option>
+                        <option value="SLABE">SLABE</option>
+                        <option value="ALUR">ALUR</option>
                     </select>
 
                     <br>
                     <!-- <input type="text" name="unit" placeholder="unit" class="form-control" required>
                                     <br> -->
+                    <label for="kategori">Kategori:</label>
+                    <input type="text" name="kategori" placeholder="Kategori" class="form-control" required>
+                    <br>
                     <label for="stock">Stock:</label>
                     <input type="number" name="stock" placeholder="Jumlah" class="form-control" required>
                     <br>
