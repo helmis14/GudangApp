@@ -219,7 +219,7 @@ $email_logged = $_SESSION['email'];
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
+                                        <a href="#" class="wo-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
                                             <img src="data:image/jpeg;base64,<?= $row['bukti_wo']; ?>" alt="Bukti WO" style="max-width: 100px; max-height: 100px;">
                                         </a>
                                     </td>
@@ -311,6 +311,27 @@ $email_logged = $_SESSION['email'];
                                             </div>
                                             <div class="modal-footer">
                                                 <a href="download_gambar_keluar.php?id=<?= $idpermintaan; ?>&type=keluar" class="btn btn-primary" download>Download</a>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal untuk menampilkan gambar penuh -->
+                                <div class="modal fade" id="WoModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="gambarModalLabel">Bukti WO</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <img src="data:image/jpeg;base64,<?= $bukti_wo; ?>" class="img-fluid">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="download_bukti_wo.php?id=<?= $idpermintaan; ?>&type=keluar" class="btn btn-primary" download>Download</a>
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                             </div>
                                         </div>
@@ -641,6 +662,14 @@ $email_logged = $_SESSION['email'];
             $('.gambar-modal-trigger').click(function() {
                 var idPermintaan = $(this).data('idpermintaan');
                 $('#gambarModal' + idPermintaan).modal('show');
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.wo-modal-trigger').click(function() {
+                var idPermintaan = $(this).data('idpermintaan');
+                $('#WoModal' + idPermintaan).modal('show');
             });
         });
     </script>
