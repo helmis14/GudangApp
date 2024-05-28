@@ -1,5 +1,4 @@
 <?php
-
 require '../../helper/function.php';
 require '../../helper/cek.php';
 
@@ -23,9 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $idbarang = $_POST['idbarang'][$index];
             $penerima = $_POST['penerima'][$index];
             $qty = $_POST['qty'][$index];
-            $keterangan = $_POST['keterangan'][$index];
+            $keterangan = $_POST['ket'][$index];  // Perbaikan dari $_POST['keterangan']
 
-            // Panggil fungsi untuk memperbarui barang keluar
+            // Panggil fungsi untuk memperbarui barang keluar tanpa mengubah stok
             if (update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan)) {
                 $message = "Barang berhasil diperbarui";
             } else {

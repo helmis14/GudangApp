@@ -2,6 +2,9 @@
 require '../../helper/function.php';
 require '../../helper/cek.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (isset($_POST['idpermintaan']) && isset($_POST['status'])) {
     $idpermintaan = $_POST['idpermintaan'];
     $status = $_POST['status'];

@@ -10,7 +10,7 @@ if (!isset($_SESSION['iduser'])) {
 }
 
 // Periksa peran pengguna
-if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'user') {
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisoradmin') {
     header('Location: ../../access_denied.php');
     exit();
 }
