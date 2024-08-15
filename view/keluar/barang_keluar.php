@@ -221,17 +221,10 @@ $email_logged = $_SESSION['email'];
                                         </button>
 
                                     </td>
-<<<<<<< HEAD
                                     <td style="text-align:center">
                                         <button type="button" class="btn btn-success wo-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>" data-toggle="modal" data-target="#WoModal<?= $idpermintaan; ?>">
                                             Lihat
                                         </button>
-=======
-                                    <td>
-                                        <a href="#" class="wo-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
-                                            <img src="data:image/jpeg;base64,<?= $row['bukti_wo']; ?>" alt="Bukti WO" style="max-width: 100px; max-height: 100px;">
-                                        </a>
->>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
                                     </td>
 
                                     <td>
@@ -293,30 +286,10 @@ $email_logged = $_SESSION['email'];
                                             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idpermintaan; ?>">
                                                 Delete
                                             </button>
-<<<<<<< HEAD
                                         <?php else : ?>
                                             Belum Ditanggapi
                                         <?php endif; ?>
                                     </td>
-<<<<<<< HEAD
-=======
-
-
-
-=======
-                                        </td>
-                                    <?php elseif ($role === 'gudang') : ?>
-                                        <td>
-                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
-                                                Edit
-                                            </button>
-                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idpermintaan; ?>">
-                                                Delete
-                                            </button>
-                                        </td>
-                                    <?php endif; ?>
->>>>>>> 55098ea6017122debef3b3aefb221eb3590a4976
->>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
                                 </tr>
 
                                 <!-- Modal untuk menampilkan gambar penuh WO -->
@@ -361,27 +334,17 @@ $email_logged = $_SESSION['email'];
                                     </div>
                                 </div>
 
-<<<<<<< HEAD
                                 <!-- Modal untuk melihat status permintaan -->
                                 <div class="modal fade" id="viewStatusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="viewStatusModalLabel">Status Permintaan</h5>
-=======
-                                <!-- Modal untuk menampilkan gambar penuh -->
-                                <div class="modal fade" id="WoModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="gambarModalLabel">Bukti WO</h5>
->>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-<<<<<<< HEAD
                                                 <p>BM atau CE
                                                     <span class="<?= ($status == 0) ? 'text-warning' : ($status == 1 ? 'text-success' : 'text-danger'); ?>">
                                                         <?= ($status == 0) ? 'belum menanggapi' : ($status == 1 ? 'menyetujui' : 'tidak menyetujui'); ?>
@@ -394,19 +357,11 @@ $email_logged = $_SESSION['email'];
                                                     </span>
                                                 </p>
                                                 <hr>
-=======
-                                                <img src="data:image/jpeg;base64,<?= $bukti_wo; ?>" class="img-fluid">
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a href="download_bukti_wo.php?id=<?= $idpermintaan; ?>&type=keluar" class="btn btn-primary" download>Download</a>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
->>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-<<<<<<< HEAD
                                 <?php if (isset($_SESSION['error_message'])) : ?>
                                     <div class="alert alert-danger" role="alert">
                                         <?= $_SESSION['error_message']; ?>
@@ -415,8 +370,6 @@ $email_logged = $_SESSION['email'];
                                     ?>
                                 <?php endif; ?>
 
-=======
->>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
                                 <!-- Modal untuk mengubah status permintaan -->
                                 <div class="modal fade" id="statusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
