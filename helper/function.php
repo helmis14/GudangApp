@@ -437,6 +437,7 @@ function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan
     $resultOld = $stmtOld->get_result();
     $oldData = $resultOld->fetch_assoc();
 
+<<<<<<< HEAD
     $oldNamabarang = $oldData['namabarang'];
     $oldUnit = $oldData['unit'];
     $oldQty = $oldData['qty'];
@@ -470,6 +471,44 @@ function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan
         $activity = "$email_logged mengubah barang keluar ID $idkeluar. $log_details_before; $log_details_after";
         catatLog($conn, $activity, $iduser_logged);
 
+=======
+<<<<<<< HEAD
+=======
+    $query_select_old_qty = "SELECT qty FROM keluar WHERE idkeluar = ?";
+    $stmt_select_old_qty = mysqli_prepare($conn, $query_select_old_qty);
+    mysqli_stmt_bind_param($stmt_select_old_qty, "i", $idkeluar);
+    mysqli_stmt_execute($stmt_select_old_qty);
+    mysqli_stmt_bind_result($stmt_select_old_qty, $old_qty);
+    mysqli_stmt_fetch($stmt_select_old_qty);
+    mysqli_stmt_close($stmt_select_old_qty);
+
+    $qty_difference = $qty - $old_qty;
+
+>>>>>>> 55098ea6017122debef3b3aefb221eb3590a4976
+    $query_update_keluar = "UPDATE keluar SET penerima = ?, qty = ?, keterangan = ? WHERE idkeluar = ?";
+    $stmt_update_keluar = mysqli_prepare($conn, $query_update_keluar);
+    mysqli_stmt_bind_param($stmt_update_keluar, "sisi", $penerima, $qty, $keterangan, $idkeluar);
+    $update_keluar_success = mysqli_stmt_execute($stmt_update_keluar);
+
+<<<<<<< HEAD
+    if ($update_keluar_success) {
+=======
+    // Update stok berdasarkan perbedaan jumlah
+    $query_update_stok = "UPDATE stock SET stock = stock - ? WHERE idbarang = ?";
+    if ($qty_difference > 0) {
+        $query_update_stok = "UPDATE stock SET stock = stock - ? WHERE idbarang = ?";
+    } elseif ($qty_difference < 0) {
+        $query_update_stok = "UPDATE stock SET stock = stock + ? WHERE idbarang = ?";
+    }
+    $stmt_update_stok = mysqli_prepare($conn, $query_update_stok);
+    mysqli_stmt_bind_param($stmt_update_stok, "ii", abs($qty_difference), $idbarang);
+    $update_stok_success = mysqli_stmt_execute($stmt_update_stok);
+
+    if ($update_keluar_success && $update_stok_success) {
+>>>>>>> 55098ea6017122debef3b3aefb221eb3590a4976
+        mysqli_commit($conn);
+        mysqli_stmt_close($stmt_update_keluar);
+>>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
         return true;
     } else {
         return false;
@@ -479,12 +518,27 @@ function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan
 }
 
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// Fungsi pembaruan barang keluar edit lama
+// function update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan)
+// {
+//     global $conn;
+>>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
 
 
 
 
 //ubah barang keluar baru
+<<<<<<< HEAD
 //ubah barang keluar baru
+=======
+=======
+
+//ubah barang keluar
+>>>>>>> 55098ea6017122debef3b3aefb221eb3590a4976
+>>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
 if (isset($_POST['updatebarangkeluar'])) {
     $idpermintaan = $_POST['id'];
     $idbarang = $_POST['idbarang'];

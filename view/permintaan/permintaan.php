@@ -7,7 +7,11 @@ if (!isset($_SESSION['iduser'])) {
     exit();
 }
 
+<<<<<<< HEAD
 if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'supervisor' && $_SESSION['role'] !== 'user' && $_SESSION['role'] !== 'supervisoradmin' && $_SESSION['role'] !== 'gudang') {
+=======
+if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSION['role'] !== 'supervisor' && $_SESSION['role'] !== 'user'&& $_SESSION['role'] !== 'supervisoradmin'&& $_SESSION['role'] !== 'supervisorgudang') {
+>>>>>>> 55098ea6017122debef3b3aefb221eb3590a4976
     header('Location: ../../access_denied.php');
     exit();
 }
@@ -50,7 +54,15 @@ ini_set('display_errors', 1);
         <div class="card mb-4">
             <div class="card-header">
             <!-- Button to Open the Modal "Tambah Barang"-->
+<<<<<<< HEAD
             <?php if ($role === 'supervisor' || $role === 'dev' || $role === 'gudang') :  ?>
+<<<<<<< HEAD
+=======
+=======
+            <?php if ($role === 'supervisor' || $role === 'dev'|| $role === 'supervisorgudang') :  ?>
+>>>>>>> 55098ea6017122debef3b3aefb221eb3590a4976
+                <div class="card-header">
+>>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                         Tambah Permintaan
                     </button>
@@ -204,6 +216,7 @@ while ($row = mysqli_fetch_assoc($filtered_result)) {
                 Lihat Bukti
             </button>
 
+<<<<<<< HEAD
         </td>
      <td>
     <?php
@@ -259,6 +272,50 @@ while ($row = mysqli_fetch_assoc($filtered_result)) {
     <?php } ?>
 </td>
     </tr>
+=======
+                                        <td>
+                                            <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
+                                                <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
+                                            </a>
+                                        </td>
+                                        <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Disetujui' : 'Tidak Disetujui'); ?></td>
+                                        <td>
+                                            <?php if ($_SESSION['role'] === 'supervisor' && $status_permintaan == 0) { ?>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+                                                    Edit
+                                                </button>
+                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
+                                                    Delete
+                                                </button>
+<<<<<<< HEAD
+                                            <?php } elseif ($_SESSION['role'] === 'superadmin' && $status_permintaan == 0) { ?>
+=======
+
+                                            <?php } elseif ($_SESSION['role'] === 'superadmin' || ($_SESSION['role'] === 'supervisoradmin'  && $status_permintaan == 0)) { ?>
+
+>>>>>>> 55098ea6017122debef3b3aefb221eb3590a4976
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                    Ubah Status
+                                                </button>
+                                            <?php } elseif ($_SESSION['role'] === 'dev') { ?>
+                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+                                                    Edit
+                                                </button>
+                                                <br>
+                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
+                                                    Delete
+                                                </button>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                                                    Ubah Status
+                                                </button>
+                                            <?php } elseif ($status_permintaan == 1 || $status_permintaan == 2) { ?>
+                                                Ditanggapi
+                                            <?php } else { ?>
+                                                Belum Ditanggapi
+                                            <?php } ?>
+                                        </td>
+                                    </tr>
+>>>>>>> a4d01fa7d8b2ec492cc87c4c30d335ffe9431b1c
 
     <!-- Modal untuk mengubah status permintaan -->
     <div class="modal fade" id="statusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
