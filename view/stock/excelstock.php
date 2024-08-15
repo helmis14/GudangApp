@@ -44,7 +44,7 @@ $spreadsheet->getActiveSheet()->getStyle('F3')
 
 
 //header text
-$sheet->setCellValue('A5', 'No');
+$sheet->setCellValue('A5', 'Id Barang');
 $sheet->setCellValue('B5', 'Nama Barang');
 $sheet->setCellValue('C5', 'Unit');
 $sheet->setCellValue('D5', 'Stock');

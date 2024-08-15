@@ -73,7 +73,7 @@ while ($row = mysqli_fetch_array($query)) {
 			$status = 'Diterima';
 			break;
 		case 2:
-			$status = 'Ditolak';
+			$status = 'Tidak Disetujui';
 			break;
 		default:
 			$status = 'Status tidak valid';

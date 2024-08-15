@@ -87,10 +87,10 @@ $role = $_SESSION['role'];
 
                     if (!empty($kolom_kosong)) {
                 ?>
-                        <div class="alert alert-danger alert-dismissible fade show">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong>Perhatian!</strong> Mohon isi kolom kosong data barang <?= $namabarang; ?> pada waktu <?= $tanggal; ?> berikut : <?= implode(', ', $kolom_kosong); ?>
-                        </div>
+                        <!--<div class="alert alert-danger alert-dismissible fade show">-->
+                        <!--    <button type="button" class="close" data-dismiss="alert">&times;</button>-->
+                        <!--    <strong>Perhatian!</strong> Mohon isi kolom kosong data barang <?= $namabarang; ?> pada waktu <?= $tanggal; ?> berikut : <?= implode(', ', $kolom_kosong); ?>-->
+                        <!--</div>-->
                 <?php
                     }
                 }
@@ -157,7 +157,7 @@ $role = $_SESSION['role'];
                                     <td><?= $keterangan; ?></td>
                                     <td>
                                         <a href="#" class="gambar-mini-trigger" data-toggle="modal" data-target="#gambarModal<?= $idm; ?>" data-id="<?= $idm; ?>">
-                                            <img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" alt="Bukti Masuk" style="max-width: 100px; max-height: 100px;">
+                                                                                        <button type="button" class="btn btn-success"">Lihat Bukti</button>
                                         </a>
                                     </td>
                                     <td><?= ($status == 0) ? 'Dalam Pengiriman' : ($status == 1 ? 'Diterima' : 'Tidak Diterima'); ?></td>
@@ -231,7 +231,7 @@ $role = $_SESSION['role'];
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" class="img-fluid">
+                                                <img src="data:image/jpeg;base64,<?= $bukti_masuk_base64; ?>" class="img-fluid" alt="Bukti Masuk Belum Di Upload">
                                             </div>
                                             <div class="modal-footer">
                                                 <a href="download_gambar_masuk.php?id=<?= $idm; ?>&type=keluar" class="btn btn-primary" download>Download</a>
@@ -242,45 +242,7 @@ $role = $_SESSION['role'];
                                 </div>
 
 
-                                <!-- Edit Modal lama-->
-                                <!--<div class="modal fade" id="edit<?= $idm; ?>">-->
-                                <!--    <div class="modal-dialog">-->
-                                <!--        <div class="modal-content">-->
-
-                                <!-- Modal Header -->
-                                <!--            <div class="modal-header">-->
-                                <!--                <h4 class="modal-title">Edit Barang</h4>-->
-                                <!--                <button type="button" class="close" data-dismiss="modal">&times;</button>-->
-                                <!--            </div>-->
-
-                                <!-- Modal body -->
-                                <!--            <form method="post" enctype="multipart/form-data">-->
-                                <!--                <div class="modal-body">-->
-                                <!--                    <label for="penerima">Penerima</label>-->
-                                <!--                    <input type="text" name="penerima" value="<?= $penerima; ?>" class="form-control">-->
-                                <!--                    <br>-->
-                                <!--                    <label for="qty">Jumlah:</label>-->
-                                <!--                    <input type="number" name="qty" value="<?= $qty; ?>" class="form-control">-->
-                                <!--                    <label for="keterangan">keterangan:</label>-->
-                                <!--                    <input type="text" name="keterangan" value="<?= $keterangan; ?>" class="form-control">-->
-                                <!--                    <br>-->
-                                <!--                    <label for="distributor">Distributor:</label>-->
-                                <!--                    <input type="text" name="distributor" value="<?= $distributor; ?>" class="form-control">-->
-                                <!--                    <br>-->
-                                <!--                    <label for="update_bukti_masuk">Bukti Masuk:</label>-->
-                                <!--                    <input type="file" name="update_bukti_masuk" class="form-control-file" accept="image/*">-->
-                                <!--                    <br>-->
-                                <!--                    <input type="hidden" name="idb" value="<?= $idb; ?>">-->
-                                <!--                    <input type="hidden" name="idm" value="<?= $idm; ?>">-->
-                                <!--                    <button type="submit" class="btn btn-primary" name="updatebarangmasuk">Submit</button>-->
-                                <!--                </div>-->
-                                <!--            </form>-->
-
-                                <!--        </div>-->
-
-                                <!--    </div>-->
-                                <!--</div>-->
-
+                               
                                 <!-- Edit Modal Baru -->
                                 <div class="modal fade" id="edit<?= $idm; ?>">
                                     <div class="modal-dialog">
@@ -376,9 +338,6 @@ $role = $_SESSION['role'];
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../../js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="../../assets/demo/chart-area-demo.js"></script>
-    <script src="../../assets/demo/chart-bar-demo.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="../../assets/demo/datatables-demo.js"></script>
@@ -395,7 +354,7 @@ $role = $_SESSION['role'];
 
 <!-- The Modal -->
 <div class="modal fade" id="myModal">
-    <div class="modal-dialog">
+    <div class="modal-dialog ">
         <div class="modal-content">
 
             <!-- Modal Header -->
@@ -407,7 +366,12 @@ $role = $_SESSION['role'];
             <!-- Modal body -->
             <form method="post" enctype="multipart/form-data">
                 <div class="modal-body">
-                    <label for="barangnya">Nama Barang:</label>
+                    <label for="bukti_masuk_base64">Bukti Masuk:</label>
+                    <input type="file" name="bukti_masuk_base64" class="form-control-file" required>
+                    <br>
+                    <label for="search-barang">Cari Nama Barang:</label>
+                    <input type="text" id="search-barang" class="form-control" placeholder="Cari Nama Barang">
+                    <label for="barangnya">Pilih Nama Barang:</label>
                     <select name="barangnya" class="form-control">
                         <?php
                         $ambilsemuadatanya = mysqli_query($conn, "select * from stock");
@@ -435,17 +399,9 @@ $role = $_SESSION['role'];
                     </br>
                     <label for="keterangan">Keterangan</label>
                     <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
-                    </br>
-                    <label for="status">Status:</label>
-                    <select class="form-control" id="status" name="status">
-                        <option value="0">Dalam Pengiriman</option>
-                        <option value="1">Diterima</option>
-                        <option value="2">Tidak Diterima</option>
-                    </select>
+                    <input type="hidden" name="status" value="1">
                     <br>
-                    <label for="bukti_masuk_base64">Bukti Masuk:</label>
-                    <input type="file" name="bukti_masuk_base64" class="form-control-file" required>
-                    <p style="font-size: small; padding-top: 7px">Ukuran bukti maksimal 5 mb </p>
+
                     <button type="submit" class="btn btn-primary" name="barangmasuk">Submit</button>
                 </div>
             </form>
@@ -458,6 +414,26 @@ $role = $_SESSION['role'];
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('search-barang').addEventListener('input', function() {
+        var searchTerm = this.value.toLowerCase();
+        var selects = document.querySelectorAll('select[name="barangnya"]');
+
+        selects.forEach(select => {
+            var options = select.options;
+
+            for (var i = 0; i < options.length; i++) {
+                var optionText = options[i].text.toLowerCase();
+                if (optionText.includes(searchTerm)) {
+                    options[i].style.display = 'block';
+                } else {
+                    options[i].style.display = 'none';
+                }
+            }
+        });
+    });
+</script>
 
 
 <!-- The Modal "Filter Barang Keluar"-->

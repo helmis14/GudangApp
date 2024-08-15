@@ -13,6 +13,7 @@ if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev' && $_SESSI
 }
 $iduser = $_SESSION['iduser'];
 $role = $_SESSION['role'];
+$email_logged = $_SESSION['email'];
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -33,6 +34,8 @@ ini_set('display_errors', 1);
     <link href="../../css/styles.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/compressorjs/dist/compressor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
 </head>
@@ -45,21 +48,24 @@ ini_set('display_errors', 1);
     <div class="container-fluid">
         <h1 class="mt-4">Permintaan Barang</h1>
         <div class="card mb-4">
+            <div class="card-header">
             <!-- Button to Open the Modal "Tambah Barang"-->
             <?php if ($role === 'supervisor' || $role === 'dev' || $role === 'gudang') :  ?>
-                <div class="card-header">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                         Tambah Permintaan
                     </button>
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#filterpermintaan">
-                        Date
+                        Cari Permintaan Barang
                     </button>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#permintaan">
                         Export to Excel
                     </button>
-                </div>
+                
             <?php endif; ?>
-
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#barang">
+                        Cari Barang
+                    </button>
+                </div>
             <div class="card-body">
                 <?php
 
@@ -80,7 +86,7 @@ ini_set('display_errors', 1);
                     $tgl_selesai = $_POST['tgl_selesai'];
 
                     // Query dengan filter tanggal
-                    $query = "SELECT permintaan.idpermintaan, permintaan.tanggal, permintaan.status, GROUP_CONCAT(CONCAT(barang_permintaan.namabarang, '')) as detail_barang, GROUP_CONCAT(barang_permintaan.qtypermintaan) as qtypermintaan, GROUP_CONCAT(barang_permintaan.unit) as unit, GROUP_CONCAT(barang_permintaan.keterangan) as keterangan, permintaan.bukti_base64, permintaan.status 
+                    $query = "SELECT permintaan.idpermintaan, permintaan.tanggal, permintaan.status, permintaan.status2, GROUP_CONCAT(CONCAT(barang_permintaan.namabarang, '')) as detail_barang, GROUP_CONCAT(barang_permintaan.qtypermintaan) as qtypermintaan, GROUP_CONCAT(barang_permintaan.unit) as unit, GROUP_CONCAT(barang_permintaan.keterangan) as keterangan, permintaan.bukti_base64, permintaan.status 
                                         FROM permintaan
                                         INNER JOIN barang_permintaan ON permintaan.idpermintaan = barang_permintaan.idpermintaan
                                         WHERE permintaan.tanggal BETWEEN ? AND ?
@@ -95,7 +101,7 @@ ini_set('display_errors', 1);
                     $filtered_result = mysqli_stmt_get_result($stmt);
                 } else {
                     // Query tanpa filter tanggal
-                    $query = "SELECT permintaan.idpermintaan, permintaan.tanggal, permintaan.status, GROUP_CONCAT(CONCAT(barang_permintaan.namabarang, '')) as detail_barang, GROUP_CONCAT(barang_permintaan.qtypermintaan) as qtypermintaan, GROUP_CONCAT(barang_permintaan.unit) as unit, GROUP_CONCAT(barang_permintaan.keterangan) as keterangan, permintaan.bukti_base64, permintaan.status 
+                    $query = "SELECT permintaan.idpermintaan, permintaan.tanggal, permintaan.status, permintaan.status2, GROUP_CONCAT(CONCAT(barang_permintaan.namabarang, '')) as detail_barang, GROUP_CONCAT(barang_permintaan.qtypermintaan) as qtypermintaan, GROUP_CONCAT(barang_permintaan.unit) as unit, GROUP_CONCAT(barang_permintaan.keterangan) as keterangan, permintaan.bukti_base64, permintaan.status 
                                         FROM permintaan
                                         INNER JOIN barang_permintaan ON permintaan.idpermintaan = barang_permintaan.idpermintaan";
 
@@ -128,136 +134,196 @@ ini_set('display_errors', 1);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                $total_rows = mysqli_num_rows($filtered_result);
-                                $no = $total_rows;
-                                while ($row = mysqli_fetch_assoc($filtered_result)) {
-                                    $idpermintaan = $row['idpermintaan'];
-                                    $tanggal = $row['tanggal'];
-                                    $status_permintaan = $row['status'];
-                                ?>
-                                    <tr>
-                                        <td><?= ($total_rows - $no + 1); ?></td>
-                                        <!--<td><?= $no--; ?></td>-->
-                                        <td><?= $tanggal; ?></td>
-                                        <td>
-                                            <?php
-                                            $detail_barang = explode(",", $row['detail_barang']);
-                                            foreach ($detail_barang as $key => $barang) {
-                                                echo ($key + 1) . ". " . $barang . "<br>";
-                                            }
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            $unit = explode(",", $row['unit']);
-                                            foreach ($unit as $barang_unit) {
-                                                echo  " " . $barang_unit . "<br>";
-                                            }
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            $qtypermintaan = explode(",", $row['qtypermintaan']);
-                                            foreach ($qtypermintaan as $qty) {
-                                                echo  " " . $qty . "<br>";
-                                            }
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            $keterangan = explode(",", $row['keterangan']);
-                                            foreach ($keterangan as $ket) {
-                                                echo  " " . $ket . "<br>";
-                                            }
-                                            ?>
-                                        </td>
-                                        <!-- Modal untuk menampilkan gambar penuh -->
-                                        <div class="modal fade" id="gambarModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="gambarModalLabel">Gambar Permintaan</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" class="img-fluid">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <a href="download_gambar_permintaan.php?id=<?= $idpermintaan; ?>" class="btn btn-primary" download>Download</a>
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                              <?php
+$total_rows = mysqli_num_rows($filtered_result);
+$no = $total_rows;
+while ($row = mysqli_fetch_assoc($filtered_result)) {
+    $idpermintaan = $row['idpermintaan'];
+    $tanggal = $row['tanggal'];
+    $status_permintaan = $row['status'];
+    $status_permintaan2 = $row['status2'];
+?>
+    <tr>
+        <td><?= ($total_rows - $no + 1); ?></td>
+        <!--<td><?= $no--; ?></td>-->
+        <td><?= $tanggal; ?></td>
+        <td>
+            <?php
+            $detail_barang = explode(",", $row['detail_barang']);
+            foreach ($detail_barang as $key => $barang) {
+                echo ($key + 1) . ". " . $barang . "<br>";
+            }
+            ?>
+        </td>
+        <td>
+            <?php
+            $unit = explode(",", $row['unit']);
+            foreach ($unit as $barang_unit) {
+                echo $barang_unit . "<br>";
+            }
+            ?>
+        </td>
+        <td>
+            <?php
+            $qtypermintaan = explode(",", $row['qtypermintaan']);
+            foreach ($qtypermintaan as $qty) {
+                echo $qty . "<br>";
+            }
+            ?>
+        </td>
+        <td>
+            <?php
+            $keterangan = explode(",", $row['keterangan']);
+            foreach ($keterangan as $ket) {
+                echo $ket . "<br>";
+            }
+            ?>
+        </td>
+        <!-- Modal untuk menampilkan gambar penuh -->
+        <div class="modal fade" id="gambarModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="gambarModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="gambarModalLabel">Gambar Permintaan</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" class="img-fluid">
+                    </div>
+                    <div class="modal-footer">
+                        <a href="download_gambar_permintaan.php?id=<?= $idpermintaan; ?>" class="btn btn-primary" download>Download</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <td>
+            <button type="button" class="btn btn-success gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>" data-toggle="modal" data-target="#gambarModal<?= $idpermintaan; ?>">
+                Lihat Bukti
+            </button>
 
-                                        <td>
-                                            <a href="#" class="gambar-modal-trigger" data-idpermintaan="<?= $idpermintaan; ?>">
-                                                <img src="data:image/jpeg;base64,<?= $row['bukti_base64']; ?>" alt="Bukti Permintaan" style="max-width: 100px; max-height: 100px;">
-                                            </a>
-                                        </td>
-                                        <td><?= ($status_permintaan == 0) ? 'Pending' : ($status_permintaan == 1 ? 'Disetujui' : 'Tidak Disetujui'); ?></td>
-                                        <td>
-                                            <?php if ($_SESSION['role'] === 'supervisor' && $status_permintaan == 0) { ?>
-                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
-                                                    Edit
-                                                </button>
-                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
-                                                    Delete
-                                                </button>
-                                            <?php } elseif ($_SESSION['role'] === 'superadmin' && $status_permintaan == 0) { ?>
-                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
-                                                    Ubah Status
-                                                </button>
-                                            <?php } elseif ($_SESSION['role'] === 'dev') { ?>
-                                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
-                                                    Edit
-                                                </button>
-                                                <br>
-                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deletModal<?= $idpermintaan; ?>">
-                                                    Delete
-                                                </button>
-                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
-                                                    Ubah Status
-                                                </button>
-                                            <?php } elseif ($status_permintaan == 1 || $status_permintaan == 2) { ?>
-                                                Ditanggapi
-                                            <?php } else { ?>
-                                                Belum Ditanggapi
-                                            <?php } ?>
-                                        </td>
-                                    </tr>
+        </td>
+     <td>
+    <?php
+    $allApproved = ($status_permintaan == 1 && $status_permintaan2 == 1);
+    $allRejected = ($status_permintaan == 2 && $status_permintaan2 == 2);
+    $anyResponded = ($status_permintaan != 0 || $status_permintaan2 != 0);
+    ?>
+    <?php if ($allApproved) : ?>
+        Disetujui
+    <?php elseif ($allRejected) : ?>
+        Ditolak
+    <?php else : ?>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#viewStatusModal<?= $idpermintaan; ?>">
+            Lihat Status
+        </button>
+    <?php endif; ?>
+</td>
+<td>
+    <?php if ($_SESSION['role'] === 'supervisor' && $status_permintaan == 0 && $status_permintaan2 == 0) { ?>
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+            Edit
+        </button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?= $idpermintaan; ?>">
+            Delete
+        </button>
+    <?php } elseif ($_SESSION['role'] === 'superadmin' && ($status_permintaan == 0 || $status_permintaan2 == 0)) { ?>
+        <?php if ($_SESSION['email'] === 'bm@plazaoleos.com' && $status_permintaan == 0) { ?>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                Ubah Status
+            </button>
+        <?php } elseif ($_SESSION['email'] === 'ce@plazaoleos.com' && $status_permintaan2 == 0) { ?>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+                Ubah Status
+            </button>
+        <?php } else { ?>
+            Ditanggapi
+        <?php } ?>
+    <?php } elseif ($_SESSION['role'] === 'dev') { ?>
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idpermintaan; ?>">
+            Edit
+        </button>
+        <br>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal<?= $idpermintaan; ?>">
+            Delete
+        </button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal<?= $idpermintaan; ?>">
+            Ubah Status
+        </button>
+    <?php } elseif ($status_permintaan == 1 && $status_permintaan2 == 1) { ?>
+        Ditanggapi
+    <?php } else { ?>
+        Belum Ditanggapi
+    <?php } ?>
+</td>
+    </tr>
 
+    <!-- Modal untuk mengubah status permintaan -->
+    <div class="modal fade" id="statusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Ubah Status Permintaan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="update_status.php" method="POST">
+                        <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
+                        <?php if ($_SESSION['role'] === 'superadmin' && $_SESSION['email'] === 'bm@plazaoleos.com') : ?>
+                            <div class="form-group">
+                                <label for="status">Status Superadmin 1:</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="1">Disetujui</option>
+                                    <option value="2">Tidak Disetujui</option>
+                                </select>
+                            </div>
+                        <?php elseif ($_SESSION['role'] === 'superadmin' && $_SESSION['email'] === 'ce@plazaoleos.com') : ?>
+                            <div class="form-group">
+                                <label for="status2">Status Superadmin 2:</label>
+                                <select class="form-control" id="status2" name="status2">
+                                    <option value="1">Disetujui</option>
+                                    <option value="2">Tidak Disetujui</option>
+                                </select>
+                            </div>
+                        <?php endif; ?>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                    <!-- Modal untuk mengubah status permintaan -->
-                                    <div class="modal fade" id="statusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="statusModalLabel">Ubah Status Permintaan</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="update_status.php" method="POST">
-                                                        <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
-                                                        <div class="form-group">
-                                                            <label for="status">Status:</label>
-                                                            <select class="form-control" id="status" name="status">
-                                                                <option value="1">Disetujui</option>
-                                                                <option value="2">Tidak Disetujui</option>
-                                                            </select>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-primary">Simpan</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+    <!-- Modal untuk melihat status permintaan -->
+    <div class="modal fade" id="viewStatusModal<?= $idpermintaan; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewStatusModalLabel">Status Permintaan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>bm@plazaoleos.com
+                        <span class="<?= ($status_permintaan == 0) ? 'text-warning' : ($status_permintaan == 1 ? 'text-success' : 'text-danger'); ?>">
+                            <?= ($status_permintaan == 0) ? 'belum menanggapi' : ($status_permintaan == 1 ? 'menyetujui' : 'tidak menyetujui'); ?>
+                        </span>
+                    </p>
+                    <hr>
+                    <p>ce@plazaoleos.com
+                        <span class="<?= ($status_permintaan2 == 0) ? 'text-warning' : ($status_permintaan2 == 1 ? 'text-success' : 'text-danger'); ?>">
+                            <?= ($status_permintaan2 == 0) ? 'belum menanggapi' : ($status_permintaan2 == 1 ? 'menyetujui' : 'tidak menyetujui'); ?>
+                        </span>
+                    </p>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
                                     <!-- Edit Modal -->
                                     <div class="modal fade" id="edit<?= $idpermintaan; ?>">
                                         <div class="modal-dialog">
@@ -435,12 +501,9 @@ ini_set('display_errors', 1);
     require_once '../../layout/_footer.php';
     require_once '../../component/modalLogout.php';
     ?>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../../js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="../../assets/demo/chart-area-demo.js"></script>
-    <script src="../../assets/demo/chart-bar-demo.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="../../assets/demo/datatables-demo.js"></script>
@@ -707,6 +770,9 @@ ini_set('display_errors', 1);
     </div>
 </div>
 
+
+
+
 <!-- The Modal "Export"-->
 <div class="modal fade" id="permintaan">
     <div class="modal-dialog">
@@ -736,5 +802,132 @@ ini_set('display_errors', 1);
         </div>
     </div>
 </div>
+
+
+
+
+
+<!-- The Modal Search -->
+<div class="modal fade" id="barang">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+               <form id="filterForm">
+                            <div class="form-row">
+                                <div class="col">
+                                    <label for="tgl_mulai">Start Date:</label>
+                                    <input type="date" name="tgl_mulai" class="form-control" id="tgl_mulai">
+                                </div>
+                                <div class="col">
+                                    <label for="tgl_selesai">End Date:</label>
+                                    <input type="date" name="tgl_selesai" class="form-control" id="tgl_selesai">
+                                </div>
+                                <div class="col">
+                                    <label for="nama_barang">Nama Barang:</label>
+                                    <input type="text" name="nama_barang" class="form-control" id="nama_barang">
+                                </div>
+                                <div class="col">
+                                    <label>&nbsp;</label>
+                                    <button type="submit" class="btn btn-info btn-block">Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+        </div>    
+
+            <!-- Filter Form -->
+     
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center" id="dataTableSearch" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Nama Barang</th>
+                                        <th>Unit</th>
+                                        <th>Quantity</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataTableBody">
+                                    <!-- Data akan dimuat di sini menggunakan AJAX -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+
+<script>
+
+$(document).ready(function() {
+    $('#dataTableSearch').DataTable();
+});
+</script>
+
+
+<script>
+$(document).ready(function() {
+    function loadData(tgl_mulai = '', tgl_selesai = '', nama_barang = '') {
+        $.ajax({
+            url: 'filter_barang.php',
+            method: 'POST',
+            data: { tgl_mulai: tgl_mulai, tgl_selesai: tgl_selesai, nama_barang: nama_barang },
+            success: function(response) {
+                $('#dataTableBody').html(response);
+                $('#dataTableSearch').DataTable();
+            }
+        });
+    }
+
+    // Load data from localStorage if exists
+    var savedFilter = JSON.parse(localStorage.getItem('filterData'));
+    if (savedFilter) {
+        $('#tgl_mulai').val(savedFilter.tgl_mulai);
+        $('#tgl_selesai').val(savedFilter.tgl_selesai);
+        $('#nama_barang').val(savedFilter.nama_barang);
+        loadData(savedFilter.tgl_mulai, savedFilter.tgl_selesai, savedFilter.nama_barang);
+    } else {
+        loadData();
+    }
+
+    // Filter data on form submission
+    $('#filterForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var tgl_mulai = $('#tgl_mulai').val();
+        var tgl_selesai = $('#tgl_selesai').val();
+        var nama_barang = $('#nama_barang').val();
+
+
+        // Save filter data to localStorage
+        var filterData = {
+            tgl_mulai: tgl_mulai,
+            tgl_selesai: tgl_selesai,
+            nama_barang: nama_barang
+        };
+        localStorage.setItem('filterData', JSON.stringify(filterData));
+
+        loadData(tgl_mulai, tgl_selesai, nama_barang);
+    });
+
+    // Clear filter data on modal close
+    $('#barang').on('hidden.bs.modal', function () {
+        localStorage.removeItem('filterData');
+    });
+
+    // Clear filter data on close button click
+    $('.close').on('click', function() {
+        localStorage.removeItem('filterData');
+    });
+});
+</script>
+
 
 </html>

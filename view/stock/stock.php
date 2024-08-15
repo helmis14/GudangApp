@@ -13,6 +13,16 @@ if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESS
     exit();
 }
 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 10;  // Jumlah data per halaman
+$offset = ($page - 1) * $limit;
+
+$totalDataQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM stock");
+$totalData = mysqli_fetch_assoc($totalDataQuery)['total'];
+$totalPages = ceil($totalData / $limit);
+
+$ambilsemuadatastock = mysqli_query($conn, "SELECT * FROM stock LIMIT $limit OFFSET $offset");
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -66,7 +76,7 @@ function importDataFromExcel($excelFilePath, $conn)
         // Check if 'unit' is empty, provide a default value if needed
         $unitValue = !empty($rowData['Unit']) ? $rowData['Unit'] : 'Default unit';
         
-        $stmt->bind_param("isssss", $rowData['No'], $rowData['Nama Barang'], $rowData['Kategori'], $unitValue, $rowData['Stock'], $rowData['Lokasi/rak']);
+        $stmt->bind_param("isssss", $rowData['No'], $rowData['Nama Barang'], $rowData['Kategori'], $unitValue, $rowData['Stock'], $rowData['Lokasi/Rak']);
 
         if (!$stmt->execute()) {
             echo "Error: " . $stmt->error;
@@ -148,49 +158,58 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
         <h1 class="mt-4">Stock Barang</h1>
         <div class="card mb-4">
             <?php if ($role === 'dev') :  ?>
-                <div class="card-header">
-                    <!-- Button to Open the Modal "Tambah Barang"-->
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                        Tambah Barang
-                    </button>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
-                        Export
-                    </button>
-                    </button>
-                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import">
-                        Import
-                    </button>
+                <div class="card-header d-flex align-items-center">
+                    <div class="p-2">
+                        <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#myModal">
+                            Tambah Barang
+                        </button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
+                            Export
+                        </button>
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import">
+                            Import
+                        </button>
+                    </div>
+                    <div class="p-2 ml-auto">
+                        <input class="form-control" type="text" id="search-input" placeholder="Cari Barang" aria-label="Search">
+                        <button class="btn btn-secondary mt-2" id="cancel-search" style="display:none;">Cancel</button>
+                    </div>
                 </div>
             <?php endif; ?>
             <?php if ($role === 'gudang') :  ?>
-                <div class="card-header">
-                    <!-- Button to Open the Modal "Tambah Barang"-->
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                        Tambah Barang
-                    </button>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
-                        Export
-                    </button>
-                    </button>
+                  <div class="card-header d-flex align-items-center">
+                    <div class="p-2">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                            Tambah Barang
+                        </button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#export">
+                            Export
+                        </button>
+                    </div>
+                    <div class="p-2 ml-auto">
+                        <input class="form-control" type="text" id="search-input" placeholder="Cari Barang" aria-label="Search">
+                        <button class="btn btn-secondary mt-2" id="cancel-search" style="display:none;">Cancel</button>
+                    </div>
+
                 </div>
             <?php endif; ?>
 
             <div class="card-body">
 
-                <?php
-                $ambildatastock = mysqli_query($conn, "select * from stock where stock < 10");
-                while ($fetch = mysqli_fetch_array($ambildatastock)) {
-                    $barang = $fetch['namabarang'];
+                 <?php
+                // $ambildatastock = mysqli_query($conn, "select * from stock where stock < 10");
+                // while ($fetch = mysqli_fetch_array($ambildatastock)) {
+                //     $barang = $fetch['namabarang'];
 
 
-                ?>
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>Perhatian!</strong> Stock <?= $barang; ?> Akan Habis.
-                    </div>
-                <?php
-                }
-                ?>
+                // ?>
+                <!--//     <div class="alert alert-danger alert-dismissible fade show">-->
+                <!--//         <button type="button" class="close" data-dismiss="alert">&times;</button>-->
+                <!--//         <strong>Perhatian!</strong> Stock <?= $barang; ?> Akan Habis.-->
+                <!--//     </div>-->
+                 <?php
+                // }
+                // ?>
 
                 <div class="table-responsive">
                     <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
@@ -210,9 +229,9 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                         <tbody>
 
                             <?php
-                            $ambilsemuadatastock = mysqli_query($conn, "select * from stock");
-                            $i = 1;
+                            $i = $offset + 1;
                             while ($data = mysqli_fetch_array($ambilsemuadatastock)) {
+                                $idbarang = $data['idbarang'];
                                 $namabarang = $data['namabarang'];
                                 $kategori = $data['kategori'];
                                 $unit = $data['unit'];
@@ -222,7 +241,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                             ?>
 
                                 <tr>
-                                    <td><?= $i++; ?></td>
+                                    <td><?= $idbarang; ?></td>
                                     <td><?= $namabarang; ?></td>
                                     <td><?= $kategori; ?></td>
                                     <td><?= $unit; ?></td>
@@ -318,6 +337,29 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
 
         </tbody>
         </table>
+         <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <!-- Tombol Previous -->
+                <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?= $page - 1; ?>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo; Previous</span>
+                    </a>
+                </li>
+
+                <!-- Nomor Halaman Saat Ini -->
+                <li class="page-item active">
+                    <span class="page-link"><?= $page; ?></span>
+                </li>
+
+                <!-- Tombol Next -->
+                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?= $page + 1; ?>" aria-label="Next">
+                        <span aria-hidden="true">Next &raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
         </div>
     </div>
     </div>
@@ -326,15 +368,29 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
     require_once '../../layout/_footer.php';
     require_once '../../component/modalLogout.php';
     ?>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../../js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="../../assets/demo/chart-area-demo.js"></script>
-    <script src="../../assets/demo/chart-bar-demo.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-    <script src="../../assets/demo/datatables-demo.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#search-input').on('input', function() {
+                var search = $(this).val();
+
+                $.ajax({
+                    url: 'search_stock.php', // Ganti dengan nama file PHP yang sesuai untuk memproses pencarian
+                    type: 'GET',
+                    data: {
+                        search: search
+                    },
+                    success: function(data) {
+                        $('#dataTable tbody').html(data); // Update tabel dengan hasil pencarian
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 <!-- The Modal "Tambah Barang"-->
