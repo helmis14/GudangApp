@@ -14,7 +14,7 @@ if ($_SESSION['role'] !== 'superadmin' && $_SESSION['role'] !== 'dev'  && $_SESS
 }
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 10;  // Jumlah data per halaman
+$limit = 10;
 $offset = ($page - 1) * $limit;
 
 $totalDataQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM stock");
@@ -159,7 +159,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
     require_once '../../layout/_sidenav.php';
     ?>
     <div class="container-fluid">
-        <h1 class="mt-4">Stock Barang</h1>
+        <h1 class="mt-4">Laporan Barang</h1>
         <div class="card mb-4">
             <?php
             $buttons = [];
@@ -184,11 +184,11 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                     <div class="p-2">
                         <?php echo implode(' ', $buttons); ?>
                     </div>
-                     <div class="p-2 ml-auto">
+                    <div class="p-2 ml-auto">
                         <div class="input-group">
                             <input class="form-control" type="text" id="search-input" placeholder="Cari Barang" aria-label="Search">
                             <div class="input-group-append">
-                                <button class="btn btn-danger" id="cancel-search" type="button" style="display: none;">
+                                <button class="btn btn-secondary" id="cancel-search" type="button" style="display: none;">
                                     Cancel
                                 </button>
                             </div>
@@ -199,24 +199,6 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
 
 
             <div class="card-body">
-
-                <?php
-                // $ambildatastock = mysqli_query($conn, "select * from stock where stock < 10");
-                // while ($fetch = mysqli_fetch_array($ambildatastock)) {
-                //     $barang = $fetch['namabarang'];
-
-
-                // 
-                ?>
-                <!--//     <div class="alert alert-danger alert-dismissible fade show">-->
-                <!--//         <button type="button" class="close" data-dismiss="alert">&times;</button>-->
-                <!--//         <strong>Perhatian!</strong> Stock <?= $barang; ?> Akan Habis.-->
-                <!--//     </div>-->
-                <?php
-                // }
-                // 
-                ?>
-
                 <div class="table-responsive">
                     <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                         <thead>
@@ -225,8 +207,6 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                                 <th>Nama Barang</th>
                                 <th>Kategori</th>
                                 <th>Unit</th>
-                                <th>Stock</th>
-                                <th>Lokasi/Rak</th>
                                 <?php if ($role === 'gudang' || $role == 'dev') : ?>
                                     <th>Aksi</th>
                                 <?php endif; ?>
@@ -241,8 +221,6 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                                 $namabarang = $data['namabarang'];
                                 $kategori = $data['kategori'];
                                 $unit = $data['unit'];
-                                $stock = $data['stock'];
-                                $lok = $data['lokasi'];
                                 $idb = $data['idbarang'];
                             ?>
 
@@ -254,88 +232,23 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
                                     <td><?= $namabarang; ?></td>
                                     <td><?= $kategori; ?></td>
                                     <td><?= $unit; ?></td>
-                                    <td><?= $stock; ?></td>
-                                    <td><?= $lok; ?></td>
                                     <?php if ($role == 'dev') : ?>
                                         <td>
-                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idb; ?>">
-                                                Edit
-                                            </button>
-                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $idb; ?>">
-                                                Delete
+                                            <button type="button" class="btn btn-success" data-target="#barang<?= $idb; ?>">
+                                                Lihat Barang
                                             </button>
                                         </td>
                                     <?php elseif ($role === 'gudang') : ?>
                                         <td>
-                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?= $idb; ?>">
-                                                Edit
+                                            <button type="button" class="btn btn-success" data-target="#barang<?= $idb; ?>">
+                                                Lihat Barang
                                             </button>
                                         </td>
                                     <?php endif; ?>
                                 </tr>
-                                <!-- Edit Modal -->
-                                <div class="modal fade" id="edit<?= $idb; ?>">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-
-                                            <!-- Modal Header -->
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Edit Barang</h4>
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            </div>
-
-                                            <!-- Modal body -->
-                                            <form method="post">
-                                                <div class="modal-body">
-                                                    <label for="namabarang">Nama Barang</label>
-                                                    <input type="text" name="namabarang" value="<?= $namabarang; ?>" class="form-control" required>
-                                                    <br>
-                                                    <label for="kategori">Kategori:</label>
-                                                    <input type="text" name="kategori" value="<?= $kategori; ?>" class="form-control" required>
-                                                    <br>
-                                                    <label for="unit">Unit:</label>
-                                                    <input type="text" name="unit" value="<?= $unit; ?>" class="form-control" required>
-                                                    <br>
-                                                    <label for="lokasi">Lokasi:</label>
-                                                    <input type="text" name="lokasi" value="<?= $lok; ?>" class="form-control" required>
-                                                    <br>
-                                                    <input type="hidden" name="idb" value="<?= $idb; ?>">
-                                                    <button type="submit" class="btn btn-primary" name="updatebarang">Submit</button>
-                                                </div>
-                                            </form>
-
-                                        </div>
-
-                                    </div>
-                                </div>
                 </div>
 
-                <!-- Delete Modal -->
-                <div class="modal fade" id="delete<?= $idb; ?>">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
 
-                            <!-- Modal Header -->
-                            <div class="modal-header">
-                                <h4 class="modal-title">Hapus Barang</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-
-                            <!-- Modal body -->
-                            <form method="post">
-                                <div class="modal-body">
-                                    Apakah Anda Yakin Ingin Menghapus <?= $namabarang; ?>?
-                                    <input type="hidden" name="idb" value="<?= $idb; ?>">
-                                    <br>
-                                    <br>
-                                    <button type="submit" class="btn btn-danger" name="hapusbarang">Hapus</button>
-                                </div>
-                            </form>
-
-                        </div>
-
-                    </div>
-                </div>
             </div>
 
 
@@ -353,35 +266,35 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
 
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-                <!-- Tombol First -->
+
                 <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
                     <a class="page-link" href="?page=1" aria-label="First">
                         <span aria-hidden="true">« Awal</span>
                     </a>
                 </li>
 
-                <!-- Tombol Previous -->
+
                 <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
                     <a class="page-link" href="?page=<?= max(1, $page - 1); ?>" aria-label="Previous">
                         <span aria-hidden="true">‹ Sebelumnya</span>
                     </a>
                 </li>
 
-                <!-- Halaman yang ditampilkan dalam rentang -->
+
                 <?php for ($i = $startRange; $i <= $endRange; $i++): ?>
                     <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
                         <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
                     </li>
                 <?php endfor; ?>
 
-                <!-- Tombol Next -->
+
                 <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
                     <a class="page-link" href="?page=<?= min($totalPages, $page + 1); ?>" aria-label="Next">
                         <span aria-hidden="true">Selanjutnya ›</span>
                     </a>
                 </li>
 
-                <!-- Tombol Last -->
+
                 <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
                     <a class="page-link" href="?page=<?= $totalPages; ?>" aria-label="Last">
                         <span aria-hidden="true">Terakhir »</span>
@@ -403,7 +316,7 @@ if (isset($_POST['import']) && isset($_FILES["excel_file"])) {
     <script src="../../js/scripts.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-   <script>
+    <script>
         $(document).ready(function() {
             function bindEditButtons() {
                 $('.btn-warning').off('click').on('click', function() {

@@ -1,0 +1,35 @@
+[24-Apr-2024 01:44:07 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php:113
+Stack trace:
+#0 /home/u6939598/public_html/wh.plazaoleos.com/view/stock/stock.php(2): require()
+#1 {main}
+  thrown in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php on line 113
+[24-Apr-2024 01:44:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php:113
+Stack trace:
+#0 /home/u6939598/public_html/wh.plazaoleos.com/view/stock/stock.php(2): require()
+#1 {main}
+  thrown in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php on line 113
+[24-Apr-2024 01:45:15 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php:113
+Stack trace:
+#0 /home/u6939598/public_html/wh.plazaoleos.com/view/stock/stock.php(2): require()
+#1 {main}
+  thrown in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php on line 113
+[24-Apr-2024 01:48:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php:113
+Stack trace:
+#0 /home/u6939598/public_html/wh.plazaoleos.com/view/stock/stock.php(2): require()
+#1 {main}
+  thrown in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php on line 113
+[24-Apr-2024 01:48:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php:113
+Stack trace:
+#0 /home/u6939598/public_html/wh.plazaoleos.com/view/stock/stock.php(2): require()
+#1 {main}
+  thrown in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php on line 113
+[24-Apr-2024 01:48:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php:113
+Stack trace:
+#0 /home/u6939598/public_html/wh.plazaoleos.com/view/stock/stock.php(2): require()
+#1 {main}
+  thrown in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php on line 113
+[24-Apr-2024 01:48:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php:113
+Stack trace:
+#0 /home/u6939598/public_html/wh.plazaoleos.com/view/stock/stock.php(2): require()
+#1 {main}
+  thrown in /home/u6939598/public_html/wh.plazaoleos.com/helper/function.php on line 113

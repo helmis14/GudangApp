@@ -2,6 +2,8 @@
 require '../../helper/function.php';
 require '../../helper/cek.php';
 
+
+
 $message = "";
 
 $idkeluar_to_delete = '';
@@ -22,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $idbarang = $_POST['idbarang'][$index];
             $penerima = $_POST['penerima'][$index];
             $qty = $_POST['qty'][$index];
-            $keterangan = $_POST['ket'][$index];  // Perbaikan dari $_POST['keterangan']
+            $keterangan = $_POST['ket'][$index];
 
             // Panggil fungsi untuk memperbarui barang keluar tanpa mengubah stok
             if (update_barang_keluar($idkeluar, $idbarang, $penerima, $qty, $keterangan)) {

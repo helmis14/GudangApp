@@ -22,7 +22,7 @@ $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
 $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
 $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
 $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
-$spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);;
+$spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
 
 //title merge cells
 $spreadsheet->getActiveSheet()->setCellValue('A1', "Report Barang Masuk Plaza Oleos");
@@ -44,7 +44,6 @@ $spreadsheet->getActiveSheet()->getStyle('H3')
 	->getNumberFormat()
 	->setFormatCode($dateFormat);
 
-
 //header text
 $sheet->setCellValue('A5', 'Tanggal');
 $sheet->setCellValue('B5', 'Nama Barang');
@@ -56,9 +55,22 @@ $sheet->setCellValue('G5', 'Keterangan');
 $sheet->setCellValue('H5', 'Status');
 
 //display from DB
-$query = mysqli_query($conn, "select * from masuk m, stock s where s.idbarang = m.idbarang");
+$query = mysqli_query($conn, "SELECT * FROM masuk m, stock s WHERE s.idbarang = m.idbarang");
 $i = 6;
 while ($row = mysqli_fetch_array($query)) {
+	$statusText = '';
+	switch ($row['status']) {
+		case 0:
+			$statusText = 'Dalam Pengiriman';
+			break;
+		case 1:
+			$statusText = 'Diterima';
+			break;
+		case 2:
+			$statusText = 'Tidak Diterima';
+			break;
+	}
+
 	$sheet->setCellValue('A' . $i, $row['tanggal']);
 	$sheet->setCellValue('B' . $i, $row['namabarang']);
 	$sheet->setCellValue('C' . $i, $row['unit']);
@@ -66,10 +78,9 @@ while ($row = mysqli_fetch_array($query)) {
 	$sheet->setCellValue('E' . $i, $row['distributor']);
 	$sheet->setCellValue('F' . $i, $row['penerima']);
 	$sheet->setCellValue('G' . $i, $row['keterangan']);
-	$sheet->setCellValue('H' . $i, $row['status']);
+	$sheet->setCellValue('H' . $i, $statusText);
 	$i++;
 }
-
 
 //style Title
 $styleTitle = [
@@ -84,7 +95,6 @@ $styleTitle = [
 		'size' => 14,
 	],
 ];
-
 
 $sheet->getStyle('A1:H1')->applyFromArray($styleTitle);
 
@@ -103,7 +113,6 @@ $styleTanggal = [
 	],
 ];
 
-
 $sheet->getStyle('G3')->applyFromArray($styleTanggal);
 
 //style Date
@@ -121,9 +130,7 @@ $styleValueTanggal = [
 	],
 ];
 
-
 $sheet->getStyle('H3')->applyFromArray($styleValueTanggal);
-
 
 //style heading text bold, size, warna, posisi
 $styleHead = [
@@ -161,7 +168,6 @@ $styleIsi = [
 $i = $i - 1;
 $sheet->getStyle('A6:H' . $i)->applyFromArray($styleIsi);
 
-
 $writer = new Xlsx($spreadsheet);
 header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 header("Content-Disposition: attachment;filename=\"Report Barang Masuk.xlsx\"");
@@ -171,3 +177,4 @@ header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 header("Cache-Control: cache, must-revalidate");
 header("Pragma: public");
 $writer->save("php://output");
+?>

@@ -55,7 +55,7 @@ html {
 }
 
 article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
-  display: grid;
+  display: block;
 }
 
 body {
@@ -7930,6 +7930,7 @@ button.bg-dark:focus {
 @media (max-width: 375px) {
   #sidebarToggle {
       display: inline-block !important;
+      position: fixed;
       top: 5px;
       right: 5px;
   }
@@ -7946,7 +7947,8 @@ button.bg-dark:focus {
     padding-left: 0;
   }
   #sidebarToggle {
-    display: inline-block !important;   
+    display: inline-block !important;
+    position: fixed;
     top: 5px;
     right: 5px;
   }
@@ -8014,7 +8016,7 @@ button.bg-dark:focus {
 @media only screen and (max-width: 428px) {
   .navbar-dark .navbar-nav .nav-link:hover, 
   .navbar-dark .navbar-nav .nav-link:focus {
-    display: ruby-text !important; 
+    display: ruby-text !important; /* Atur hover dan focus menjadi ruby-text */
   }
 
   .navbar-expand .navbar-nav .nav-link {
@@ -8022,6 +8024,7 @@ button.bg-dark:focus {
     padding-left: 0rem; 
   }
 }
+
 
 @media (max-width: 428px) {
   .navbar-expand .navbar-nav .nav-link {
@@ -8031,6 +8034,7 @@ button.bg-dark:focus {
   }
   #sidebarToggle {
     display: inline-block !important;
+    position: fixed;
     top: 5px;
       right: 5px;
   }
@@ -8099,6 +8103,7 @@ button.bg-dark:focus {
 @media (min-width: 576px) {
   #sidebarToggle {
       display: inline-block !important;
+      position: fixed;
       top: 5px;
       right: 5px;
   }
@@ -9417,6 +9422,7 @@ button.bg-dark:focus {
   
   #sidebarToggle {
     display: inline-block !important;
+    position: fixed;
     top: 9px;
     right: 0px;
 }

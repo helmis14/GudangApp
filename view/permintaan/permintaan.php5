@@ -126,15 +126,9 @@ ini_set('display_errors', 1);
                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#barang">
                     Cari Barang
                 </button>
-               <div class="p-2 ml-auto">
-                    <div class="input-group">
-                        <input class="form-control" type="text" id="search-input" placeholder="Cari Barang" aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-danger" id="cancel-search" type="button" style="display: none;">
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
+                <div class="p-2 ml-auto">
+                    <input class="form-control" type="text" id="search-input" placeholder="Cari Barang" aria-label="Search">
+                    <button class="btn btn-secondary mt-2" id="cancel-search" style="display:none;">Cancel</button>
                 </div>
             </div>
             <div class="card-body">
@@ -445,24 +439,9 @@ ini_set('display_errors', 1);
                                                 <div class="modal-body">
                                                     <form action="process_form.php" method="POST">
                                                         <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
-
-                                                        <!-- Pilihan Input: Barang Baru atau Dari Stock -->
                                                         <div class="form-group">
-                                                            <label>Pilih Input:</label><br>
-                                                            <input type="radio" id="inputBaruEdit<?= $idpermintaan; ?>" name="pilihanInputEdit" value="baru" onclick="toggleInputEdit(<?= $idpermintaan; ?>)" required> Barang Baru
-                                                            <input type="radio" id="inputStockEdit<?= $idpermintaan; ?>" name="pilihanInputEdit" value="stock" onclick="toggleInputEdit(<?= $idpermintaan; ?>)"> Dari Stock
-                                                        </div>
-
-                                                        <!-- Input Barang Baru -->
-                                                        <div id="inputBarangBaruEdit<?= $idpermintaan; ?>" style="display: block;">
-                                                            <label for="namabarangBaruEdit<?= $idpermintaan; ?>">Nama Barang Baru:</label>
-                                                            <input type="text" name="namabarang" id="namabarangBaruEdit<?= $idpermintaan; ?>" placeholder="Nama Barang" class="form-control">
-                                                        </div>
-
-                                                        <!-- Input Barang dari Stok -->
-                                                        <div id="inputBarangStockEdit<?= $idpermintaan; ?>" style="display: none;">
-                                                            <label for="search-barangEdit<?= $idpermintaan; ?>">Cari Nama Barang:</label>
-                                                            <select class="js-example-responsive form-control" style="width: 100%" name="namabarang" id="namabarangStockEdit<?= $idpermintaan; ?>">
+                                                            <label for="search-barang">Cari Nama Barang:</label>
+                                                            <select class="js-example-responsive" style="width: 100%" name="namabarang[]" name="namabarang" class="form-control" required>
                                                                 <?php
                                                                 $ambilsemuadatanya = mysqli_query($conn, "SELECT * FROM stock");
                                                                 while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
@@ -473,139 +452,138 @@ ini_set('display_errors', 1);
                                                                 }
                                                                 ?>
                                                             </select>
-                                                        </div>
+                                                            <br>
+                                                            <br>
+                                                            <label for="unit">Unit:</label>
+                                                            <select class="js-example-responsive" style="width: 20%" name="namabarang[]" name="unit" class="form-control">
+                                                                <option value="PCS">PCS</option>
+                                                                <option value="PACK">PACK</option>
+                                                                <option value="KG">KG</option>
+                                                                <option value="BALL">BALL</option>
+                                                                <option value="BTG">BTG</option>
+                                                                <option value="ROLL">ROLL</option>
+                                                                <option value="METER">METER</option>
+                                                                <option value="BOTOL">BOTOL</option>
+                                                                <option value="LITER">LITER</option>
+                                                                <option value="PAIL">PAIL</option>
+                                                                <option value="GALON">GALON</option>
+                                                                <option value="CAN">CAN</option>
+                                                                <option value="UNIT">UNIT</option>
+                                                                <option value="TAB">TAB</option>
+                                                                <option value="SET">SET</option>
+                                                                <option value="DUS">DUS</option>
+                                                                <option value="SAK">SAK</option>
+                                                                <option value="SLABE">SLABE</option>
+                                                                <option value="ALUR">ALUR</option>
+                                                            </select>
+                                                            <br>
+                                                            <label for="qtypermintaan">Jumlah:</label>
+                                                            <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
+                                                            <br>
+                                                            <label for="keterangan">Keterangan:</label>
+                                                            <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
+                                                            <br>
 
-                                                        <br>
-                                                        <label for="unitEdit<?= $idpermintaan; ?>">Unit:</label>
-                                                        <select class="js-example-responsive form-control" style="width: 20%" name="unit" id="unitEdit<?= $idpermintaan; ?>">
-                                                            <option value="PCS">PCS</option>
-                                                            <option value="PACK">PACK</option>
-                                                            <option value="KG">KG</option>
-                                                            <option value="BALL">BALL</option>
-                                                            <option value="BTG">BTG</option>
-                                                            <option value="ROLL">ROLL</option>
-                                                            <option value="METER">METER</option>
-                                                            <option value="BOTOL">BOTOL</option>
-                                                            <option value="LITER">LITER</option>
-                                                            <option value="PAIL">PAIL</option>
-                                                            <option value="GALON">GALON</option>
-                                                            <option value="CAN">CAN</option>
-                                                            <option value="UNIT">UNIT</option>
-                                                            <option value="TAB">TAB</option>
-                                                            <option value="SET">SET</option>
-                                                            <option value="DUS">DUS</option>
-                                                            <option value="SAK">SAK</option>
-                                                            <option value="SLABE">SLABE</option>
-                                                            <option value="ALUR">ALUR</option>
-                                                        </select>
-                                                        <br>
-                                                        <label for="qtypermintaanEdit<?= $idpermintaan; ?>">Jumlah:</label>
-                                                        <input type="Number" name="qtypermintaan" placeholder="Quantity" class="form-control" required>
-                                                        <br>
-                                                        <label for="keteranganEdit<?= $idpermintaan; ?>">Keterangan:</label>
-                                                        <input type="text" name="keterangan" placeholder="Keterangan" class="form-control" required>
-                                                        <br>
-
-                                                        <label for="statusEdit">Status:</label>
-                                                        <select name="status" class="form-control" disabled>
-                                                            <option value="0">Pending</option>
-                                                            <option value="1" disabled>Disetujui</option>
-                                                            <option value="2" disabled>Tidak Disetujui</option>
-                                                        </select>
-                                                        <hr>
-                                                        <br>
-                                                        <div>
+                                                            <label for="status">Status:</label>
+                                                            <select name="status" class="form-control" disabled>
+                                                                <option value="0">Pending</option>
+                                                                <option value="1" disabled>Disetujui</option>
+                                                                <option value="2" disabled>Tidak Disetujui</option>
+                                                            </select>
+                                                            <hr>
+                                                            <br>
+                                                            <div>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary" name="barangbaru">Submit</button>
                                                         </div>
-                                                        <button type="submit" class="btn btn-primary" name="barangbaru">Submit</button>
+                                                    </form>
                                                 </div>
-                                                </form>
                                             </div>
                                         </div>
                                     </div>
-                    </div>
 
 
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deletModal<?= $idpermintaan; ?>">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deletModal<?= $idpermintaan; ?>">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
 
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Hapus Barang</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
+                                                <!-- Modal Header -->
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Hapus Barang</h4>
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                </div>
 
-                                <!-- Modal body -->
-                                <form method="post">
-                                    <div class="modal-body">
-                                        Apakah anda yakin ingin menghapus permintaan tanggal waktu ini: <?= $tanggal; ?> ?
-                                        <br>
-                                        <br>
-                                        <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
-                                        <button type="submit" class="btn btn-danger" name="hapuspermintaan">Hapus</button>
+                                                <!-- Modal body -->
+                                                <form method="post">
+                                                    <div class="modal-body">
+                                                        Apakah anda yakin ingin menghapus permintaan tanggal waktu ini: <?= $tanggal; ?> ?
+                                                        <br>
+                                                        <br>
+                                                        <input type="hidden" name="idpermintaan" value="<?= $idpermintaan; ?>">
+                                                        <button type="submit" class="btn btn-danger" name="hapuspermintaan">Hapus</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
                                     </div>
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
-                <?php
+                                <?php
                                 };
 
-                ?>
-                </tbody>
-                </table>
-                <div style="text-align:center" id="loadingSpinner" style="display: none;">
-                    <img src="../../assets/gif/loading.gif" alt="Loading..." />
-                </div>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <!-- Tombol First -->
-                        <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="?page=1" aria-label="First">
-                                <span aria-hidden="true">« Awal</span>
-                            </a>
-                        </li>
+                                ?>
+                            </tbody>
+                        </table>
+                        <div style="text-align:center" id="loadingSpinner" style="display: none;">
+                            <img src="../../assets/gif/loading.gif" alt="Loading..." />
+                        </div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <!-- Tombol First -->
+                                <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="?page=1" aria-label="First">
+                                        <span aria-hidden="true">« Awal</span>
+                                    </a>
+                                </li>
 
-                        <!-- Tombol Previous -->
-                        <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="?page=<?= max(1, $page - 1); ?>" aria-label="Previous">
-                                <span aria-hidden="true">‹ Sebelumnya</span>
-                            </a>
-                        </li>
+                                <!-- Tombol Previous -->
+                                <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="?page=<?= max(1, $page - 1); ?>" aria-label="Previous">
+                                        <span aria-hidden="true">‹ Sebelumnya</span>
+                                    </a>
+                                </li>
 
-                        <!-- Halaman yang ditampilkan dalam rentang -->
-                        <?php for ($i = $startRange; $i <= $endRange; $i++): ?>
-                            <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
-                                <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
+                                <!-- Halaman yang ditampilkan dalam rentang -->
+                                <?php for ($i = $startRange; $i <= $endRange; $i++): ?>
+                                    <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                                    </li>
+                                <?php endfor; ?>
 
-                        <!-- Tombol Next -->
-                        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="?page=<?= min($totalPages, $page + 1); ?>" aria-label="Next">
-                                <span aria-hidden="true">Selanjutnya ›</span>
-                            </a>
-                        </li>
+                                <!-- Tombol Next -->
+                                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="?page=<?= min($totalPages, $page + 1); ?>" aria-label="Next">
+                                        <span aria-hidden="true">Selanjutnya ›</span>
+                                    </a>
+                                </li>
 
-                        <!-- Tombol Last -->
-                        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
-                            <a class="page-link" href="?page=<?= $totalPages; ?>" aria-label="Last">
-                                <span aria-hidden="true">Terakhir »</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                                <!-- Tombol Last -->
+                                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                                    <a class="page-link" href="?page=<?= $totalPages; ?>" aria-label="Last">
+                                        <span aria-hidden="true">Terakhir »</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
 
-            </div>
-        <?php
+                    </div>
+                <?php
                 } else {
                     echo "Tidak ada hasil yang ditemukan.";
                 }
-        ?>
+                ?>
+            </div>
         </div>
-    </div>
     </div>
     <?php
     require_once '../../layout/_footer.php';
@@ -617,7 +595,8 @@ ini_set('display_errors', 1);
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
+
+    <script>
         $(document).ready(function() {
             function bindEditButtons() {
                 $('.btn-warning').off('click').on('click', function() {
@@ -626,33 +605,13 @@ ini_set('display_errors', 1);
                 });
             }
 
-            function debounce(func, wait) {
-                let timeout;
-                return function(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func.apply(this, args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            }
-
-            function handleSearch() {
+            $('#search-input').on('input', function() {
                 $('#loading').show();
-                var search = $('#search-input').val();
 
-                // Jika ada pencarian, sembunyikan pagination dan tampilkan tombol cancel
-                if (search !== '') {
-                    $('#cancel-search').show();
-                    $('.pagination').hide(); // Sembunyikan pagination saat pencarian
-                } else {
-                    $('#cancel-search').hide();
-                    $('.pagination').show(); // Tampilkan pagination jika tidak ada pencarian
-                }
+                var search = $(this).val();
 
                 $.ajax({
-                    url: 'search_datapermintaan.php',
+                    url: "search_datapermintaan.php",
                     type: 'GET',
                     data: {
                         search: search
@@ -666,22 +625,9 @@ ini_set('display_errors', 1);
                         $('#loading').hide();
                         alert('Pencarian gagal');
                     }
+
                 });
-            }
-
-            // Fungsi untuk cancel search: kembali ke halaman pertama tanpa filter pencarian
-            $('#cancel-search').on('click', function() {
-                $('#search-input').val(''); // Kosongkan input
-                $(this).hide(); // Sembunyikan tombol cancel
-                $('.pagination').show(); // Tampilkan kembali pagination
-
-                // Arahkan ke halaman 1 tanpa filter pencarian
-                window.location.href = "?page=1";
             });
-
-            // Debounce untuk pencarian agar tidak menembak server terus menerus
-            $('#search-input').on('input', debounce(handleSearch, 500));
-
             bindEditButtons();
         });
     </script>
@@ -712,22 +658,8 @@ ini_set('display_errors', 1);
             $("#addBarangBtn").click(function() {
                 var newBarang = `
                 <div id="barang${counter}">
-                <div class="form-group">
-                    <label>Pilih Input:</label><br>
-                    <input type="radio" id="inputBaru${counter}" name="pilihanInput${counter}" value="baru" onclick="toggleInput(${counter})" required> Barang Baru
-                    <input type="radio" id="inputStock${counter}" name="pilihanInput${counter}" value="stock" onclick="toggleInput(${counter})"> Dari Stock
-                </div>
-                
-                <!-- Input Barang Baru -->
-                <div id="inputBarangBaru${counter}" style="display: block;">
-                    <label for="namabarang[]">Nama Barang Baru:</label>
-                    <input type="text" name="namabarang[]" id="namabarangBaru${counter}" placeholder="Nama Barang" class="form-control">
-                </div>
-
-                <!-- Input Barang dari Stok -->
-                <div id="inputBarangStock${counter}" style="display: none;">
                     <label for="search-barang${counter}">Cari Nama Barang:</label>
-                    <select class="js-example-responsive" style="width: 100%" name="namabarang[]" id="namabarangStock${counter}" class="form-control">
+                    <select name="namabarang[]" id="search-barang${counter}" class="form-control select-plugin" required>
                         <?php
                         $ambilsemuadatanya = mysqli_query($conn, "SELECT * FROM stock");
                         while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
@@ -739,9 +671,7 @@ ini_set('display_errors', 1);
                         ?>
                     </select>
                     <br>
-                </div>
-                <br>
-
+                    <br>
                     <label for="unit${counter}">Unit:</label>
                     <select name="unit[]" class="form-control">
                         <option value="PCS">PCS</option>
@@ -782,40 +712,10 @@ ini_set('display_errors', 1);
                 </div>
             `;
                 $("#barangContainer").append(newBarang);
-                $('.js-example-responsive').select2();
+                $('.select-plugin').select2();
                 $("#hapusBarangBtn").show();
                 counter++;
             });
-
-            // Fungsi untuk mengatur visibilitas input berdasarkan pilihan (baru atau stok) untuk form dinamis
-            window.toggleInput = function(counter) {
-                var inputBaru = document.getElementById('inputBaru' + counter);
-                var inputStock = document.getElementById('inputStock' + counter);
-
-                var barangBaru = document.getElementById('inputBarangBaru' + counter);
-                var barangStock = document.getElementById('inputBarangStock' + counter);
-
-                if (inputBaru && inputBaru.checked) {
-                    barangBaru.style.display = 'block';
-                    barangStock.style.display = 'none';
-
-                    document.getElementById('namabarangBaru' + counter).setAttribute('required', 'required');
-                    document.getElementById('namabarangBaru' + counter).disabled = false;
-
-                    document.getElementById('namabarangStock' + counter).removeAttribute('required');
-                    document.getElementById('namabarangStock' + counter).disabled = true;
-                } else if (inputStock && inputStock.checked) {
-                    barangBaru.style.display = 'none';
-                    barangStock.style.display = 'block';
-
-                    document.getElementById('namabarangStock' + counter).setAttribute('required', 'required');
-                    document.getElementById('namabarangStock' + counter).disabled = false;
-
-                    document.getElementById('namabarangBaru' + counter).removeAttribute('required');
-                    document.getElementById('namabarangBaru' + counter).disabled = true;
-                }
-            };
-
 
             // Hapus barang baru
             $("#hapusBarangBtn").click(function() {
@@ -823,13 +723,13 @@ ini_set('display_errors', 1);
                     counter--;
                     $("#barangContainer #barang" + counter).remove();
                 }
+                // Sembunyikan tombol hapus barang jika tidak ada barang lagi
                 if (counter === 1) {
                     $("#hapusBarangBtn").hide();
                 }
             });
         });
     </script>
-
     <script>
         $(document).ready(function() {
             $("#myModaledit").on('show.bs.modal', function(e) {
@@ -865,37 +765,19 @@ ini_set('display_errors', 1);
                     <label for="bukti_base64">Bukti Permintaan:</label>
                     <input type="file" name="bukti_base64" class="form-control-file" required>
                     <p style="font-size: small; padding-top: 7px">Ukuran bukti maksimal 5 mb </p>
-                    <!-- Pilih Input -->
-                    <div class="form-group">
-                        <label>Pilih Input:</label><br>
-                        <input type="radio" id="inputBaru" name="pilihanInput" value="baru" onclick="toggleInputTambah()" required> Barang Baru
-                        <input type="radio" id="inputStock" name="pilihanInput" value="stock" onclick="toggleInputTambah()"> Dari Stock
-                        <br>
-                    </div>
-
-                    <!-- Input Barang Baru -->
-                    <div id="inputBarangBaru">
-                        <label for="namabarang[]">Nama Barang Baru:</label>
-                        <input type="text" name="namabarang[]" id="namabarangBaru" placeholder="Nama Barang" class="form-control" required>
-
-                    </div>
-
-                    <!-- Input Barang dari Stok -->
-                    <div id="inputBarangStock" style="display: none;">
-                        <label for="search-barang">Cari Nama Barang:</label>
-                        <select class="js-example-responsive" style="width: 100%" name="namabarang[]" id="namabarangStock" class="form-control">
-                            <?php
-                            $ambilsemuadatanya = mysqli_query($conn, "SELECT * FROM stock");
-                            while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
-                                $namabarangnya = $fetcharray['namabarang'];
-                            ?>
-                                <option value="<?= $namabarangnya; ?>"><?= $namabarangnya; ?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                        <br>
-                    </div>
+                    <label for="search-barang">Cari Nama Barang:</label>
+                    <select class="js-example-responsive" style="width: 100%" name="namabarang[]" class="form-control" required>
+                        <?php
+                        $ambilsemuadatanya = mysqli_query($conn, "SELECT * FROM stock");
+                        while ($fetcharray = mysqli_fetch_array($ambilsemuadatanya)) {
+                            $namabarangnya = $fetcharray['namabarang'];
+                        ?>
+                            <option value="<?= $namabarangnya; ?>"><?= $namabarangnya; ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                    <br>
                     <br>
                     <label for="unit[]">Unit:</label>
                     <select class="js-example-responsive" style="width: 20%" name="unit[]" class="form-control">
@@ -929,11 +811,11 @@ ini_set('display_errors', 1);
                     <br>
 
                     <label for="status[]" style="display: none;">Status:</label>
-                    <!-- <select name="status[]" class="form-control" style="display: none;">
+                    <select name="status[]" class="form-control" style="display: none;">
                         <option value="0">Pending</option>
                         <option value="1" disabled>Disetujui</option>
                         <option value="2" disabled>Tidak Disetujui</option>
-                    </select> -->
+                    </select>
 
                     <hr>
                     <!-- Tempat untuk menambahkan barang-barang baru -->
@@ -1281,71 +1163,6 @@ ini_set('display_errors', 1);
                 dropdownParent: $(this) // Agar dropdown berada di dalam modal
             });
         });
-    });
-</script>
-
-<script>
-    // Fungsi untuk menampilkan input yang sesuai dengan pilihan
-    function toggleInputTambah() {
-        var inputBaru = document.getElementById('inputBaru');
-        var inputStock = document.getElementById('inputStock');
-
-        var barangBaru = document.getElementById('inputBarangBaru');
-        var barangStock = document.getElementById('inputBarangStock');
-
-        // Atur visibilitas dan disable input sesuai pilihan
-        if (inputBaru.checked) {
-            barangBaru.style.display = 'block';
-            barangStock.style.display = 'none';
-            document.getElementById('namabarangBaru').disabled = false;
-            document.getElementById('namabarangStock').disabled = true;
-        } else if (inputStock.checked) {
-            barangBaru.style.display = 'none';
-            barangStock.style.display = 'block';
-            document.getElementById('namabarangBaru').disabled = true;
-            document.getElementById('namabarangStock').disabled = false;
-        }
-    }
-</script>
-<script>
-    // Fungsi untuk toggle input barang baru atau dari stock
-    function toggleInputEdit(id) {
-        var inputBaru = document.getElementById('inputBaruEdit' + id);
-        var inputStock = document.getElementById('inputStockEdit' + id);
-
-        var barangBaru = document.getElementById('inputBarangBaruEdit' + id);
-        var barangStock = document.getElementById('inputBarangStockEdit' + id);
-
-        if (inputBaru && inputBaru.checked) {
-            // Tampilkan input barang baru dan sembunyikan input stock
-            barangBaru.style.display = 'block';
-            barangStock.style.display = 'none';
-
-            // Aktifkan input barang baru dan disable select stock
-            document.getElementById('namabarangBaruEdit' + id).removeAttribute('disabled');
-            document.getElementById('namabarangStockEdit' + id).setAttribute('disabled', 'disabled');
-
-            // Atur input barang baru sebagai required dan select stock tidak required
-            document.getElementById('namabarangBaruEdit' + id).setAttribute('required', 'required');
-            document.getElementById('namabarangStockEdit' + id).removeAttribute('required');
-        } else if (inputStock && inputStock.checked) {
-            // Tampilkan select stock dan sembunyikan input barang baru
-            barangBaru.style.display = 'none';
-            barangStock.style.display = 'block';
-
-            // Aktifkan select stock dan disable input barang baru
-            document.getElementById('namabarangStockEdit' + id).removeAttribute('disabled');
-            document.getElementById('namabarangBaruEdit' + id).setAttribute('disabled', 'disabled');
-
-            // Atur select stock sebagai required dan input barang baru tidak required
-            document.getElementById('namabarangStockEdit' + id).setAttribute('required', 'required');
-            document.getElementById('namabarangBaruEdit' + id).removeAttribute('required');
-        }
-    }
-
-    // Inisialisasi select2 saat modal dibuka
-    $('#myModaledit<?= $idpermintaan; ?>').on('shown.bs.modal', function() {
-        $('.js-example-responsive').select2();
     });
 </script>
 
